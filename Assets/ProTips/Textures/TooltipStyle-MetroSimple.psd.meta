@@ -1,0 +1,217 @@
+fileFormatVersion: 2
+guid: 8a99042b90d2cfc4ab2c77016882eea6
+labels:
+- Tooltip
+- Tooltips
+- UGUI
+- GUI
+- Interface
+- Tool
+- Tip
+- Tutorial
+- Barks
+- Textures
+timeCreated: 1439348164
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: TooltipStyle-MetroSimple_0
+    21300002: TooltipStyle-MetroSimple_1
+    21300004: TooltipStyle-MetroSimple_2
+    21300006: TooltipStyle-MetroSimple_3
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: TooltipStyle-MetroSimple_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 126, y: -115}
+        - {x: 126, y: -109}
+        - {x: 127, y: -108}
+        - {x: 127, y: 108}
+        - {x: 126, y: 115}
+        - {x: 124, y: 120}
+        - {x: 121, y: 123}
+        - {x: 116, y: 125}
+        - {x: 109, y: 126}
+        - {x: -108, y: 126}
+        - {x: -109, y: 125}
+        - {x: -115, y: 125}
+        - {x: -120, y: 123}
+        - {x: -123, y: 120}
+        - {x: -125, y: 115}
+        - {x: -126, y: 108}
+        - {x: -126, y: -108}
+        - {x: -125, y: -115}
+        - {x: -123, y: -120}
+        - {x: -120, y: -123}
+        - {x: -115, y: -125}
+        - {x: -108, y: -126}
+        - {x: 109, y: -126}
+        - {x: 116, y: -125}
+        - {x: 121, y: -123}
+        - {x: 124, y: -120}
+    - name: TooltipStyle-MetroSimple_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 125, y: -115}
+        - {x: 125, y: -109}
+        - {x: 126, y: -108}
+        - {x: 126, y: 108}
+        - {x: 125, y: 115}
+        - {x: 123, y: 120}
+        - {x: 120, y: 123}
+        - {x: 115, y: 125}
+        - {x: 108, y: 126}
+        - {x: -108, y: 126}
+        - {x: -109, y: 125}
+        - {x: -115, y: 125}
+        - {x: -120, y: 123}
+        - {x: -123, y: 120}
+        - {x: -125, y: 115}
+        - {x: -126, y: 108}
+        - {x: -126, y: -108}
+        - {x: -125, y: -115}
+        - {x: -123, y: -120}
+        - {x: -120, y: -123}
+        - {x: -115, y: -125}
+        - {x: -108, y: -126}
+        - {x: 108, y: -126}
+        - {x: 115, y: -125}
+        - {x: 120, y: -123}
+        - {x: 123, y: -120}
+    - name: TooltipStyle-MetroSimple_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 126, y: -115}
+        - {x: 126, y: -109}
+        - {x: 127, y: -108}
+        - {x: 127, y: 108}
+        - {x: 126, y: 115}
+        - {x: 124, y: 120}
+        - {x: 121, y: 123}
+        - {x: 116, y: 125}
+        - {x: 109, y: 126}
+        - {x: -108, y: 126}
+        - {x: -109, y: 125}
+        - {x: -115, y: 125}
+        - {x: -120, y: 123}
+        - {x: -123, y: 120}
+        - {x: -125, y: 115}
+        - {x: -126, y: 108}
+        - {x: -126, y: -108}
+        - {x: -125, y: -115}
+        - {x: -123, y: -120}
+        - {x: -120, y: -123}
+        - {x: -115, y: -125}
+        - {x: -108, y: -126}
+        - {x: 109, y: -126}
+        - {x: 116, y: -125}
+        - {x: 121, y: -123}
+        - {x: 124, y: -120}
+    - name: TooltipStyle-MetroSimple_3
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 253
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 126.5, y: -115}
+        - {x: 126.5, y: 115}
+        - {x: 124.5, y: 120}
+        - {x: 121.5, y: 123}
+        - {x: 116.5, y: 125}
+        - {x: 109.5, y: 126}
+        - {x: -106.5, y: 126}
+        - {x: -107.5, y: 125}
+        - {x: -113.5, y: 125}
+        - {x: -118.5, y: 123}
+        - {x: -121.5, y: 120}
+        - {x: -123.5, y: 115}
+        - {x: -124.5, y: 108}
+        - {x: -124.5, y: -108}
+        - {x: -123.5, y: -115}
+        - {x: -121.5, y: -120}
+        - {x: -118.5, y: -123}
+        - {x: -113.5, y: -125}
+        - {x: -106.5, y: -126}
+        - {x: 109.5, y: -126}
+        - {x: 116.5, y: -125}
+        - {x: 121.5, y: -123}
+        - {x: 124.5, y: -120}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

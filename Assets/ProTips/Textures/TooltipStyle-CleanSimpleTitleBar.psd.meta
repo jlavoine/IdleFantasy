@@ -1,0 +1,246 @@
+fileFormatVersion: 2
+guid: 72a7d355f71235a4b9fe1e863daa0c86
+labels:
+- Tooltip
+- Tooltips
+- UGUI
+- GUI
+- Interface
+- Tool
+- Tip
+- Tutorial
+- Barks
+- Textures
+timeCreated: 1455771958
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: TooltipStyle-CleanTitle_0
+    21300002: TooltipStyle-CleanTitle_1
+    21300004: TooltipStyle-CleanTitle_2
+    21300006: TooltipStyle-CleanTitle_3
+    21300008: TooltipStyle-CleanTitle_4
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: TooltipStyle-CleanTitle_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 53}
+      outline:
+      - - {x: 125, y: 100}
+        - {x: 124, y: 106}
+        - {x: 123, y: 109}
+        - {x: 120, y: 116}
+        - {x: 116, y: 120}
+        - {x: 106, y: 125}
+        - {x: -88, y: 125}
+        - {x: -89, y: 126}
+        - {x: -94, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: 96}
+        - {x: -125, y: 91}
+        - {x: -125, y: -98}
+        - {x: -124, y: -106}
+        - {x: -123, y: -109}
+        - {x: -120, y: -116}
+        - {x: -116, y: -120}
+        - {x: -106, y: -125}
+        - {x: 98, y: -125}
+        - {x: 110, y: -124}
+        - {x: 121, y: -116}
+        - {x: 125, y: -107}
+    - name: TooltipStyle-CleanTitle_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 53}
+      outline:
+      - - {x: 125, y: 88}
+        - {x: 126, y: 89}
+        - {x: 128, y: 94}
+        - {x: 128, y: 128}
+        - {x: 96, y: 128}
+        - {x: 91, y: 125}
+        - {x: -98, y: 125}
+        - {x: -106, y: 124}
+        - {x: -109, y: 123}
+        - {x: -116, y: 120}
+        - {x: -120, y: 116}
+        - {x: -125, y: 106}
+        - {x: -125, y: -98}
+        - {x: -124, y: -106}
+        - {x: -123, y: -109}
+        - {x: -120, y: -116}
+        - {x: -116, y: -120}
+        - {x: -106, y: -125}
+        - {x: 98, y: -125}
+        - {x: 110, y: -124}
+        - {x: 121, y: -116}
+        - {x: 125, y: -106}
+    - name: TooltipStyle-CleanTitle_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 53}
+      outline:
+      - - {x: 121, y: -116}
+        - {x: 125, y: -106}
+        - {x: 125, y: 98}
+        - {x: 124, y: 106}
+        - {x: 123, y: 109}
+        - {x: 120, y: 116}
+        - {x: 116, y: 120}
+        - {x: 106, y: 125}
+        - {x: -98, y: 125}
+        - {x: -106, y: 124}
+        - {x: -109, y: 123}
+        - {x: -116, y: 120}
+        - {x: -120, y: 116}
+        - {x: -125, y: 106}
+        - {x: -125, y: -88}
+        - {x: -126, y: -89}
+        - {x: -128, y: -94}
+        - {x: -128, y: -128}
+        - {x: -96, y: -128}
+        - {x: -91, y: -125}
+        - {x: 98, y: -125}
+        - {x: 110, y: -124}
+    - name: TooltipStyle-CleanTitle_3
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 53}
+      outline:
+      - - {x: 125, y: 98}
+        - {x: 124, y: 106}
+        - {x: 123, y: 109}
+        - {x: 120, y: 116}
+        - {x: 116, y: 120}
+        - {x: 107, y: 125}
+        - {x: -100, y: 125}
+        - {x: -106, y: 124}
+        - {x: -109, y: 123}
+        - {x: -116, y: 120}
+        - {x: -120, y: 116}
+        - {x: -125, y: 107}
+        - {x: -125, y: -100}
+        - {x: -124, y: -106}
+        - {x: -123, y: -109}
+        - {x: -120, y: -116}
+        - {x: -116, y: -120}
+        - {x: -106, y: -125}
+        - {x: 88, y: -125}
+        - {x: 89, y: -126}
+        - {x: 94, y: -128}
+        - {x: 128, y: -128}
+        - {x: 128, y: -97}
+        - {x: 125, y: -91}
+    - name: TooltipStyle-CleanTitle_4
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 125, y: 100}
+        - {x: 124, y: 106}
+        - {x: 123, y: 109}
+        - {x: 120, y: 116}
+        - {x: 116, y: 120}
+        - {x: 107, y: 125}
+        - {x: -100, y: 125}
+        - {x: -106, y: 124}
+        - {x: -109, y: 123}
+        - {x: -116, y: 120}
+        - {x: -120, y: 116}
+        - {x: -125, y: 107}
+        - {x: -125, y: -100}
+        - {x: -124, y: -106}
+        - {x: -123, y: -109}
+        - {x: -120, y: -116}
+        - {x: -116, y: -120}
+        - {x: -107, y: -125}
+        - {x: 100, y: -125}
+        - {x: 110, y: -124}
+        - {x: 121, y: -116}
+        - {x: 125, y: -107}
+      - - {x: -128, y: 127}
+        - {x: -128, y: 100}
+        - {x: -125, y: 101}
+        - {x: -123, y: 104}
+        - {x: -123, y: 121}
+        - {x: -124, y: 127}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

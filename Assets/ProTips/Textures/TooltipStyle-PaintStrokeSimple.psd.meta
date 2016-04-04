@@ -1,0 +1,266 @@
+fileFormatVersion: 2
+guid: 02ca2a14cc161ed40b09c6b97d4bfd14
+labels:
+- Tooltip
+- Tooltips
+- UGUI
+- GUI
+- Interface
+- Tool
+- Tip
+- Tutorial
+- Barks
+- Textures
+timeCreated: 1440103881
+licenseType: Store
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: TooltipStyle-PaintStrokeSimple_0
+    21300002: TooltipStyle-PaintStrokeSimple_1
+    21300004: TooltipStyle-PaintStrokeSimple_2
+    21300006: TooltipStyle-PaintStrokeSimple_3
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 512
+  textureSettings:
+    filterMode: 1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: TooltipStyle-PaintStrokeSimple_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 125, y: -98}
+        - {x: 128, y: -88}
+        - {x: 128, y: 68}
+        - {x: 126, y: 79}
+        - {x: 122, y: 94}
+        - {x: 104, y: 120}
+        - {x: 86, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -92}
+        - {x: -124, y: -107}
+        - {x: -113, y: -116}
+        - {x: -97, y: -125}
+        - {x: -88, y: -128}
+        - {x: 73, y: -128}
+        - {x: 76, y: -127}
+        - {x: 98, y: -120}
+        - {x: 109, y: -113}
+      - - {x: 118, y: -122}
+        - {x: 114, y: -125}
+        - {x: 114, y: -127}
+        - {x: 115, y: -128}
+        - {x: 125, y: -128}
+        - {x: 125, y: -124}
+        - {x: 122, y: -122}
+      - - {x: -122, y: -116}
+        - {x: -122, y: -120}
+        - {x: -121, y: -122}
+        - {x: -116, y: -122}
+        - {x: -115, y: -120}
+        - {x: -115, y: -117}
+        - {x: -116, y: -116}
+      - - {x: 118, y: -116}
+        - {x: 115, y: -119}
+        - {x: 116, y: -122}
+        - {x: 120, y: -122}
+        - {x: 122, y: -121}
+        - {x: 122, y: -118}
+        - {x: 121, y: -116}
+    - name: TooltipStyle-PaintStrokeSimple_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: -121, y: -122}
+        - {x: -125, y: -124}
+        - {x: -125, y: -128}
+        - {x: -115, y: -128}
+        - {x: -114, y: -127}
+        - {x: -115, y: -124}
+        - {x: -118, y: -122}
+      - - {x: 122, y: -102}
+        - {x: 128, y: -89}
+        - {x: 128, y: 128}
+        - {x: -87, y: 128}
+        - {x: -107, y: 118}
+        - {x: -120, y: 93}
+        - {x: -127, y: 79}
+        - {x: -128, y: 67}
+        - {x: -128, y: -90}
+        - {x: -127, y: -94}
+        - {x: -115, y: -109}
+        - {x: -98, y: -119}
+        - {x: -76, y: -127}
+        - {x: -73, y: -128}
+        - {x: 88, y: -128}
+        - {x: 101, y: -124}
+        - {x: 121, y: -110}
+      - - {x: -122, y: -116}
+        - {x: -122, y: -120}
+        - {x: -121, y: -122}
+        - {x: -116, y: -122}
+        - {x: -115, y: -120}
+        - {x: -115, y: -117}
+        - {x: -116, y: -116}
+      - - {x: 118, y: -116}
+        - {x: 115, y: -119}
+        - {x: 116, y: -122}
+        - {x: 120, y: -122}
+        - {x: 122, y: -121}
+        - {x: 122, y: -118}
+        - {x: 121, y: -116}
+    - name: TooltipStyle-PaintStrokeSimple_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 127, y: -93}
+        - {x: 128, y: -84}
+        - {x: 128, y: 73}
+        - {x: 127, y: 76}
+        - {x: 120, y: 98}
+        - {x: 113, y: 109}
+        - {x: 98, y: 125}
+        - {x: 88, y: 128}
+        - {x: -68, y: 128}
+        - {x: -79, y: 126}
+        - {x: -94, y: 122}
+        - {x: -120, y: 104}
+        - {x: -128, y: 85}
+        - {x: -128, y: -128}
+        - {x: 93, y: -128}
+        - {x: 112, y: -119}
+        - {x: 113, y: -112}
+      - - {x: 119, y: -115}
+        - {x: 116, y: -116}
+        - {x: 116, y: -120}
+        - {x: 117, y: -122}
+        - {x: 122, y: -122}
+        - {x: 122, y: -116}
+        - {x: 120, y: -115}
+      - - {x: 124, y: 125}
+        - {x: 122, y: 121}
+        - {x: 122, y: 118}
+        - {x: 126, y: 114}
+        - {x: 128, y: 115}
+        - {x: 128, y: 125}
+      - - {x: 116, y: 120}
+        - {x: 116, y: 118}
+        - {x: 119, y: 115}
+        - {x: 122, y: 116}
+        - {x: 122, y: 120}
+        - {x: 120, y: 122}
+        - {x: 118, y: 122}
+    - name: TooltipStyle-PaintStrokeSimple_3
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 36, y: 36, z: 36, w: 36}
+      outline:
+      - - {x: 128, y: 87}
+        - {x: 118, y: 106}
+        - {x: 100, y: 117}
+        - {x: 79, y: 126}
+        - {x: 63, y: 128}
+        - {x: -90, y: 128}
+        - {x: -94, y: 127}
+        - {x: -109, y: 115}
+        - {x: -119, y: 98}
+        - {x: -127, y: 76}
+        - {x: -128, y: 73}
+        - {x: -128, y: -88}
+        - {x: -124, y: -101}
+        - {x: -113, y: -118}
+        - {x: -103, y: -124}
+        - {x: -90, y: -128}
+        - {x: 128, y: -128}
+      - - {x: -122, y: -116}
+        - {x: -122, y: -120}
+        - {x: -120, y: -122}
+        - {x: -118, y: -122}
+        - {x: -116, y: -120}
+        - {x: -116, y: -118}
+        - {x: -119, y: -115}
+      - - {x: -128, y: 125}
+        - {x: -128, y: 115}
+        - {x: -127, y: 114}
+        - {x: -124, y: 115}
+        - {x: -122, y: 118}
+        - {x: -122, y: 121}
+        - {x: -124, y: 125}
+      - - {x: -122, y: 122}
+        - {x: -122, y: 115}
+        - {x: -118, y: 115}
+        - {x: -116, y: 116}
+        - {x: -116, y: 121}
+        - {x: -117, y: 122}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
