@@ -11,5 +11,7 @@ namespace IdleFantasy {
         public int Size;
 
         public int MaxLevel;
+
+        public Dictionary<string, int> ResourcesToUpgrade;
     }
 }
