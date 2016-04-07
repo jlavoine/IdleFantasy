@@ -9,7 +9,6 @@ namespace IdleFantasy {
         public List<string> Units;
 
         public int Size;
-
         public int MaxLevel;
 
         public Dictionary<string, int> ResourcesToUpgrade;

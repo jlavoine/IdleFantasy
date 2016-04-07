@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 
 namespace IdleFantasy.UnitTests {
-    public class BuildingTests {
+    public class BuildingUpgradeTests {
 
         static object[] BuildingLevels = {
             new object[] { 1 },
@@ -85,7 +85,7 @@ namespace IdleFantasy.UnitTests {
             Assert.IsFalse( canUpgrade );
         }
 
-        private Building GetMockBuilding() {
+        public static Building GetMockBuilding() {
             BuildingData data = new BuildingData();
             data.ID = "TEST_BUILDING";
             data.MaxLevel = 50;
