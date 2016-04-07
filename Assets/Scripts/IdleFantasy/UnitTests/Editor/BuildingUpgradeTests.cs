@@ -40,6 +40,16 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        public void UpgradeIncreasesCapacity() {            
+            Building testBuilding = GetMockBuilding();
+            int capacityBeforeUpgrade = testBuilding.Capacity;
+
+            testBuilding.Upgrade();
+
+            Assert.AreNotEqual( capacityBeforeUpgrade, testBuilding.Capacity );
+        }
+
+        [Test]
         [TestCaseSource( "BuildingLevels" )]
         public void InitiateUpgrade_EnoughResources( int i_level ) {
             IResourceInventory fullInventory = new FullInventory();

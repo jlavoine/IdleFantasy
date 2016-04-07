@@ -93,6 +93,8 @@ namespace IdleFantasy {
                 Level = 1;
                 //Logger.Log( "Upgrading " + mData.ID + " below min level.", LogTypes.Error );
             }
+
+            UpdateCapacity();
         }
         #endregion
 

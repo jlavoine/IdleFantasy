@@ -13,10 +13,13 @@ namespace IdleFantasy {
             Unit testUnit = new Unit( unitData );
 
             BuildingView viewToTest = FindObjectOfType<BuildingView>();
+            BuildingController controllerToTest = FindObjectOfType<BuildingController>();
+
             BuildingData buildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
             mTestBuilding = new Building( buildingData, testUnit );
 
             viewToTest.SetModel( mTestBuilding.GetViewModel() );
+            controllerToTest.Init( mTestBuilding );
 
             //Test();
             //IntegrationTest.Pass();
