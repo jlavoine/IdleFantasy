@@ -17,7 +17,12 @@ public class Property {
     // value the property holds
     public object Value;
     public T GetValue<T>() {
-        return (T) Value;
+        if ( Value is T ) {
+            return (T) Value;
+        }
+        else {
+            return default( T );
+        }
     }
 
     public void SetValue( object i_object ) {

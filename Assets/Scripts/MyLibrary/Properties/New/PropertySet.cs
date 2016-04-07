@@ -10,11 +10,7 @@ namespace MyLibrary {
         }
 
         public Property GetProperty( string i_key ) {
-            if ( Properties == null ) {
-                Properties = new Dictionary<string, Property>();
-            }
-
-            if ( Properties.ContainsKey( i_key ) ) {
+            if ( HasProperty( i_key ) ) {
                 return Properties[i_key];
             }
             else {
@@ -43,11 +39,8 @@ namespace MyLibrary {
         }
 
         public void SetProperty( string i_key, object i_value ) {
-            if ( Properties == null )
-                Properties = new Dictionary<string, Property>();
-
-            if ( Properties.ContainsKey( i_key ) == false ) {
-                Properties.Add( i_key, new Property() );
+            if ( !HasProperty( i_key ) ) {
+                Properties.Add( i_key, new Property( i_key ) );
             }
 
             Property property = Properties[i_key];

@@ -23,7 +23,7 @@ namespace MyLibrary {
             }
 
             Property property = mModel.GetProperty( PropertyName );
-            Guid guid = property.GetID();
+            Guid guid = property.ID;
             SetPropertyID( guid, !modelHasProperty );
         }
 
