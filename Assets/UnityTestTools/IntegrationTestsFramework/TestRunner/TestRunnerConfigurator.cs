@@ -18,6 +18,8 @@ using System.Net.NetworkInformation;
 using UnityEditorInternal;
 #endif
 
+#pragma warning disable 0168
+
 namespace UnityTest
 {
     public class TestRunnerConfigurator

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
@@ -122,6 +123,23 @@ public static class DataUtils {
 
             string strID = data.ID;
             i_dictData.Add( strID, data );
+        }
+    }
+
+    public static void LoadDataAsHash<T>( Hashtable i_hash, string i_folder ) where T : GenericData {
+        // get all files in the folder (their contents)
+        List<string> listFiles = LoadFiles( i_folder );
+
+        // loop through each files contents..
+        foreach ( string strFile in listFiles ) {
+            T data = JsonConvert.DeserializeObject<T>( strFile );
+
+            if ( i_hash == null ) {
+                i_hash = new Hashtable();
+            }
+
+            string strID = data.ID;
+            i_hash.Add( strID, data );
         }
     }
 }

@@ -45,12 +45,15 @@ namespace IdleFantasy {
             set { mModel.SetProperty( "Name", value ); }
         }
 
-        public Building( BuildingData i_data ) {
+        public Building( BuildingData i_data, IUnit i_unit ) {
             mModel = new ViewModel();
             mData = i_data;
             Name = i_data.GetName();
             NumUnits = 0;
             Level = 1;
+            NextUnitProgress = 0;
+
+            Unit = i_unit;
 
             UpdateCapacity();
         }
@@ -95,6 +98,10 @@ namespace IdleFantasy {
 
         #region Unit Generation
         public void Tick( TimeSpan i_timeSpan ) {
+            if ( AtMaxCapacity() ) {
+                return;
+            }
+
             float progress = Unit.GetProgressFromTimeElapsed( i_timeSpan );
 
             NextUnitProgress += progress;
@@ -104,6 +111,10 @@ namespace IdleFantasy {
                 AddUnitsFromProgress( numNewUnits );
                 NextUnitProgress -= numNewUnits;
             }
+        }
+
+        public bool AtMaxCapacity() {
+            return NumUnits == Capacity;
         }
 
         public void AddUnitsFromProgress( int i_numUnits ) {

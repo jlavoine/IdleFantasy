@@ -7,7 +7,10 @@ namespace MyLibrary {
 
         public string PropertyName;
 
-        protected ViewModel mModel;
+        private ViewModel mModel;
+        protected ViewModel Model {
+            get { return mModel; }
+        }
 
         protected Guid mPropertyID;
 
@@ -39,6 +42,10 @@ namespace MyLibrary {
             if ( !i_isNewProperty ) {
                 UpdateView();
             }
+        }
+
+        protected T GetValue<T>() {
+            return Model.GetPropertyValue<T>( PropertyName );
         }
     }
 }

@@ -94,7 +94,7 @@ namespace IdleFantasy.UnitTests {
             data.Categories = new List<string>() { "TEST_CATEGORY" };
             data.ResourcesToUpgrade = new Dictionary<string, int>() { { "Wood", 10 } };
 
-            return new Building( data );
+            return new Building( data, new MockUnit(1) );
         }
     }
 }

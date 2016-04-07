@@ -14,7 +14,8 @@ namespace MyLibrary {
         }
 
         public override void UpdateView() {
-            string label = mModel.GetPropertyValue<string>( PropertyName );
+            object propertyValue = GetValue<object>();
+            string label = propertyValue.ToString();
 
             if ( TextField != null ) {
                 TextField.text = label;
