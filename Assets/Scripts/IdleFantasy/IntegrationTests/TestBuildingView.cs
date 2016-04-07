@@ -11,6 +11,8 @@ namespace IdleFantasy {
             Building testBuilding = new Building( buildingData );
 
             viewToTest.SetModel( testBuilding.GetViewModel() );
+
+            IntegrationTest.Pass();
         }
 
         /*public static Building GetMockBuilding() {
