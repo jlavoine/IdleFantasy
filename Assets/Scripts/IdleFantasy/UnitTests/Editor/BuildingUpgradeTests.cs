@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 
-using UnityEngine;
+#pragma warning disable 0414
 
 namespace IdleFantasy.UnitTests {
     public class BuildingUpgradeTests {

@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
 
+#pragma warning disable 0414
+
 namespace IdleFantasy.UnitTests {
     public class BuildingUnitGenerationTests {
         static object[] UnitGenerationAmounts = {
