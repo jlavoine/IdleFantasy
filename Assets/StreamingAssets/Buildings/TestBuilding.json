@@ -1,0 +1,22 @@
+{
+  "$type": "IdleFantasy.BuildingData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Categories": {
+    "$type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "$values": [
+      "TEST_CATEGORY"
+    ]
+  },
+  "Units": {
+    "$type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "$values": [
+      "TEST_UNIT"
+    ]
+  },
+  "Size": 10,
+  "MaxLevel": 50,
+  "ResourcesToUpgrade": {
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "Wood": 10
+  },
+  "ID": "TEST_BUILDING"
+}

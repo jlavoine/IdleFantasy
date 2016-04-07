@@ -89,7 +89,7 @@ public static class DataUtils {
     /// Loads a generic dictionary of data
     /// from the streaming assets folder.
     //////////////////////////////////////////
-    public static void LoadData<T>( Dictionary<string, T> i_dictData, string i_strFolder ) where T : GenericData {
+    public static void LoadDataOld<T>( Dictionary<string, T> i_dictData, string i_strFolder ) where T : GenericData {
         // get all files in the folder (their contents)
         List<string> listFiles = LoadFiles( i_strFolder );
 
@@ -99,10 +99,29 @@ public static class DataUtils {
             List<T> listData = JsonConvert.DeserializeObject<List<T>>( strFile );
 
             // loop through each piece of data and add it to our dictionary
+            i_dictData = new Dictionary<string, T>();
+
             foreach ( T data in listData ) {
                 string strID = data.ID;
                 i_dictData.Add( strID, data );
             }
+        }
+    }
+
+    public static void LoadData<T>( Dictionary<string, T> i_dictData, string i_strFolder ) where T : GenericData {
+        // get all files in the folder (their contents)
+        List<string> listFiles = LoadFiles( i_strFolder );
+
+        // loop through each files contents..
+        foreach ( string strFile in listFiles ) {
+            T data = JsonConvert.DeserializeObject<T>( strFile );
+
+            if ( i_dictData == null ) {
+                i_dictData = new Dictionary<string, T>();
+            }
+
+            string strID = data.ID;
+            i_dictData.Add( strID, data );
         }
     }
 }

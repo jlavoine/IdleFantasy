@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace IdleFantasy {
-    public class BuildingData {
-        public string ID;
-
+    public class BuildingData : GenericData {
         public List<string> Categories;
 
         public List<string> Units;
