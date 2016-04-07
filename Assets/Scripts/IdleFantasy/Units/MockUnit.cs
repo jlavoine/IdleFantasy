@@ -2,10 +2,10 @@
 
 namespace IdleFantasy {
     public class MockUnit : IUnit {
-        private int mUnitsPerTick;
+        private float mUnitsPerSecond;
 
-        public MockUnit( int i_unitsPerTick ) {
-            mUnitsPerTick = i_unitsPerTick;
+        public MockUnit( float i_unitsPerSecond ) {
+            mUnitsPerSecond = i_unitsPerSecond;
         }
 
         public string GetID() {
@@ -13,7 +13,9 @@ namespace IdleFantasy {
         }
 
         public float GetProgressFromTimeElapsed( TimeSpan i_timeSpan ) {
-            return mUnitsPerTick;
+            float progress = (float) ( mUnitsPerSecond * i_timeSpan.TotalSeconds );
+            UnityEngine.Debug.Log( progress );
+            return progress;
         }
     }
 }

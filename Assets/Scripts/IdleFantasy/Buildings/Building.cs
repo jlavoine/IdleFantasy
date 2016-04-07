@@ -111,6 +111,10 @@ namespace IdleFantasy {
                 AddUnitsFromProgress( numNewUnits );
                 NextUnitProgress -= numNewUnits;
             }
+
+            if ( AtMaxCapacity() ) {
+                NextUnitProgress = 0;
+            }
         }
 
         public bool AtMaxCapacity() {

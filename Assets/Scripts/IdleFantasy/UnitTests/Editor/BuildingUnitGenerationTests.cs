@@ -47,5 +47,16 @@ namespace IdleFantasy.UnitTests {
 
             Assert.AreNotSame( unitsBeforeTick, testBuilding.NumUnits );
         }
+
+        [Test]
+        public void ZeroProgressAtMaxCapacity() {
+            Building testBuilding = BuildingUpgradeTests.GetMockBuilding();
+            IUnit unit = new MockUnit( .111f );
+            testBuilding.SetUnit( unit );
+
+            testBuilding.Tick( new TimeSpan( 1, 0, 0 ) );
+
+            Assert.AreEqual( 0, testBuilding.NextUnitProgress );
+        }
     }
 }

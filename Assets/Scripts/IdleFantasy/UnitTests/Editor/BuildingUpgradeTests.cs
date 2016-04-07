@@ -86,14 +86,7 @@ namespace IdleFantasy.UnitTests {
         }
 
         public static Building GetMockBuilding() {
-            BuildingData data = new BuildingData();
-            data.ID = "TEST_BUILDING";
-            data.MaxLevel = 50;
-            data.Size = 10;
-            data.Units = new List<string>() { "TEST_UNIT" };
-            data.Categories = new List<string>() { "TEST_CATEGORY" };
-            data.ResourcesToUpgrade = new Dictionary<string, int>() { { "Wood", 10 } };
-
+            BuildingData data = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
             return new Building( data, new MockUnit(1) );
         }
     }
