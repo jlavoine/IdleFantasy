@@ -1,23 +1,5 @@
 <English>
 	<String ID="NUMBER_DELIMETER">,</String>
 
-  <String ID="TURN_TEXT">$NAME$ turn: $NUM$ tiles remaining</String>
-  <String ID="NAME_Player">Player</String>
-  <String ID="NAME_AI">AI</String>
-
-  <String ID="STATE_On">ACTIVE</String>
-  <String ID="STATE_Off">NOT ACTIVE</String>
-
-  <String ID="GameOver_Victory">Victory!!!</String>
-  <String ID="GameOver_Defeat">Defeat...</String>
-
-  <String ID="BLESSING_TOOLTIP">&lt;b&gt;$STATE$&lt;/b&gt;\n$BODY$</String>
-
-  <String ID="PerkName_HealingBoost">Piety</String>
-  <String ID="PerkDesc_HealingBoost">Boost your healing.</String>
-
-  <String ID="PerkName_FavorRegen">Favor of Arrun</String>
-  <String ID="PerkDesc_FavorRegen">Increase the regen tick of Blessing of Arrun.</String>
-  
-  <String ID="Perk_ToTrain">To Train: $COST$</String>
+  <String ID="BUILDING_NAME_TEST_BUILDING">Test Building</String>
 </English>

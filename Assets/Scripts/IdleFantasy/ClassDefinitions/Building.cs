@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using MyLibrary;
 
 namespace IdleFantasy {
     public class Building {
+        private ViewModel mModel;
+        public ViewModel GetViewModel() {
+            return mModel;
+        }
+
         private BuildingData mData;
         public BuildingData Data {
             get { return mData; }
         }
 
-        private int mLevel;
         public int Level {
-            get { return mLevel; }
-            set { mLevel = value; }
+            get { return mModel.GetPropertyValue<int>( "Level" ); }
+            set { mModel.SetProperty( "Level", value ); }
         }
 
-        private int mNumUnits;
         public int NumUnits {
-            get { return mNumUnits; }
-            set { mNumUnits = value; }
+            get { return mModel.GetPropertyValue<int>( "NumUnits" ); }
+            set { mModel.SetProperty( "NumUnits", value ); }
         }
 
         private IUnit mUnit;
@@ -26,22 +30,37 @@ namespace IdleFantasy {
             set { mUnit = value; }
         }
 
-        private float mNextUnitProgress;
         public float NextUnitProgress {
-            get { return mNextUnitProgress;  }
-            set { mNextUnitProgress = value; }
+            get { return mModel.GetPropertyValue<float>( "NextUnitProgress" );  }
+            set { mModel.SetProperty( "NextUnitProgress", value ); }
+        }
+
+        public int Capacity {
+            get { return mModel.GetPropertyValue<int>( "Capacity" ); }
+            set { mModel.SetProperty( "Capacity", value ); }
+        }
+
+        public string Name {
+            get { return mModel.GetPropertyValue<string>( "Name" ); }
+            set { mModel.SetProperty( "Name", value ); }
         }
 
         public Building( BuildingData i_data ) {
+            mModel = new ViewModel();
             mData = i_data;
+            Name = i_data.GetName();
+            NumUnits = 0;
+            Level = 1;
+
+            UpdateCapacity();
         }
 
         public void SetUnit( IUnit i_unit ) {
             Unit = i_unit; 
         }
 
-        public int GetMaxUnits() {
-            return Data.Size * Level;
+        public void UpdateCapacity() {
+            Capacity = Data.Size * Level;
         }
 
         #region Upgrading
@@ -92,7 +111,7 @@ namespace IdleFantasy {
                 return;
             }
 
-            NumUnits = Math.Min( i_numUnits + NumUnits, GetMaxUnits() );
+            NumUnits = Math.Min( i_numUnits + NumUnits, Capacity );
         }
         #endregion
     }

@@ -1,11 +1,6 @@
-﻿using UnityEngine.UI;
-using System;
+﻿using MyLibrary;
 
 namespace IdleFantasy {
-    public class BuildingView : PropertyView {
-
-        public override void UpdateView() {
-            throw new NotImplementedException();
-        }
+    public class BuildingView : GroupView {
     }
 }

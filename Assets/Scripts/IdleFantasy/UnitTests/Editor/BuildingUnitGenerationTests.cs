@@ -28,7 +28,7 @@ namespace IdleFantasy.UnitTests {
         public void TestUnitGeneration( int i_numUnits ) {
             Building testBuilding = BuildingUpgradeTests.GetMockBuilding();
             int expectedUnits = Math.Max( 0, testBuilding.NumUnits + i_numUnits );
-            expectedUnits = Math.Min( expectedUnits, testBuilding.GetMaxUnits() );
+            expectedUnits = Math.Min( expectedUnits, testBuilding.Capacity );
 
             testBuilding.AddUnitsFromProgress( i_numUnits );
             
