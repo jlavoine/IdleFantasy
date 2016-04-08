@@ -9,14 +9,14 @@ namespace IdleFantasy {
         private ViewModel mModel;
         private UpgradeData mData;
         
-        public event UpgradeComplete UpgradeEvent;
+        public event UpgradeComplete UpgradeCompleteEvent;
 
         public void SetPropertyToUpgrade( ViewModel i_model, UpgradeData i_data ) {
             mModel = i_model;
             mData = i_data;
         }
 
-        public int Level {
+        public int Value {
             get { return mModel.GetPropertyValue<int>( mData.PropertyName ); }
             set {
                 if ( value > mData.MaxLevel ) {
@@ -57,10 +57,10 @@ namespace IdleFantasy {
         }
 
         public void Upgrade() {
-            Level++;
+            Value++;
 
-            if ( UpgradeEvent != null ) {
-                UpgradeEvent();
+            if ( UpgradeCompleteEvent != null ) {
+                UpgradeCompleteEvent();
             }
         }
 
@@ -83,13 +83,13 @@ namespace IdleFantasy {
         }
 
         public bool IsAtMaxLevel() {
-            bool atMaxLevel = Level == mData.MaxLevel;
+            bool atMaxLevel = Value == mData.MaxLevel;
             return atMaxLevel;
         }
 
         public int GetUpgradeCostForResource( string i_resource ) {            
             if ( mData.ResourcesToUpgrade.ContainsKey( i_resource ) ) {
-                int cost = mData.ResourcesToUpgrade[i_resource] * Level;
+                int cost = mData.ResourcesToUpgrade[i_resource] * Value;
                 return cost;
             }
             else {

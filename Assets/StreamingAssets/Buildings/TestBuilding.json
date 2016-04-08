@@ -13,7 +13,7 @@
     ]
   },
   "Size": 10,
-  "Level": {
+  "LevelUpgrade": {
     "$type": "IdleFantasy.UpgradeData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
     "PropertyName": "Level",
     "MaxLevel": 50,

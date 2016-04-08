@@ -20,7 +20,7 @@ namespace IdleFantasy.UnitTests {
         private Upgradeable mUpgrade;
 
         private int GetUpgradedLevel( IUpgradeable i_upgrade ) {
-            int upgradedLevel = i_upgrade.Level + 1;
+            int upgradedLevel = i_upgrade.Value + 1;
 
             if ( upgradedLevel > i_upgrade.MaxLevel ) {
                 upgradedLevel = i_upgrade.MaxLevel;
@@ -53,17 +53,17 @@ namespace IdleFantasy.UnitTests {
 
             mUpgrade.Upgrade();
 
-            Assert.AreEqual( mUpgrade.Level, expectedLevel );
+            Assert.AreEqual( mUpgrade.Value, expectedLevel );
         }
 
         [Test]
         [TestCaseSource( "Levels" )]
         public void VerifyUpgradeCosts( int i_level ) {
-            mUpgrade.Level = i_level;
+            mUpgrade.Value = i_level;
 
             NormalInventory inventory = new NormalInventory();
             foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
-                int amount = cost.Value * mUpgrade.Level;
+                int amount = cost.Value * mUpgrade.Value;
                 inventory.SetResource( cost.Key, amount );
             }
 
@@ -75,11 +75,11 @@ namespace IdleFantasy.UnitTests {
         [Test]
         [TestCaseSource( "Levels" )]
         public void VerifyUpgradeSpendDeduction( int i_level ) {
-            mUpgrade.Level = i_level;
+            mUpgrade.Value = i_level;
 
             NormalInventory inventory = new NormalInventory();
             foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
-                int amount = cost.Value * mUpgrade.Level;
+                int amount = cost.Value * mUpgrade.Value;
                 inventory.SetResource( cost.Key, amount );
             }
 
@@ -98,12 +98,12 @@ namespace IdleFantasy.UnitTests {
         [TestCaseSource( "Levels" )]
         public void InitiateUpgrade_EnoughResources( int i_level ) {
             IResourceInventory fullInventory = new FullInventory();
-            mUpgrade.Level = i_level;
+            mUpgrade.Value = i_level;
             int expectedLevel = GetUpgradedLevel( mUpgrade );
 
             mUpgrade.InitiateUpgrade( fullInventory );
 
-            Assert.AreEqual( mUpgrade.Level, expectedLevel );
+            Assert.AreEqual( mUpgrade.Value, expectedLevel );
         }
 
         [Test]
@@ -119,12 +119,12 @@ namespace IdleFantasy.UnitTests {
         [TestCaseSource( "Levels" )]
         public void InitiateUpgrade_NotEnoughResource( int i_level ) {
             IResourceInventory emptyInventory = new EmptyInventory();
-            mUpgrade.Level = i_level;
+            mUpgrade.Value = i_level;
 
-            int levelBeforeUpgrade = mUpgrade.Level;
+            int levelBeforeUpgrade = mUpgrade.Value;
             mUpgrade.InitiateUpgrade( emptyInventory );
 
-            Assert.AreEqual( levelBeforeUpgrade, mUpgrade.Level );
+            Assert.AreEqual( levelBeforeUpgrade, mUpgrade.Value );
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void NoUpgradeAtMaxLevel() {
-            mUpgrade.Level = mUpgrade.MaxLevel;
+            mUpgrade.Value = mUpgrade.MaxLevel;
 
             bool canUpgrade = mUpgrade.CanUpgrade( new FullInventory() );
 

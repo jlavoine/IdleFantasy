@@ -73,7 +73,7 @@ namespace IdleFantasy {
             upgrade.PropertyName = "Level";
             upgrade.ResourcesToUpgrade = new Dictionary<string, int>() { { "Gold", 1000 } };
 
-            data.Level = upgrade;
+            data.LevelUpgrade = upgrade;
 
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;

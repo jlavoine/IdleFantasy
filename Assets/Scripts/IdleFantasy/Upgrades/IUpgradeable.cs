@@ -5,7 +5,7 @@ namespace IdleFantasy {
     public interface IUpgradeable {
         void SetPropertyToUpgrade( ViewModel i_model, UpgradeData i_data );
 
-        int Level {
+        int Value {
             get;
             set;
         }
@@ -17,6 +17,8 @@ namespace IdleFantasy {
         Dictionary<string, int> ResourcesToUpgrade {
             get;
         }
+
+        event UpgradeComplete UpgradeCompleteEvent;
 
         void InitiateUpgrade( IResourceInventory i_inventory  );
         void ChargeForUpgrade( IResourceInventory i_inventory  );

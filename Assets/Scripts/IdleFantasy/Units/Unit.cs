@@ -10,16 +10,18 @@ namespace IdleFantasy {
             return mModel;
         }
 
-        private int mLevel;
-        public int Level {
-            get { return mModel.GetPropertyValue<int>( "Level" );  }
-            set { mModel.SetProperty( "Level", value ); }
+        Upgradeable mLevel;
+        public IUpgradeable Level {
+            get { return mLevel; }
         }
 
         public Unit( UnitData i_data ) {
             mModel = new ViewModel();
             mData = i_data;
-            Level = 1;
+
+            mLevel = new Upgradeable();
+            mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
+            Level.Value = 1;
         }
 
         public string GetID() {
@@ -27,7 +29,7 @@ namespace IdleFantasy {
         }
 
         public float GetProgressFromTimeElapsed( TimeSpan i_timeSpan ) {
-            float progressPerSecond = mData.BaseProgressPerSecond / Level;
+            float progressPerSecond = mData.BaseProgressPerSecond / Level.Value;
             float progress = (float)(i_timeSpan.TotalSeconds * progressPerSecond);
             return progress;
         }

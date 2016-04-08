@@ -13,9 +13,9 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( testBuildingData.Size, 10 );            
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
 
-            Assert.AreEqual( testBuildingData.Level.MaxLevel, 50 );
-            Assert.Contains( new KeyValuePair<string, int>( "Gold", 1000 ), testBuildingData.Level.ResourcesToUpgrade );
-            Assert.AreEqual( "Level", testBuildingData.Level.PropertyName );            
+            Assert.AreEqual( testBuildingData.LevelUpgrade.MaxLevel, 50 );
+            Assert.Contains( new KeyValuePair<string, int>( "Gold", 1000 ), testBuildingData.LevelUpgrade.ResourcesToUpgrade );
+            Assert.AreEqual( "Level", testBuildingData.LevelUpgrade.PropertyName );            
         }
     }
 }

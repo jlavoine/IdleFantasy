@@ -11,7 +11,7 @@ namespace IdleFantasy.UnitTests {
             Building testBuilding = GetMockBuilding();
             int capacityBeforeUpgrade = testBuilding.Capacity;
 
-            testBuilding.BuildingLevel.Upgrade();
+            testBuilding.Level.Upgrade();
 
             Assert.AreNotEqual( capacityBeforeUpgrade, testBuilding.Capacity );
         }

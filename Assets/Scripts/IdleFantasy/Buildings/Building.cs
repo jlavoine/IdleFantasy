@@ -40,9 +40,9 @@ namespace IdleFantasy {
             set { mModel.SetProperty( "Name", value ); }
         }
 
-        private Upgradeable mBuildingLevel;
-        public Upgradeable BuildingLevel {
-            get { return mBuildingLevel; }
+        private Upgradeable mLevel;
+        public Upgradeable Level {
+            get { return mLevel; }
         }
 
         public Building( BuildingData i_data, IUnit i_unit ) {
@@ -53,11 +53,12 @@ namespace IdleFantasy {
             NextUnitProgress = 0;
 
             Unit = i_unit;
+            Unit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
 
-            mBuildingLevel = new Upgradeable();
-            mBuildingLevel.SetPropertyToUpgrade( mModel, mData.Level );
-            mBuildingLevel.UpgradeEvent += OnUpgraded;
-            BuildingLevel.Level = 1;
+            mLevel = new Upgradeable();
+            mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
+            mLevel.UpgradeCompleteEvent += OnUpgraded;
+            Level.Value = 1;
 
             UpdateCapacity();
         }
@@ -71,7 +72,7 @@ namespace IdleFantasy {
         }
 
         public void UpdateCapacity() {
-            Capacity = Data.Size * BuildingLevel.Level;
+            Capacity = Data.Size * Level.Value;
         }
 
         #region Unit Generation
@@ -105,6 +106,11 @@ namespace IdleFantasy {
             }
 
             NumUnits = Math.Min( i_numUnits + NumUnits, Capacity );
+        }
+
+        public void OnUnitUpgraded() {
+            NumUnits = 0;
+            NextUnitProgress = 0;
         }
         #endregion
     }

@@ -11,7 +11,11 @@ namespace IdleFantasy {
         }
 
         public void UpgradeClicked() {
-            mBuilding.BuildingLevel.InitiateUpgrade( mInventory );
+            mBuilding.Level.InitiateUpgrade( mInventory );
+        }
+
+        public void UpgradeUnitClicked() {
+            mBuilding.Unit.Level.InitiateUpgrade( mInventory );
         }
     }
 }

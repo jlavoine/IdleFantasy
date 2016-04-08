@@ -5,5 +5,7 @@ namespace IdleFantasy {
         public Dictionary<string, int> Stats;
 
         public float BaseProgressPerSecond;
+
+        public UpgradeData LevelUpgrade;
     }
 }

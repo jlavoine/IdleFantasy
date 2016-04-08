@@ -8,6 +8,12 @@ namespace IdleFantasy {
             mUnitsPerSecond = i_unitsPerSecond;
         }
 
+        public IUpgradeable Level {
+            get {
+                return new MockUpgrade();
+            }
+        }
+
         public string GetID() {
             return "MOCK_UNIT";
         }
