@@ -9,6 +9,8 @@ namespace IdleFantasy {
         Building mTestBuilding;
 
         void Start() {
+            //TestBuilding();
+
             UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
             Unit testUnit = new Unit( unitData );
 
@@ -30,8 +32,7 @@ namespace IdleFantasy {
             controllerToTest.Init( mTestBuilding, mockPlayer );
 
             SetUpMajorResourcesView();
-
-            //Test();
+            
             //IntegrationTest.Pass();
         }
 
@@ -52,6 +53,27 @@ namespace IdleFantasy {
             data.ID = "TEST_UNIT";
             data.Stats = new Dictionary<string, int>() { { "Str", 1 }, { "Int", 4 } };
             data.BaseProgressPerSecond = 1.2f;
+
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.All;
+            settings.TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+            string test = JsonConvert.SerializeObject( data, Formatting.Indented, settings );
+            Debug.Log( test );
+        }
+
+        public void TestBuilding() {
+            BuildingData data = new BuildingData();
+            data.ID = "TEST_BUILDING";
+            data.Size = 10;
+            data.Units = new List<string>() { "TEST_UNIT" };
+            data.Categories = new List<string>() { "TEST_CATEGORY" };
+
+            UpgradeData upgrade = new UpgradeData();
+            upgrade.MaxLevel = 50;
+            upgrade.PropertyName = "Level";
+            upgrade.ResourcesToUpgrade = new Dictionary<string, int>() { { "Gold", 1000 } };
+
+            data.Level = upgrade;
 
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;

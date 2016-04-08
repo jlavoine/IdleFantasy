@@ -7,9 +7,8 @@ namespace IdleFantasy {
         public List<string> Units;
 
         public int Size;
-        public int MaxLevel;
 
-        public Dictionary<string, int> ResourcesToUpgrade;
+        public UpgradeData Level;        
 
         public string GetName() {
             return StringTableManager.Get( "BUILDING_NAME_" + ID );
