@@ -86,7 +86,9 @@ namespace IdleFantasy {
 
         public void ChargeForUpgrade( IResourceInventory i_inventory ) {
             foreach ( KeyValuePair<string, int> cost in mData.ResourcesToUpgrade ) {
-                i_inventory.SpendResources( cost.Key, cost.Value );
+                string resourceName = cost.Key;
+                int resourceAmount = GetUpgradeCostForResource( resourceName );
+                i_inventory.SpendResources( resourceName, resourceAmount );
             }
         }
 
@@ -100,12 +102,23 @@ namespace IdleFantasy {
 
         public bool CanAffordUpgrade( IResourceInventory i_inventory ) {
             foreach ( KeyValuePair<string, int> cost in mData.ResourcesToUpgrade ) {
-                int resourceCost = cost.Value * Level;
+                int resourceCost = GetUpgradeCostForResource( cost.Key );
                 if ( i_inventory.HasEnoughResources( cost.Key, resourceCost ) == false ) {
                     return false;
                 }
             }
             return true;
+        }
+
+        public int GetUpgradeCostForResource( string i_resource ) {
+            // NOTE at the moment there is only one resource (gold) used for upgrading buildings, but I'm keeping a dictionary for costs for future expansion
+            if ( mData.ResourcesToUpgrade.ContainsKey( i_resource ) ) {
+                int cost = mData.ResourcesToUpgrade[i_resource] * Level;
+                return cost;
+            }
+            else {
+                return int.MaxValue;
+            }
         }
 
         public void Upgrade() {
