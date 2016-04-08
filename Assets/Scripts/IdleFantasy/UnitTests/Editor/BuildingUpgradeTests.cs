@@ -51,6 +51,33 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         [TestCaseSource( "BuildingLevels" )]
+        public void VerifyUpgradeCosts( int i_level ) {
+            Building testBuilding = GetMockBuilding();
+            testBuilding.Level = i_level;
+
+            NormalInventory inventory = new NormalInventory();
+            foreach (KeyValuePair<string,int> cost in testBuilding.Data.ResourcesToUpgrade) {
+                int amount = cost.Value * testBuilding.Level;
+                inventory.SetResource( cost.Key, amount );
+            }
+
+            bool canAffordUpgrade = testBuilding.CanAffordUpgrade( inventory );
+
+            Assert.IsTrue( canAffordUpgrade );
+        }
+
+        [Test]
+        public void NoUpgradeAtMaxLevel() {
+            Building testBuilding = GetMockBuilding();
+            testBuilding.Level = testBuilding.Data.MaxLevel;
+
+            bool canUpgrade = testBuilding.CanUpgrade( new FullInventory() );
+
+            Assert.IsFalse( canUpgrade );
+        }
+
+        [Test]
+        [TestCaseSource( "BuildingLevels" )]
         public void InitiateUpgrade_EnoughResources( int i_level ) {
             IResourceInventory fullInventory = new FullInventory();
             Building testBuilding = GetMockBuilding();

@@ -12,7 +12,7 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( testBuildingData.ID, "TEST_BUILDING" );
             Assert.AreEqual( testBuildingData.MaxLevel, 50 );
             Assert.AreEqual( testBuildingData.Size, 10 );
-            Assert.Contains( new KeyValuePair<string, int>( "Wood", 10), testBuildingData.ResourcesToUpgrade );
+            Assert.Contains( new KeyValuePair<string, int>( "Gold", 100), testBuildingData.ResourcesToUpgrade );
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
         }
     }

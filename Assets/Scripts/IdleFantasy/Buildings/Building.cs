@@ -16,7 +16,16 @@ namespace IdleFantasy {
 
         public int Level {
             get { return mModel.GetPropertyValue<int>( "Level" ); }
-            set { mModel.SetProperty( "Level", value ); }
+            set {
+                if ( value < 1 ) {
+                    value = 1;
+                }
+                else if ( value > Data.MaxLevel ) {
+                    value = Data.MaxLevel;
+                }
+
+                mModel.SetProperty( "Level", value );
+            }
         }
 
         public int NumUnits {
@@ -69,17 +78,33 @@ namespace IdleFantasy {
         #region Upgrading
         public void InitiateUpgrade( IResourceInventory i_inventory ) {
             if ( CanUpgrade( i_inventory ) ) {
-                Upgrade();
+                ChargeForUpgrade( i_inventory );
+
+                Upgrade();                
+            }
+        }
+
+        public void ChargeForUpgrade( IResourceInventory i_inventory ) {
+            foreach ( KeyValuePair<string, int> cost in mData.ResourcesToUpgrade ) {
+                i_inventory.SpendResources( cost.Key, cost.Value );
             }
         }
 
         public bool CanUpgrade( IResourceInventory i_inventory ) {
-            foreach(KeyValuePair<string,int> cost in mData.ResourcesToUpgrade) {
-                if(i_inventory.HasEnoughResources(cost.Key, cost.Value) == false) {
+            if ( IsMaxLevel() ) {
+                return false;
+            }
+
+            return CanAffordUpgrade( i_inventory );
+        }
+
+        public bool CanAffordUpgrade( IResourceInventory i_inventory ) {
+            foreach ( KeyValuePair<string, int> cost in mData.ResourcesToUpgrade ) {
+                int resourceCost = cost.Value * Level;
+                if ( i_inventory.HasEnoughResources( cost.Key, resourceCost ) == false ) {
                     return false;
                 }
             }
-
             return true;
         }
 
@@ -95,6 +120,11 @@ namespace IdleFantasy {
             }
 
             UpdateCapacity();
+        }
+
+        public bool IsMaxLevel() {
+            bool isMaxLevel = Level == Data.MaxLevel;
+            return isMaxLevel;
         }
         #endregion
 

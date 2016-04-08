@@ -16,7 +16,7 @@
   "MaxLevel": 50,
   "ResourcesToUpgrade": {
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-    "Wood": 10
+    "Gold": 100
   },
   "ID": "TEST_BUILDING"
 }

@@ -1,12 +1,14 @@
 ﻿
 namespace IdleFantasy {
-    public class EmptyInventory : IResourceInventory {
+    public class FullInventory : IResourceInventory {
         int IResourceInventory.GetResourceCount( string i_resource ) {
-            return 0;
+            return int.MaxValue;
         }
 
         bool IResourceInventory.HasEnoughResources( string i_resource, int i_count ) {
-            return false;
+            return true;
         }
+
+        public void SpendResources( string i_resource, int i_count ) { }
     }
 }

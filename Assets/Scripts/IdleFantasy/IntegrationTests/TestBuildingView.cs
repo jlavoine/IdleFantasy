@@ -15,14 +15,30 @@ namespace IdleFantasy {
             BuildingView viewToTest = FindObjectOfType<BuildingView>();
             BuildingController controllerToTest = FindObjectOfType<BuildingController>();
 
+            MajorResourcesView[] views = FindObjectsOfType<MajorResourcesView>();
+            MockPlayerData mockPlayer = new MockPlayerData();
+            mockPlayer.Gold = 10000;
+
             BuildingData buildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
             mTestBuilding = new Building( buildingData, testUnit );
 
+            foreach ( MajorResourcesView view in views ) {
+                view.SetModel( mockPlayer.GetViewModel() );
+            }
+
             viewToTest.SetModel( mTestBuilding.GetViewModel() );
-            controllerToTest.Init( mTestBuilding );
+            controllerToTest.Init( mTestBuilding, mockPlayer );
+
+            SetUpMajorResourcesView();
 
             //Test();
             //IntegrationTest.Pass();
+        }
+
+        void SetUpMajorResourcesView() {
+
+
+     
         }
 
         void Update() {
