@@ -52,9 +52,6 @@ namespace IdleFantasy {
             NumUnits = 0;            
             NextUnitProgress = 0;
 
-            Unit = i_unit;
-            Unit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
-
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
             mLevel.UpgradeCompleteEvent += OnUpgraded;
@@ -68,7 +65,12 @@ namespace IdleFantasy {
         }
 
         public void SetUnit( IUnit i_unit ) {
-            Unit = i_unit; 
+            if ( Unit != null ) {
+                Unit.Level.UpgradeCompleteEvent -= OnUnitUpgraded;
+            }
+
+            Unit = i_unit;
+            Unit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
         }
 
         public void UpdateCapacity() {
