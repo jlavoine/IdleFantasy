@@ -5,11 +5,15 @@ using System;
 namespace IdleFantasy {
     public class MockPlayerData : IPlayerData, IResourceInventory {
         private ViewModel mModel;
+        private ITrainerData mTrainerData;
 
-        private Dictionary<string, int> mInventory = new Dictionary<string, int>();
+        private Dictionary<string, int> mInventory = new Dictionary<string, int>();        
 
         public MockPlayerData() {
             mModel = new ViewModel();
+
+            Dictionary<string, int> mockTrainerData = new Dictionary<string, int>() { { IdleFantasy.TrainerData.NORMAL_TRAINERS, 1 } };
+            mTrainerData = new TrainerData( mModel, mockTrainerData );
         }
 
         public int Gold {
@@ -24,6 +28,10 @@ namespace IdleFantasy {
                     mInventory["Gold"] = value;
                 }
             }
+        }
+
+        public ITrainerData TrainerData {
+            get { return mTrainerData; }
         }
 
         public ViewModel GetViewModel() {

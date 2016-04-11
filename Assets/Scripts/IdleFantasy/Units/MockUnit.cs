@@ -3,6 +3,7 @@
 namespace IdleFantasy {
     public class MockUnit : IUnit {
         private float mUnitsPerSecond;
+        private int mTrainingLevel = 1;
 
         public MockUnit( float i_unitsPerSecond ) {
             mUnitsPerSecond = i_unitsPerSecond;
@@ -11,6 +12,16 @@ namespace IdleFantasy {
         public IUpgradeable Level {
             get {
                 return new MockUpgrade();
+            }
+        }
+
+        public int TrainingLevel {
+            get {
+                return mTrainingLevel;
+            }
+
+            set {
+                mTrainingLevel = value;
             }
         }
 

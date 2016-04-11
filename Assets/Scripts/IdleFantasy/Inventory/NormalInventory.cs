@@ -4,6 +4,8 @@ using System;
 
 namespace IdleFantasy {
     public class NormalInventory : IResourceInventory {
+        public const string GOLD = "Gold";
+
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
         public void SetResource( string i_resource, int i_amount ) {

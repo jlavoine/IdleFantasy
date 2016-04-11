@@ -8,6 +8,11 @@ namespace IdleFantasy {
             get;
         }
 
+        int TrainingLevel {
+            get;
+            set;
+        }
+
         float GetProgressFromTimeElapsed( TimeSpan i_timeSpan );
     }
 }

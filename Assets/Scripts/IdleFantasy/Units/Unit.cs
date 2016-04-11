@@ -4,6 +4,7 @@ using MyLibrary;
 namespace IdleFantasy {
     public class Unit : IUnit {
         private UnitData mData;
+        private int mTrainingLevel;
 
         private ViewModel mModel;
         public ViewModel GetModel() {
@@ -15,6 +16,12 @@ namespace IdleFantasy {
             get { return mLevel; }
         }
 
+        public int TrainingLevel {
+            get { return mTrainingLevel; }
+
+            set { mTrainingLevel = value; }
+        }
+
         public Unit( UnitData i_data ) {
             mModel = new ViewModel();
             mData = i_data;
@@ -22,6 +29,8 @@ namespace IdleFantasy {
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
             Level.Value = 1;
+
+            TrainingLevel = 1;
         }
 
         public string GetID() {

@@ -8,5 +8,9 @@ namespace IdleFantasy {
             get;
             set;
         }
+
+        ITrainerData TrainerData {
+            get;
+        }
     }
 }
