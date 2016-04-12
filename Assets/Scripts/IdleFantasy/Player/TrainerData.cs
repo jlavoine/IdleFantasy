@@ -31,7 +31,13 @@ namespace IdleFantasy {
 
         public int TotalTrainers {
             get { return mPlayerModel.GetPropertyValue<int>( TOTAL_TRAINERS ); }
-            set { mPlayerModel.SetProperty( TOTAL_TRAINERS, value ); }
+            set {
+                if ( value < 0 ) {
+                    value = 0;
+                }
+                
+                mPlayerModel.SetProperty( TOTAL_TRAINERS, value );
+            }
         }
 
         public TrainerData( ViewModel i_playerModel, Dictionary<string, int> i_trainerData ) {
@@ -39,6 +45,8 @@ namespace IdleFantasy {
             mPlayerModel = i_playerModel;
 
             TotalTrainers = GetTotalTrainers();
+            AvailableTrainers = TotalTrainers;
+            // TODO: need to use save data somewhere here
         }
 
         private int GetTotalTrainers() {
@@ -53,13 +61,16 @@ namespace IdleFantasy {
         public int GetTotalTrainersOfType( string i_type ) {
             int currentTrainers = 0;
             mTrainers.TryGetValue( i_type, out currentTrainers );
+            if ( currentTrainers < 0 )
+                currentTrainers = 0;
+
             return currentTrainers;
         }
 
         public int GetNextTrainerCost() {
             int totalNormalTrainers = GetTotalTrainersOfType( NORMAL_TRAINERS );
             int trainerStartingCost = Constants.GetConstant<int>( STARTING_COST_KEY );
-            int nextCost = totalNormalTrainers * trainerStartingCost;
+            int nextCost = (totalNormalTrainers + 1) * trainerStartingCost;
 
             return nextCost;
         }
@@ -90,6 +101,7 @@ namespace IdleFantasy {
             mTrainers[i_type] = numTrainers;
 
             TotalTrainers += i_count;
+            AvailableTrainers += i_count;
         }
 
         public void InitiateChangeInTraining( IUnit i_unit, bool i_isTraining ) {
