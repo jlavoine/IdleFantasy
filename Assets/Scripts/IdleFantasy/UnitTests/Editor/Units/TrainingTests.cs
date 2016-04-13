@@ -47,14 +47,14 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
-        public void CannotAffordNewTrainerWithEmptyInventory() {
+        public void CannotAffordNewTrainer_EmptyInventory() {
             bool canAfford = mTrainerData.CanAffordTrainerPurchase( new EmptyInventory() );
 
             Assert.IsFalse( canAfford );
         }
 
         [Test]
-        public void CanAffordNewTrainerWithFullInventory() {
+        public void CanAffordNewTrainer_FullInventory() {
             bool canAfford = mTrainerData.CanAffordTrainerPurchase( new FullInventory() );
 
             Assert.IsTrue( canAfford );
@@ -73,20 +73,63 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( i_expectedCostForNextTrainer, costForNextTrainer );
         }
 
-        public void VerifyCanAffordNextTrain_RealInventory() {
+        [Test]
+        [TestCaseSource( "NewTrainerCostTests" )]
+        public void CanAffordNewTrainer_RealInventory( int i_numTrainers, int i_expectedCostForNextTrainer ) {
+            Dictionary<string, int> trainers = new Dictionary<string, int>();
+            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
+            mTrainerData = new TrainerData( new ViewModel(), trainers );
 
+            int costForNextTrainer = mTrainerData.GetNextTrainerCost();
+            NormalInventory realInventory = new NormalInventory();
+            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
+
+            bool canAfford = mTrainerData.CanAffordTrainerPurchase( realInventory );
+
+            Assert.IsTrue( canAfford );
         }
 
-        // verify initiate next trainer path
+        [Test]
+        [TestCaseSource( "NewTrainerCostTests" )]
+        public void VerifyNextTrainerPurchaseSpendsResources( int i_numTrainers, int i_expectedCostForNextTrainer ) {
+            Dictionary<string, int> trainers = new Dictionary<string, int>();
+            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
+            mTrainerData = new TrainerData( new ViewModel(), trainers );
 
-        // verify unit training cost (in trainers)
+            int costForNextTrainer = mTrainerData.GetNextTrainerCost();
+            NormalInventory realInventory = new NormalInventory();
+            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
 
-        // verify training unit
+            mTrainerData.InitiateTrainerPurchase( realInventory );
 
-        // verify untraining unit
+            Assert.AreEqual( realInventory.GetResourceCount( NormalInventory.GOLD ), 0 );
+        }
 
-        // verify train unit path
+        [Test]
+        [TestCaseSource( "NewTrainerCostTests" )]
+        public void VerifyNextTrainerPurchaseIncreasesTrainers( int i_numTrainers, int i_expectedCostForNextTrainer ) {
+            Dictionary<string, int> trainers = new Dictionary<string, int>();
+            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
+            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            int expectedTrainersAfterPurchase = mTrainerData.TotalTrainers + 1;
 
-        // verify can train and untrain unit
-    }
+            int costForNextTrainer = mTrainerData.GetNextTrainerCost();
+            NormalInventory realInventory = new NormalInventory();
+            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
+
+            mTrainerData.InitiateTrainerPurchase( realInventory );
+
+            Assert.AreEqual( mTrainerData.TotalTrainers, expectedTrainersAfterPurchase );
+        }
+
+            // verify unit training cost (in trainers)
+
+            // verify training unit
+
+            // verify untraining unit
+
+            // verify train unit path
+
+            // verify can train and untrain unit
+        }
 }
