@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using IdleFantasy.Data;
 
 #pragma warning disable 0414
 
@@ -16,6 +17,14 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( testBuildingData.LevelUpgrade.MaxLevel, 50 );
             Assert.Contains( new KeyValuePair<string, int>( "Gold", 1000 ), testBuildingData.LevelUpgrade.ResourcesToUpgrade );
             Assert.AreEqual( "Level", testBuildingData.LevelUpgrade.PropertyName );            
+        }
+
+        [Test]
+        public void VerifyTestUnit() {
+            UnitData testUnitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
+
+            Assert.AreEqual( "TEST_UNIT", testUnitData.ID );
+            Assert.AreEqual( 1f, testUnitData.BaseProgressPerSecond );
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
+using IdleFantasy.Data;
 
 namespace IdleFantasy {
     public class TestBuildingView : MonoBehaviour {
@@ -9,7 +10,7 @@ namespace IdleFantasy {
         Building mTestBuilding;
 
         void Start() {
-            //TestBuilding();
+            //TestUnit();
 
             UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
             Unit testUnit = new Unit( unitData );
@@ -48,10 +49,18 @@ namespace IdleFantasy {
             mTestBuilding.Tick( timeElapsedAsSpan );
         }
 
-        public void Test() {
+        public void TestUnit() {
             UnitData data = new UnitData();
             data.ID = "TEST_UNIT";
-            data.Stats = new Dictionary<string, int>() { { "Str", 1 }, { "Int", 4 } };
+            data.Stats = new Dictionary<string, StatInfo>();
+            StatInfo a = new StatInfo();
+            a.Stat = "Str";
+            a.Base = 1;
+            StatInfo b = new StatInfo();
+            b.Stat = "Int";
+            b.Base = 2;
+            data.Stats.Add( "Str", a );
+            data.Stats.Add( "Int", b );
             data.BaseProgressPerSecond = 1.2f;
 
             JsonSerializerSettings settings = new JsonSerializerSettings();

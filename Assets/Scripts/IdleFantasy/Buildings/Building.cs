@@ -57,6 +57,8 @@ namespace IdleFantasy {
             mLevel.UpgradeCompleteEvent += OnUpgraded;
             Level.Value = 1;
 
+            Unit = i_unit;
+
             UpdateCapacity();
         }
 

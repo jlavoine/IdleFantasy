@@ -34,5 +34,13 @@ namespace IdleFantasy {
             UnityEngine.Debug.Log( progress );
             return progress;
         }
+
+        public bool HasStat( string i_stat ) {
+            return true;
+        }
+
+        public int GetRoundedStat( string i_stat ) {
+            return TrainingLevel;
+        }
     }
 }

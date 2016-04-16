@@ -1,9 +1,17 @@
 {
   "$type": "IdleFantasy.UnitData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
   "Stats": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-    "Str": 1,
-    "Int": 4
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "Str": {
+      "$type": "IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Stat": "Str",
+      "Base": 1.0
+    },
+    "Int": {
+      "$type": "IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "Stat": "Int",
+      "Base": 2.0
+    }
   },
   "BaseProgressPerSecond": 1,
   "LevelUpgrade": {

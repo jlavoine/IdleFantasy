@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using IdleFantasy.Data;
 
 namespace IdleFantasy {
     public class UnitData : GenericData {      
-        public Dictionary<string, int> Stats;
-
         public float BaseProgressPerSecond;
 
         public UpgradeData LevelUpgrade;
+
+        public Dictionary<string, StatInfo> Stats;
     }
 }
