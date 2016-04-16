@@ -114,7 +114,7 @@ namespace IdleFantasy {
 
         public bool CanChangeUnitTraining( IUnit i_unit, bool i_isTraining ) {
             if ( i_isTraining ) {
-                int costInTrainers = GetUnitTrainingCost( i_unit.TrainingLevel );
+                int costInTrainers = GetTrainersToTrainUnit( i_unit );
                 return AvailableTrainers >= costInTrainers;
             }
             else {
@@ -122,8 +122,8 @@ namespace IdleFantasy {
             }
         }
 
-        public int GetUnitTrainingCost( int i_level ) {
-            return i_level + 1;
+        public int GetTrainersToTrainUnit( IUnit i_unit ) {
+            return i_unit.TrainingLevel + 1;
         }
 
         public void ChangeAvailableTrainers( IUnit i_unit, bool i_isTraining ) {

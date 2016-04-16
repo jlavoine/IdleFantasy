@@ -21,7 +21,7 @@ namespace IdleFantasy {
 
         void InitiateChangeInTraining( IUnit i_unit, bool i_isTraining );
         bool CanChangeUnitTraining( IUnit i_unit, bool i_isTraining );
-        int GetUnitTrainingCost( int i_level );
+        int GetTrainersToTrainUnit( IUnit i_unit );
 
         void ChangeAvailableTrainers( IUnit i_unit, bool i_isTraining );
         void ChangeUnitTrainingLevel( IUnit i_unit, bool i_isTraining );

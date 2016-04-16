@@ -19,7 +19,12 @@ namespace IdleFantasy {
         public int TrainingLevel {
             get { return mTrainingLevel; }
 
-            set { mTrainingLevel = value; }
+            set {
+                if (value < 0) {
+                    value = 0;
+                }
+                mTrainingLevel = value;
+            }
         }
 
         public Unit( UnitData i_data ) {

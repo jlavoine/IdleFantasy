@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace IdleFantasy.UnitTests {
     [TestFixture]
-    public class TrainingTests {
+    public class TrainerPurchases {
         private ITrainerData mTrainerData;
 
         static object[] NewTrainerCostTests = {
@@ -19,8 +19,6 @@ namespace IdleFantasy.UnitTests {
 
         [SetUp]
         public void BeforeTests() {
-            //Dictionary<string, int> trainers = new Dictionary<string, int>() { { TrainerData.NORMAL_TRAINERS } };
-
             mTrainerData = new TrainerData( new ViewModel(), new Dictionary<string, int>() );
         }
 
@@ -108,28 +106,13 @@ namespace IdleFantasy.UnitTests {
         [Test]
         [TestCaseSource( "NewTrainerCostTests" )]
         public void VerifyNextTrainerPurchaseIncreasesTrainers( int i_numTrainers, int i_expectedCostForNextTrainer ) {
-            Dictionary<string, int> trainers = new Dictionary<string, int>();
-            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
-            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            mTrainerData.TotalTrainers = i_numTrainers;
+            mTrainerData.AvailableTrainers = i_numTrainers;
             int expectedTrainersAfterPurchase = mTrainerData.TotalTrainers + 1;
-
-            int costForNextTrainer = mTrainerData.GetNextTrainerCost();
-            NormalInventory realInventory = new NormalInventory();
-            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
-
-            mTrainerData.InitiateTrainerPurchase( realInventory );
+            
+            mTrainerData.InitiateTrainerPurchase( new FullInventory() );
 
             Assert.AreEqual( mTrainerData.TotalTrainers, expectedTrainersAfterPurchase );
         }
-
-            // verify unit training cost (in trainers)
-
-            // verify training unit
-
-            // verify untraining unit
-
-            // verify train unit path
-
-            // verify can train and untrain unit
-        }
+    }
 }
