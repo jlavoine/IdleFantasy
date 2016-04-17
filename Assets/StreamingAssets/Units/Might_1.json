@@ -1,27 +1,22 @@
 {
-  "$type": "IdleFantasy.UnitData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-  "Stats": {
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-    "Str": {
-      "$type": "IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "Stat": "Str",
-      "Base": 1.0
-    },
-    "Int": {
-      "$type": "IdleFantasy.Data.StatInfo, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-      "Stat": "Int",
-      "Base": 2.0
-    }
-  },
   "BaseProgressPerSecond": 1,
   "LevelUpgrade": {
-    "$type": "IdleFantasy.UpgradeData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
     "PropertyName": "Level",
     "MaxLevel": 50,
     "ResourcesToUpgrade": {
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
       "Gold": 1000
     }
-  },  
+  },
+  "Stats": {
+    "TEST_STAT_1": {
+      "Stat": "TEST_STAT_1",
+      "Base": 1.25
+    },
+    "TEST_STAT_2": {
+      "Stat": "TEST_STAT_2",
+      "Base": 2.4
+    }
+  },
   "ID": "MIGHT_1"
 }
+

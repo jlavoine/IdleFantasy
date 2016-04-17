@@ -1,24 +1,15 @@
 {
-  "$type": "IdleFantasy.BuildingData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-  "Categories": {
-    "$type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-    "$values": [
-      "TEST_CATEGORY"
-    ]
-  },
-  "Units": {
-    "$type": "System.Collections.Generic.List`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-    "$values": [
-      "TEST_UNIT"
-    ]
-  },
+  "Categories": [
+    "TEST_CATEGORY"
+  ],
+  "Units": [
+    "TEST_UNIT"
+  ],
   "Size": 10,
   "LevelUpgrade": {
-    "$type": "IdleFantasy.UpgradeData, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
     "PropertyName": "Level",
     "MaxLevel": 50,
     "ResourcesToUpgrade": {
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
       "Gold": 1000
     }
   },

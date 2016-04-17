@@ -11,7 +11,8 @@ namespace IdleFantasy {
 
         void Start() {
             //TestUnit();
-
+            //TestBuilding();
+            //return;
             UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
             Unit testUnit = new Unit( unitData );
 
@@ -63,10 +64,17 @@ namespace IdleFantasy {
             data.Stats.Add( "Int", b );
             data.BaseProgressPerSecond = 1.2f;
 
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-            settings.TypeNameHandling = TypeNameHandling.All;
-            settings.TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-            string test = JsonConvert.SerializeObject( data, Formatting.Indented, settings );
+            UpgradeData upgrade = new UpgradeData();
+            upgrade.MaxLevel = 10;
+            upgrade.PropertyName = "Level";
+            upgrade.ResourcesToUpgrade = new Dictionary<string, int>() { { "Gold", 1000 }, { "Wood", 10 } };
+            data.LevelUpgrade = upgrade;
+
+            //JsonSerializerSettings settings = new JsonSerializerSettings();
+            //settings.TypeNameHandling = TypeNameHandling.All;
+            //settings.TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
+            //string test = JsonConvert.SerializeObject( data, Formatting.Indented, settings );
+            string test = JsonConvert.SerializeObject( data, Formatting.Indented );
             Debug.Log( test );
         }
 
@@ -87,7 +95,7 @@ namespace IdleFantasy {
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;
             settings.TypeNameAssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
-            string test = JsonConvert.SerializeObject( data, Formatting.Indented, settings );
+            string test = JsonConvert.SerializeObject( data, Formatting.Indented );
             Debug.Log( test );
         }
 

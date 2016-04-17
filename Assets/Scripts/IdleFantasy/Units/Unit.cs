@@ -36,7 +36,7 @@ namespace IdleFantasy {
             mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
             Level.Value = 1;
 
-            TrainingLevel = 1;
+            TrainingLevel = 0;
         }
 
         public string GetID() {
