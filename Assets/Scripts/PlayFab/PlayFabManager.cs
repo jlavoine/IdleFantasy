@@ -2,6 +2,7 @@
 using PlayFab;
 using PlayFab.ClientModels;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 public class PlayFabManager : MonoBehaviour {
 
@@ -12,24 +13,16 @@ public class PlayFabManager : MonoBehaviour {
     void Start () {
         PlayFabSettings.TitleId = TITLE_ID;
 
+        Dictionary<string, int> test = new Dictionary<string, int>();
+        test.Add( "A", 1 );
+        test.Add( "B", 2 );
+        string json = JsonConvert.SerializeObject( test );
+        //Debug.Log( json );
+
         //ClientGetTitleData();
 
         Login( TITLE_ID );
         //Debug.Log( "HAI" );
-	}
-
-    public void ClientGetTitleData() {
-        var getRequest = new GetTitleDataRequest();
-        PlayFabClientAPI.GetTitleData( getRequest, ( result ) => {
-            Debug.Log( "Got the following titleData:" );
-            foreach ( var entry in result.Data ) {
-                Debug.Log( entry.Key + ": " + entry.Value );
-            }
-        },
-          ( error ) => {
-              Debug.Log( "Got error getting titleData:" );
-              Debug.Log( error.ErrorMessage );
-          } );
     }
 
     private void Login( string i_titleID ) {
@@ -38,8 +31,6 @@ public class PlayFabManager : MonoBehaviour {
             CreateAccount = true,
             CustomId = SystemInfo.deviceUniqueIdentifier
         };
-
-        Debug.Log( "What's this: " + SystemInfo.deviceUniqueIdentifier );
 
         PlayFabClientAPI.LoginWithCustomID( request, ( result ) => {
             PlayFabId = result.PlayFabId;
@@ -55,12 +46,63 @@ public class PlayFabManager : MonoBehaviour {
             Debug.Log( "Here we go!" );
             //ClientGetTitleData();
             //SetUserData();
-            GetUserData();
+            //GetUserData();
+            GetCloudURL();
         },
         ( error ) => {
             Debug.Log( "Error logging in player with custom ID:" );
             Debug.Log( error.ErrorMessage );
         } );
+    }
+
+    public void GetCloudURL() {
+        GetCloudScriptUrlRequest request = new GetCloudScriptUrlRequest() {
+            Testing = false
+        };
+
+        PlayFabClientAPI.GetCloudScriptUrl( request, ( result ) => {
+            Debug.Log( "URL is set" );
+            CloudRequest();
+        },
+        ( error ) => {
+            Debug.Log( "Failed to retrieve Cloud Script URL" );
+        } );
+    }
+
+    public void CloudRequest() {
+        Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
+        upgradeParams.Add( "Class", "Buildings" );
+
+        RunCloudScriptRequest request = new RunCloudScriptRequest() {
+            ActionId = "initiateUpgrade",
+            Params = new { data = upgradeParams }
+        };
+
+        PlayFabClientAPI.RunCloudScript( request, ( result ) =>
+        {
+            Debug.Log( "Got log entries:" );
+            Debug.Log( result.ActionLog );
+            Debug.Log( "Time: " + result.ExecutionTime );
+            if (result.Results != null)
+                Debug.Log( "and return value: " + result.Results.ToString() );
+        }, ( error ) => {
+            Debug.Log( "Error calling helloWorld in Cloud Script:" );
+            Debug.Log( error.ErrorMessage );
+        } );
+    }
+
+    public void ClientGetTitleData() {
+        var getRequest = new GetTitleDataRequest();
+        PlayFabClientAPI.GetTitleData( getRequest, ( result ) => {
+            Debug.Log( "Got the following titleData:" );
+            foreach ( var entry in result.Data ) {
+                Debug.Log( entry.Key + ": " + entry.Value );
+            }
+        },
+          ( error ) => {
+              Debug.Log( "Got error getting titleData:" );
+              Debug.Log( error.ErrorMessage );
+          } );
     }
 
     private void SetUserData() {
