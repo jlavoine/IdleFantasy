@@ -6,5 +6,7 @@ namespace MyLibrary {
 
         public const string CLOUD_SETUP_SUCCESS = "CloudSetupSuccess";
         public const string CLOUD_SETUP_FAIL = "CloudSetupFailure";
+
+        public const string LOGIN_SUCCESS = "LoginComplete";
     }
 }
