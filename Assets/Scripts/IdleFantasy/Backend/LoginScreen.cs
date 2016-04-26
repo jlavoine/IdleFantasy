@@ -6,11 +6,10 @@ namespace IdleFantasy {
 
         void Start() {
             IMessageService myMessenger = new MyMessenger();            
-            ILogService myLogger = new MyLogger();
 
-            IBackend playFabBackend = new PlayFabBackend( myMessenger, myLogger );
+            IBackend playFabBackend = new PlayFabBackend( myMessenger );
 
-            Login login = new Login( myMessenger, myLogger, playFabBackend );
+            Login login = new Login( myMessenger, playFabBackend );
             login.Start();
         }
 

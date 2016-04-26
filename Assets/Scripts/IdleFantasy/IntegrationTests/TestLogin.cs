@@ -7,12 +7,11 @@ namespace IdleFantasy.IntegrationTests {
 
         void Start() {
             mMessenger = new MyMessenger();                       
-            ILogService myLogger = new MyLogger();
-            IBackend playFabBackend = new PlayFabBackend( mMessenger, myLogger );
+            IBackend playFabBackend = new PlayFabBackend( mMessenger );
 
             mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
 
-            Login login = new Login( mMessenger, myLogger, playFabBackend );
+            Login login = new Login( mMessenger, playFabBackend );
             login.Start();
         }
 

@@ -8,17 +8,15 @@ namespace MyLibrary {
         public const string PLAYFAB = "PlayFab";
 
         private IMessageService mMessenger;
-        private ILogService mLogger;
 
         public string PlayFabId;
 
-        public PlayFabBackend( IMessageService i_messenger, ILogService i_logger ) {
+        public PlayFabBackend( IMessageService i_messenger ) {
             mMessenger = i_messenger;
-            mLogger = i_logger;
         }
 
         public void Authenticate() {
-            mLogger.Log( LogTypes.Info, "Authentication attempt for title " + TITLE_ID, PLAYFAB );
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authentication attempt for title " + TITLE_ID, PLAYFAB );
 
             PlayFabSettings.TitleId = TITLE_ID;
 
@@ -40,7 +38,7 @@ namespace MyLibrary {
         }
 
         public void SetUpCloudServices( bool i_testing ) {
-            mLogger.Log( LogTypes.Info, "Starting cloud service setup call", PLAYFAB );
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Starting cloud service setup call", PLAYFAB );
 
             GetCloudScriptUrlRequest request = new GetCloudScriptUrlRequest() {
                 Testing = i_testing
