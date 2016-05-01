@@ -17,8 +17,9 @@ namespace MyLibrary {
             mMessenger.RemoveListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
         }
 
+        // currently don't have access to send custom analytics with playfab...
         private void OnTimerAnalytic( string i_analyticName, long i_elapsedMillis ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Attempt log event: " + i_analyticName, PlayFabBackend.PLAYFAB );
+            /*mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Attempt log event: " + i_analyticName, PlayFabBackend.PLAYFAB );
 
             Dictionary<string, object> body = new Dictionary<string, object>();
             body.Add( i_analyticName, i_elapsedMillis );
@@ -35,7 +36,7 @@ namespace MyLibrary {
             ( error ) => {
                 mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Log event failure: " + i_analyticName, PlayFabBackend.PLAYFAB );
                 mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Analytics error: " + error.ErrorMessage, PlayFabBackend.PLAYFAB );
-            } );
+            } );*/
         }
     }
 }

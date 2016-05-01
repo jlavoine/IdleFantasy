@@ -1,4 +1,6 @@
 ﻿using MyLibrary;
+using UnityEngine;
+using System.Collections;
 
 namespace IdleFantasy {
     public class Login {
@@ -18,7 +20,7 @@ namespace IdleFantasy {
 
         public void Start() {                        
             mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.AddListener< IBackendFailure>( BackendMessages.AUTH_FAIL, OnAuthenticationFailure );
+            mMessenger.AddListener<IBackendFailure>( BackendMessages.AUTH_FAIL, OnAuthenticationFailure );
 
             mMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
             mMessenger.AddListener<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, OnCloudSetupFailure );
@@ -59,6 +61,6 @@ namespace IdleFantasy {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup failure", "" );
 
             mLoginTimer.Stop();
-        }
+        }       
     }
 }

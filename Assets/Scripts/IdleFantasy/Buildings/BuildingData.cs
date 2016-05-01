@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MyLibrary;
 
 namespace IdleFantasy {
     public class BuildingData : GenericData {

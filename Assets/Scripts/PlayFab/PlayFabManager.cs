@@ -16,7 +16,7 @@ public class PlayFabManager : MonoBehaviour {
         Dictionary<string, int> test = new Dictionary<string, int>();
         test.Add( "A", 1 );
         test.Add( "B", 2 );
-        string json = JsonConvert.SerializeObject( test );
+        //string json = JsonConvert.SerializeObject( test );
         //Debug.Log( json );
 
         //ClientGetTitleData();

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using PlayFab;
 using PlayFab.ClientModels;
 
@@ -9,10 +10,20 @@ namespace MyLibrary {
 
         private IMessageService mMessenger;
 
+        private int mCloudRequestCount = 0;
+        public int CloudRequestCount {
+            get { return mCloudRequestCount; }
+            set { mCloudRequestCount = value; }
+        }
+
         public string PlayFabId;
 
         public PlayFabBackend( IMessageService i_messenger ) {
             mMessenger = i_messenger;
+        }
+
+        public bool IsBusy() {
+            return mCloudRequestCount > 0;
         }
 
         public void Authenticate() {
@@ -34,6 +45,7 @@ namespace MyLibrary {
             ( error ) => {
                 IBackendFailure failureResult = null;
                 mMessenger.Send<IBackendFailure>( BackendMessages.AUTH_FAIL, failureResult );
+                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failureResult );
             } );
         }
 
@@ -50,7 +62,34 @@ namespace MyLibrary {
             ( error ) => {
                 IBackendFailure failure = null;
                 mMessenger.Send<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, failure );
+                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             } );
+        }
+
+        public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Requesting title data for " + i_key, PLAYFAB );
+
+            CloudRequestCount++;
+
+            GetTitleDataRequest request = new GetTitleDataRequest() {
+                Keys = new List<string>() { i_key }
+            };
+
+            PlayFabClientAPI.GetTitleData( request, ( result ) => {
+                CloudRequestCount--;
+
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request title data success for " + i_key, PLAYFAB );
+
+                foreach ( var entry in result.Data ) {
+                    requestSuccessCallback(entry.Value);
+                }                
+            },
+              ( error ) => {
+                  CloudRequestCount--;
+
+                  IBackendFailure failure = null;
+                  mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
+              } );
         }
     }
 }

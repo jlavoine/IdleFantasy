@@ -1,19 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class StringTableManager {
-	// current string table
-	private static StringTable m_table;
+namespace MyLibrary {
+    public static class StringTableManager {
+        private static StringTable mStringTable;
 
-	///////////////////////////////////////////
-	// Get()
-	// Accesses the string value for i_key in
-	// the current string table.
-	///////////////////////////////////////////
-	public static string Get( string i_strKey ) {
-		if ( m_table == null )
-			m_table = new StringTable("English");
+        private static IMessageService mMessenger;
 
-		return m_table.Get( i_strKey );
-	}
+        public static void InitTable( string i_langauge, IBackend i_backend, IMessageService i_messenger ) {
+            mMessenger = i_messenger;
+
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing string table for " + i_langauge, "" );
+
+            string tableKey = "StringTable_" + i_langauge;
+            i_backend.GetTitleData( tableKey, CreateTableFromJSON );
+        }
+
+        private static void CreateTableFromJSON( string i_tableJSON ) {
+            mStringTable = new StringTable( i_tableJSON, mMessenger );
+        }
+
+        public static string Get( string i_key ) {
+            if ( mStringTable != null ) {
+                return mStringTable.Get( i_key );
+            } 
+            else {
+                return "No string table";
+            }
+        }
+    }
 }

@@ -1,20 +1,43 @@
 ﻿using UnityEngine;
 using MyLibrary;
+using System.Collections;
 
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {
 
+        private IBackend mBackend;
+        private IMessageService mMessenger;
+
         void Start() {
-            IMessageService myMessenger = new MyMessenger();            
+            mMessenger = new MyMessenger();            
+            mBackend = new PlayFabBackend( mMessenger );
 
-            IBackend playFabBackend = new PlayFabBackend( myMessenger );
+            mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
 
-            Login login = new Login( myMessenger, playFabBackend );
+            Login login = new Login( mMessenger, mBackend );
             login.Start();
         }
 
         void OnDestroy() {
+            mMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
+        }
 
+        private void OnLoginSuccess() {
+            StartCoroutine( GetTitleAndUserData() );
+        }
+
+        private IEnumerator GetTitleAndUserData() {
+            StringTableManager.InitTable( "English", mBackend, mMessenger );
+
+            while ( mBackend.IsBusy() ) {
+                yield return 0;
+            }
+
+            DoneLoadingData();
+        }
+
+        private void DoneLoadingData() {
+            // load next scene here???
         }
     }
 }

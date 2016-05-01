@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using MyLibrary;
 
 [RequireComponent(typeof(Text))]
 public class SetText : MonoBehaviour {

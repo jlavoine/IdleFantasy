@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using MyLibrary;
 
 //////////////////////////////////////////
 /// CraLabel
@@ -24,7 +24,7 @@ public class CraLabel : MonoBehaviour {
 
 		// we got to have a text mesh!
 		if (m_textmesh == null) {
-			Debug.LogError("No text mesh for CraLabel " + gameObject.name, gameObject);
+			UnityEngine.Debug.LogError("No text mesh for CraLabel " + gameObject.name, gameObject);
 			return;
 		}
 
