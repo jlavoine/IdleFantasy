@@ -2,7 +2,7 @@
 using PlayFab.ClientModels;
 using System.Collections.Generic;
 
-namespace MyLibrary {
+namespace MyLibrary{
     public class PlayFabAnalytics {
 
         private IMessageService mMessenger;
@@ -18,7 +18,7 @@ namespace MyLibrary {
         }
 
         // currently don't have access to send custom analytics with playfab...
-        private void OnTimerAnalytic( string i_analyticName, long i_elapsedMillis ) {
+        public void OnTimerAnalytic( string i_analyticName, long i_elapsedMillis ) {
             /*mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Attempt log event: " + i_analyticName, PlayFabBackend.PLAYFAB );
 
             Dictionary<string, object> body = new Dictionary<string, object>();
