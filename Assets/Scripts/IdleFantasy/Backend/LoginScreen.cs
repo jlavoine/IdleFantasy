@@ -27,7 +27,8 @@ namespace IdleFantasy {
         }
 
         private IEnumerator GetTitleAndUserData() {
-            StringTableManager.InitTable( "English", mBackend, mMessenger );
+            StringTableManager.Init( "English", mBackend, mMessenger );
+            BuildingLoader.Init( mBackend );
 
             while ( mBackend.IsBusy() ) {
                 yield return 0;

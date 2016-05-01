@@ -2,14 +2,16 @@
 using MyLibrary;
 
 namespace IdleFantasy {
-    public class BuildingData : GenericData {
+    public class SimpleBuildingData : GenericData {
         public List<string> Categories;
 
         public string Unit;
 
-        public int Size;
+        public int StartingSize;
 
-        public UpgradeData LevelUpgrade;        
+        public int MaxLevel;
+
+        public int StartingUpgradeCost;
 
         public string GetName() {
             return StringTableManager.Get( "BUILDING_NAME_" + ID );

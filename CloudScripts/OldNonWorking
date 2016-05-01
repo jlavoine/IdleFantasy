@@ -33,7 +33,7 @@ handlers.canTrainUnit = function (args) {
 handlers.getAllDataForClass = function (args) {
     var className = args.data["Class"];
 
-    var data = GetTitleDataForClass(className);
+    var data = GetAllDataForClass(className);
 
     return data;
 }
@@ -59,19 +59,23 @@ handlers.initiateUpgrade = function (args) {
 
 function GetTitleDataForClass(className) {
     var moduleNames = GetAllModules();
+
+    // build the keys for the title data
     for (var i = 0; i < moduleNames.length; i++) {
         moduleNames[i] += className;
     }
 
+    // get the title data for each module
     var titleData = server.GetTitleData({ Keys : moduleNames });
     var dataPerModule = titleData["Data"];
     var classData = {};
 
+    // inside each module is a list of data for that module -- combine it into one list containing all data
     for (var moduleKey in dataPerModule) {
         var classesInModule = JSON.parse(dataPerModule[moduleKey]);
-
-        for(var data in classesInModule) {
-            classData[data] = classesInModule[data];
+       
+        for(var class in classesInModule) {
+            classData[class] = classesInModule[class];
         }
     }
 

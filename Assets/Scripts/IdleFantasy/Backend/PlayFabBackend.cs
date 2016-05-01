@@ -91,5 +91,39 @@ namespace MyLibrary {
                   mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
               } );
         }
+
+        public void GetAllDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
+            Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
+            upgradeParams.Add( "Class", i_className );
+
+            RunCloudScriptRequest request = new RunCloudScriptRequest() {
+                ActionId = "getAllDataForClass",
+                Params = new { data = upgradeParams }
+            };
+
+            PlayFabClientAPI.RunCloudScript( request, ( result ) => {
+            Debug.Log( "Got log entries:" );
+            Debug.Log( result.ActionLog );
+            Debug.Log( "Time: " + result.ExecutionTime );
+                if ( result.Results != null ) {
+                    string res = result.Results.ToString();
+                    
+                    Debug.Log( "and return value: " + res );
+                    res = res.Replace( "\"[", "[" );
+                    res = res.Replace( "]\"", "]" );
+
+                    res = res.Replace( "\"{", "{" );
+                    res = res.Replace( "}\"", "}" );
+
+                    res = res.Replace( "\\\"", "\"" );
+                    Debug.Log( "How bout now: " + res );
+
+                    requestSuccessCallback( res );
+                }
+            }, ( error ) => {
+                Debug.Log( "Error calling helloWorld in Cloud Script:" );
+                Debug.Log( error.ErrorMessage );
+            } );
+        }      
     }
 }

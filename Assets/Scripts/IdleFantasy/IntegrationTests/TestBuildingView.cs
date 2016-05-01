@@ -82,7 +82,7 @@ namespace IdleFantasy {
             BuildingData data = new BuildingData();
             data.ID = "TEST_BUILDING";
             data.Size = 10;
-            data.Units = new List<string>() { "TEST_UNIT" };
+            data.Unit = "TEST_UNIT";
             data.Categories = new List<string>() { "TEST_CATEGORY" };
 
             UpgradeData upgrade = new UpgradeData();
