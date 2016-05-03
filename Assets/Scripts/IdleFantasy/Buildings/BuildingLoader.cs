@@ -32,7 +32,7 @@ namespace IdleFantasy {
 
         private static void LoadData() {
             if ( mBackend != null ) {
-                mBackend.GetAllTitleDataForClass( "Buildings", DeserializeData );
+                //mBackend.GetAllTitleDataForClass( "Buildings", DeserializeData );
             }
             else {
                 mData = new Dictionary<string, BuildingData>();

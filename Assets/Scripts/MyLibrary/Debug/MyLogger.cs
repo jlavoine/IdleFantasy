@@ -25,6 +25,7 @@ namespace MyLibrary {
                     UnityEngine.Debug.Log( i_message );
                     break;
                 case LogTypes.Error:
+                case LogTypes.Fatal:
                     UnityEngine.Debug.LogError( i_message );
                     break;
                 case LogTypes.Warn:

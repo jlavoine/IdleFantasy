@@ -28,11 +28,16 @@ namespace IdleFantasy {
 
         private IEnumerator GetTitleAndUserData() {
             StringTableManager.Init( "English", mBackend, mMessenger );
-            BuildingLoader.Init( mBackend );
+            GenericDataLoader.Init( mBackend, mMessenger );
+            GenericDataLoader.LoadDataOfClass<BuildingData>( GenericDataLoader.BUILDINGS );
+            GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );
 
             while ( mBackend.IsBusy() ) {
                 yield return 0;
             }
+
+            UnitData test = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, "BASE_UNIT_1" );
+            UnityEngine.Debug.LogError( test.ID );
 
             DoneLoadingData();
         }
