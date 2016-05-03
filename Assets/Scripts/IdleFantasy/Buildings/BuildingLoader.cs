@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MyLibrary;
 using Newtonsoft.Json;
-using PlayFab;
 
 namespace IdleFantasy {
     public static class BuildingLoader {
@@ -27,17 +26,13 @@ namespace IdleFantasy {
             LoadData();
         }
 
-        private static void Test( string test ) {
-            //Dictionary<string, SimpleBuildingData> testdict = JsonConvert.DeserializeObject<Dictionary<string, SimpleBuildingData>>( test );
-            mData = PlayFab.SimpleJson.DeserializeObject<Dictionary<string, BuildingData>>( test );
-
-            //Debug.LogError( "TEST: " + testdict[ "BASE_BUILDING_1"].Unit );
-            Debug.LogError(GetData("BASE_BUILDING_1").LevelUpgrade.PropertyName);
+        private static void DeserializeData( string i_data ) {
+            mData = JsonConvert.DeserializeObject<Dictionary<string, BuildingData>>( i_data );            
         }
 
         private static void LoadData() {
             if ( mBackend != null ) {
-                mBackend.GetAllDataForClass( "Buildings", Test );
+                mBackend.GetAllTitleDataForClass( "Buildings", DeserializeData );
             }
             else {
                 mData = new Dictionary<string, BuildingData>();

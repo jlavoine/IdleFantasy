@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PlayFab;
 using PlayFab.ClientModels;
+using MyLibrary.PlayFab;
 
 namespace MyLibrary {
     public class PlayFabBackend : IBackend {
@@ -92,7 +93,11 @@ namespace MyLibrary {
               } );
         }
 
-        public void GetAllDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
+        public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request all data for class " + i_className, PLAYFAB );
+
+            CloudRequestCount++;
+
             Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
             upgradeParams.Add( "Class", i_className );
 
@@ -102,27 +107,21 @@ namespace MyLibrary {
             };
 
             PlayFabClientAPI.RunCloudScript( request, ( result ) => {
-            Debug.Log( "Got log entries:" );
-            Debug.Log( result.ActionLog );
-            Debug.Log( "Time: " + result.ExecutionTime );
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud logs for all data request for " + i_className + ": " + result.ActionLog, PLAYFAB );
+
+                CloudRequestCount--;
+
                 if ( result.Results != null ) {
                     string res = result.Results.ToString();
-                    
-                    Debug.Log( "and return value: " + res );
-                    res = res.Replace( "\"[", "[" );
-                    res = res.Replace( "]\"", "]" );
-
-                    res = res.Replace( "\"{", "{" );
-                    res = res.Replace( "}\"", "}" );
-
-                    res = res.Replace( "\\\"", "\"" );
-                    Debug.Log( "How bout now: " + res );
+                    res = res.CleanStringForJsonDeserialization();
 
                     requestSuccessCallback( res );
                 }
             }, ( error ) => {
-                Debug.Log( "Error calling helloWorld in Cloud Script:" );
-                Debug.Log( error.ErrorMessage );
+                CloudRequestCount--;
+
+                IBackendFailure failure = null;
+                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             } );
         }      
     }
