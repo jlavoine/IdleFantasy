@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using MyLibrary;
 using System.Collections;
 
@@ -37,13 +38,13 @@ namespace IdleFantasy {
             }
 
             UnitData test = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, "BASE_UNIT_1" );
-            UnityEngine.Debug.LogError( test.ID );
 
             DoneLoadingData();
         }
 
         private void DoneLoadingData() {
             // load next scene here???
+            SceneManager.LoadScene( "TestPlayground" );
         }
     }
 }

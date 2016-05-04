@@ -11,7 +11,7 @@ namespace IdleFantasy.UnitTests {
             BuildingData testBuildingData = BuildingLoader.GetData( BuildingLoader.TEST_BUILDING );
 
             Assert.AreEqual( testBuildingData.ID, "TEST_BUILDING" );            
-            Assert.AreEqual( testBuildingData.Size, 10 );            
+            Assert.AreEqual( testBuildingData.StartingSize, 10 );            
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
 
             Assert.AreEqual( testBuildingData.LevelUpgrade.MaxLevel, 50 );

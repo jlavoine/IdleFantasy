@@ -7,7 +7,7 @@ namespace IdleFantasy {
 
         public string Unit;
 
-        public int Size;
+        public int StartingSize;
 
         public UpgradeData LevelUpgrade;        
 

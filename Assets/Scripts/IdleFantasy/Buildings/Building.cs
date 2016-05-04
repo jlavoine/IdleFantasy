@@ -76,7 +76,7 @@ namespace IdleFantasy {
         }
 
         public void UpdateCapacity() {
-            Capacity = Data.Size * Level.Value;
+            Capacity = Data.StartingSize * Level.Value;
         }
 
         #region Unit Generation

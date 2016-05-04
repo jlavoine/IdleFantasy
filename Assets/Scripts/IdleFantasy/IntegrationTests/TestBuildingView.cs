@@ -81,7 +81,7 @@ namespace IdleFantasy {
         public void TestBuilding() {
             BuildingData data = new BuildingData();
             data.ID = "TEST_BUILDING";
-            data.Size = 10;
+            data.StartingSize = 10;
             data.Unit = "TEST_UNIT";
             data.Categories = new List<string>() { "TEST_CATEGORY" };
 
