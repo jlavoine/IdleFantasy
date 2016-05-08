@@ -44,11 +44,7 @@ namespace MyLibrary {
                 IAuthenticationSuccess successResult = null;
                 mMessenger.Send<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, successResult );
             },
-            ( error ) => {
-                IBackendFailure failureResult = null;
-                mMessenger.Send<IBackendFailure>( BackendMessages.AUTH_FAIL, failureResult );
-                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failureResult );
-            } );
+            ( error ) => { HandleError( error, BackendMessages.AUTH_FAIL ); } );
         }
 
         public void SetUpCloudServices( bool i_testing ) {
@@ -61,52 +57,37 @@ namespace MyLibrary {
             PlayFabClientAPI.GetCloudScriptUrl( request, ( result ) => {
                 mMessenger.Send( BackendMessages.CLOUD_SETUP_SUCCESS );
             },
-            ( error ) => {
-                IBackendFailure failure = null;
-                mMessenger.Send<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, failure );
-                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
-            } );
+            ( error ) => { HandleError( error, BackendMessages.CLOUD_SETUP_FAIL ); } );
         }
 
         public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Requesting title data for " + i_key, PLAYFAB );
-
-            CloudRequestCount++;
+            StartRequest( "Requesting title data for " + i_key );
 
             GetTitleDataRequest request = new GetTitleDataRequest() {
                 Keys = new List<string>() { i_key }
             };
 
             PlayFabClientAPI.GetTitleData( request, ( result ) => {
-                CloudRequestCount--;
-
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request title data success for " + i_key, PLAYFAB );
+                RequestComplete( "Request title data success for " + i_key, LogTypes.Info );
 
                 // should only call the callback ONCE because there is only one key
                 foreach ( var entry in result.Data ) {
                     requestSuccessCallback(entry.Value);
                 }                
             },
-              ( error ) => {
-                  CloudRequestCount--;
-
-                  IBackendFailure failure = null;
-                  mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
-              } );
+            ( error ) => { HandleError( error, BackendMessages.TITLE_DATA_FAIL ); } );
         }
 
         public void GetPlayerData( string i_key, Callback<string> requestSuccessCallback ) {
-            CloudRequestCount++;
-
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request player data " + i_key, PLAYFAB );
-
+            StartRequest( "Request player data " + i_key );
+            
             GetUserDataRequest request = new GetUserDataRequest() {
                 PlayFabId = PlayFabId,
                 Keys = new List<string>() { i_key }
             };
 
             PlayFabClientAPI.GetUserReadOnlyData( request, ( result ) => {
-                CloudRequestCount--;
+                RequestComplete( "Player data request complete: " + i_key, LogTypes.Info );
 
                 if ( ( result.Data == null ) || ( result.Data.Count == 0 ) ) {
                     mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No user data for " + i_key, PLAYFAB );
@@ -117,25 +98,16 @@ namespace MyLibrary {
                         requestSuccessCallback( item.Value.Value );
                     }
                 }
-            }, ( error ) => {
-                CloudRequestCount--;
-
-                IBackendFailure failure = null;
-                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
-            } );
+            }, ( error ) => { HandleError( error, BackendMessages.PLAYER_DATA_REQUEST_FAIL ); } );
         }
 
         public void GetVirtualCurrency( string i_key, Callback<int> requestSuccessCallback ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Requesting virtual currency: " + i_key, PLAYFAB );
-
-            CloudRequestCount++;
+            StartRequest( "Requesting virtual currency: " + i_key );
 
             GetUserCombinedInfoRequest request = new GetUserCombinedInfoRequest();
 
             PlayFabClientAPI.GetUserCombinedInfo( request, ( result ) => {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request for virtual currency complete: " + i_key, PLAYFAB );
-
-                CloudRequestCount--;
+                RequestComplete( "Request for virtual currency complete: " + i_key, LogTypes.Info );
 
                 int currency = 0;
                 if ( result.VirtualCurrency.ContainsKey( i_key ) ) {
@@ -146,18 +118,11 @@ namespace MyLibrary {
 
                 requestSuccessCallback( currency );
             },
-            ( error ) => {
-                CloudRequestCount--;
-
-                IBackendFailure failure = null;
-                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
-            } );
+            ( error ) => { HandleError( error, BackendMessages.CURRENCY_REQUEST_FAIL ); } );
         }
 
         public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request all data for class " + i_className, PLAYFAB );
-
-            CloudRequestCount++;
+            StartRequest( "Request all data for class " + i_className );
 
             Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
             upgradeParams.Add( "Class", i_className );
@@ -168,9 +133,7 @@ namespace MyLibrary {
             };
 
             PlayFabClientAPI.RunCloudScript( request, ( result ) => {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud logs for all data request for " + i_className + ": " + result.ActionLog, PLAYFAB );
-
-                CloudRequestCount--;
+                RequestComplete( "Cloud logs for all data request for " + i_className + ": " + result.ActionLog, LogTypes.Info );
 
                 if ( result.Results != null ) {
                     string res = result.Results.ToString();
@@ -178,12 +141,25 @@ namespace MyLibrary {
 
                     requestSuccessCallback( res );
                 }
-            }, ( error ) => {
-                CloudRequestCount--;
+            }, ( error ) => { HandleError( error, BackendMessages.TITLE_DATA_FAIL ); } );
+        }
 
-                IBackendFailure failure = null;
-                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
-            } );
-        }      
+        private void HandleError( PlayFabError i_error, string i_messageType ) {
+            RequestComplete( "Backend failure!", LogTypes.Error );
+
+            IBackendFailure failure = null;
+            mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
+            mMessenger.Send<IBackendFailure>( i_messageType, failure );
+        }
+
+        private void StartRequest( string i_message ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, i_message, PLAYFAB );
+            CloudRequestCount++;
+        }
+
+        private void RequestComplete( string i_message, LogTypes i_messageType ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, i_messageType, i_message, PLAYFAB );
+            CloudRequestCount--;
+        }
     }
 }
