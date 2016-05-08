@@ -8,7 +8,7 @@ namespace IdleFantasy.UnitTests {
     public class VerifyTestData {
         [Test]
         public void VerifyTestBuilding() {
-            BuildingData testBuildingData = BuildingLoader.GetData( BuildingLoader.TEST_BUILDING );
+            BuildingData testBuildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
 
             Assert.AreEqual( testBuildingData.ID, "TEST_BUILDING" );            
             Assert.AreEqual( testBuildingData.StartingSize, 10 );            
