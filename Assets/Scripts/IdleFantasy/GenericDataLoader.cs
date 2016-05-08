@@ -35,7 +35,7 @@ namespace IdleFantasy {
                 return (T)dataOfType[i_key];
             }
             else {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data!" + i_type, "" );
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data for " + i_type, "" );
                 return default( T );
             }
         }
@@ -62,6 +62,8 @@ namespace IdleFantasy {
             }
 
             mBackend.GetAllTitleDataForClass( i_className, ( data ) => {
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Got title data for " + i_className, "" );
+
                 Dictionary<string, T> dataAsDictionary = DeserializeData<T>( data, i_className );
 
                 StoreDictionaryDataAsHash<T>( dataAsDictionary, i_className );

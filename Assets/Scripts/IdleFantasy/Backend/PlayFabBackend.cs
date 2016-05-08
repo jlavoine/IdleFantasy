@@ -82,6 +82,7 @@ namespace MyLibrary {
 
                 mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request title data success for " + i_key, PLAYFAB );
 
+                // should only call the callback ONCE because there is only one key
                 foreach ( var entry in result.Data ) {
                     requestSuccessCallback(entry.Value);
                 }                
@@ -108,9 +109,10 @@ namespace MyLibrary {
                 CloudRequestCount--;
 
                 if ( ( result.Data == null ) || ( result.Data.Count == 0 ) ) {
-                    mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "No user data for " + i_key, PLAYFAB );
+                    mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No user data for " + i_key, PLAYFAB );
                 }
                 else {
+                    // should only call the callback ONCE because there is only one key
                     foreach ( var item in result.Data ) {
                         requestSuccessCallback( item.Value.Value );
                     }
@@ -122,7 +124,7 @@ namespace MyLibrary {
                 mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             } );
         }
-
+        
         public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request all data for class " + i_className, PLAYFAB );
 

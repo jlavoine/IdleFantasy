@@ -5,12 +5,15 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
-        public Dictionary<string, int> UnitLevels;
+        public const string BUILDING_PROGRESS = "BuildingProgress";
+        public const string UNIT_PROGRESS = "UnitProgress";
+
+        public Dictionary<string, UnitProgress> UnitProgress;
         public Dictionary<string, int> UnitTrainingLevels;
 
         public Dictionary<string, int> Trainers;
 
-        public Dictionary<string, int> BuildingLevels;
+        public Dictionary<string, BuildingProgress> BuildingProgress;
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
@@ -21,17 +24,24 @@ namespace IdleFantasy {
         public void Init( IBackend i_backend ) {
             mBackend = i_backend;
 
-            mBackend.GetPlayerData( "BuildingLevels", (jsonData) => {
-                BuildingLevels = JsonConvert.DeserializeObject<Dictionary<string, int>>( jsonData );
+            mBackend.GetPlayerData( BUILDING_PROGRESS, (jsonData) => {
+                BuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
+            } );
+
+            mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
+                UnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
             } );
         }
 
         public object GetData( string i_key ) {
-            if ( i_key == "BuildingLevels" ) {
-                return BuildingLevels;
+            switch ( i_key ) {
+                case BUILDING_PROGRESS:
+                    return BuildingProgress;
+                case UNIT_PROGRESS:
+                    return UnitProgress;
+                default:
+                    return null;
             }
-
-            return null;
         }
 
         public int Gold {
