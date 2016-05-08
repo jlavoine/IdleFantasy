@@ -124,7 +124,36 @@ namespace MyLibrary {
                 mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             } );
         }
-        
+
+        public void GetVirtualCurrency( string i_key, Callback<int> requestSuccessCallback ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Requesting virtual currency: " + i_key, PLAYFAB );
+
+            CloudRequestCount++;
+
+            GetUserCombinedInfoRequest request = new GetUserCombinedInfoRequest();
+
+            PlayFabClientAPI.GetUserCombinedInfo( request, ( result ) => {
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request for virtual currency complete: " + i_key, PLAYFAB );
+
+                CloudRequestCount--;
+
+                int currency = 0;
+                if ( result.VirtualCurrency.ContainsKey( i_key ) ) {
+                    currency = result.VirtualCurrency[i_key];
+                } else {
+                    mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No virtual currency for: " + i_key, PLAYFAB );
+                }
+
+                requestSuccessCallback( currency );
+            },
+            ( error ) => {
+                CloudRequestCount--;
+
+                IBackendFailure failure = null;
+                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
+            } );
+        }
+
         public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request all data for class " + i_className, PLAYFAB );
 

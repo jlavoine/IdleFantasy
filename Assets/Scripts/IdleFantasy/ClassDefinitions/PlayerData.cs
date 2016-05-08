@@ -23,6 +23,7 @@ namespace IdleFantasy {
         
         public void Init( IBackend i_backend ) {
             mBackend = i_backend;
+            mModel = new ViewModel();
 
             mBackend.GetPlayerData( BUILDING_PROGRESS, (jsonData) => {
                 BuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
@@ -30,6 +31,10 @@ namespace IdleFantasy {
 
             mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
                 UnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
+            } );
+
+            mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
+                Gold = numGold;
             } );
         }
 
