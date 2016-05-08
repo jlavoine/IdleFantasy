@@ -24,27 +24,29 @@ namespace IdleFantasy {
         }
 
         private void OnLoginSuccess() {
-            StartCoroutine( GetTitleAndUserData() );
+            StartCoroutine( LoadDataFromBackend() );
         }
 
-        private IEnumerator GetTitleAndUserData() {
+        private IEnumerator LoadDataFromBackend() {
             StringTableManager.Init( "English", mBackend, mMessenger );
             GenericDataLoader.Init( mBackend, mMessenger );
             GenericDataLoader.LoadDataOfClass<BuildingData>( GenericDataLoader.BUILDINGS );
             GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );
 
+            PlayerData playerData = new PlayerData();
+            playerData.Init( mBackend );
+            PlayerManager.Init( playerData );
+
             while ( mBackend.IsBusy() ) {
                 yield return 0;
             }
-
-            UnitData test = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, "BASE_UNIT_1" );
 
             DoneLoadingData();
         }
 
         private void DoneLoadingData() {
             // load next scene here???
-            SceneManager.LoadScene( "TestPlayground" );
+           SceneManager.LoadScene( "Main" );
         }
     }
 }

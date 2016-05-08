@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using PlayFab;
 using PlayFab.ClientModels;
 using MyLibrary.PlayFab;
+using Newtonsoft.Json;
 
 namespace MyLibrary {
     public class PlayFabBackend : IBackend {
@@ -91,6 +92,35 @@ namespace MyLibrary {
                   IBackendFailure failure = null;
                   mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
               } );
+        }
+
+        public void GetPlayerData( string i_key, Callback<string> requestSuccessCallback ) {
+            CloudRequestCount++;
+
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Request player data " + i_key, PLAYFAB );
+
+            GetUserDataRequest request = new GetUserDataRequest() {
+                PlayFabId = PlayFabId,
+                Keys = new List<string>() { i_key }
+            };
+
+            PlayFabClientAPI.GetUserReadOnlyData( request, ( result ) => {
+                CloudRequestCount--;
+
+                if ( ( result.Data == null ) || ( result.Data.Count == 0 ) ) {
+                    mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "No user data for " + i_key, PLAYFAB );
+                }
+                else {
+                    foreach ( var item in result.Data ) {
+                        requestSuccessCallback( item.Value.Value );
+                    }
+                }
+            }, ( error ) => {
+                CloudRequestCount--;
+
+                IBackendFailure failure = null;
+                mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
+            } );
         }
 
         public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {

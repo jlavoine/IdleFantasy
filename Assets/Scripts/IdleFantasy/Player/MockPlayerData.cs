@@ -67,5 +67,9 @@ namespace IdleFantasy {
                 mModel.SetProperty( inventoryItem.Key, inventoryItem.Value );
             }
         }
+
+        public object GetData( string i_key ) {
+            throw new NotImplementedException();
+        }
     }
 }

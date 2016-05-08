@@ -9,8 +9,10 @@ namespace IdleFantasy {
             set;
         }
 
-        ITrainerData TrainerData {
+        object GetData( string i_key );
+
+        /*ITrainerData TrainerData {
             get;
-        }
+        }*/
     }
 }
