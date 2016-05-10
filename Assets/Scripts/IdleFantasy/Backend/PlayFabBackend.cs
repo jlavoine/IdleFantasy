@@ -147,7 +147,7 @@ namespace MyLibrary {
         private void HandleError( PlayFabError i_error, string i_messageType ) {
             RequestComplete( "Backend failure!", LogTypes.Error );
 
-            IBackendFailure failure = null;
+            IBackendFailure failure = new BackendFailure( i_error.ErrorMessage );
             mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             mMessenger.Send<IBackendFailure>( i_messageType, failure );
         }

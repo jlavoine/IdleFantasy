@@ -15,7 +15,7 @@ namespace IdleFantasy {
 
             mBackend = i_backend;
 
-            mLoginTimer = new AnalyticsTimer( i_messenger, AnalyticEvents.LOGIN_TIME );
+            mLoginTimer = new AnalyticsTimer( i_messenger, LibraryAnalyticEvents.LOGIN_TIME );
         }
 
         public void Start() {                        

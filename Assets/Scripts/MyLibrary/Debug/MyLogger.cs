@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-
+﻿
 namespace MyLibrary {
     public class MyLogger {
         public const string LOG_EVENT = "Log";
