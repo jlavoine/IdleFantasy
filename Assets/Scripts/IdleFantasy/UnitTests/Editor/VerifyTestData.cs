@@ -5,12 +5,19 @@ using IdleFantasy.Data;
 #pragma warning disable 0414
 
 namespace IdleFantasy.UnitTests {
+    [TestFixture]
     public class VerifyTestData {
+
+        [SetUp]
+        public void BeforeTest() {
+            UnitTestUtils.LoadOfflineData();
+        }
+
         [Test]
         public void VerifyTestBuilding() {
             BuildingData testBuildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
 
-            Assert.AreEqual( testBuildingData.ID, "TEST_BUILDING" );            
+            Assert.AreEqual( testBuildingData.ID, "BASE_BUILDING_1" );            
             Assert.AreEqual( testBuildingData.StartingSize, 10 );            
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
 
@@ -23,7 +30,7 @@ namespace IdleFantasy.UnitTests {
         public void VerifyTestUnit() {
             UnitData testUnitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
 
-            Assert.AreEqual( "TEST_UNIT", testUnitData.ID );
+            Assert.AreEqual( "BASE_UNIT_1", testUnitData.ID );
             Assert.AreEqual( 1f, testUnitData.BaseProgressPerSecond );
         }
     }

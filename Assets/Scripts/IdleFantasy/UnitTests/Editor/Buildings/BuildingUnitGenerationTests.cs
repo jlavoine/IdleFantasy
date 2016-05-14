@@ -1,9 +1,11 @@
 ﻿using NUnit.Framework;
 using System;
+using MyLibrary;
 
 #pragma warning disable 0414
 
 namespace IdleFantasy.UnitTests {
+    [TestFixture]
     public class BuildingUnitGenerationTests {
         static object[] UnitGenerationAmounts = {
             new object[] { 1 },
@@ -22,6 +24,11 @@ namespace IdleFantasy.UnitTests {
             new object[] { new TimeSpan(0, 2, 0) },
             new object[] { new TimeSpan(100, 10, 10) },
         };
+
+        [SetUp]
+        public void BeforeTest() {
+            UnitTestUtils.LoadOfflineData();
+        }
 
         [Test]
         [TestCaseSource( "UnitGenerationAmounts" )]

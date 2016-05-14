@@ -31,7 +31,6 @@ namespace IdleFantasy {
 
         public float GetProgressFromTimeElapsed( TimeSpan i_timeSpan ) {
             float progress = (float) ( mUnitsPerSecond * i_timeSpan.TotalSeconds );
-            UnityEngine.Debug.Log( progress );
             return progress;
         }
 

@@ -34,6 +34,7 @@ namespace IdleFantasy.UnitTests {
 
         [SetUp]
         public void BeforeTest() {
+            UnitTestUtils.LoadOfflineData();
             mTestModel = new ViewModel();
 
             UpgradeData testUpgradeData = new UpgradeData();

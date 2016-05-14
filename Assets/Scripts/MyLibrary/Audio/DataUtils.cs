@@ -17,20 +17,23 @@ public static class DataUtils {
     /// Returns whatever text is in the
     /// incoming file.
     //////////////////////////////////////////
+    public static string LoadFileWithPath( string i_file ) {
+        string data = "";
+
+        if ( File.Exists( i_file ) ) {
+            FileStream file = new FileStream( i_file, FileMode.Open, FileAccess.Read );
+            StreamReader sr = new StreamReader( file );
+
+            data = sr.ReadToEnd();
+            sr.Close();
+            file.Close();
+        }
+
+        return data;
+    }
     public static string LoadFile( string i_strFile ) {
-		string strData = "";
-
         string strPath = GetPath( i_strFile );
-		if ( File.Exists( strPath ) ) {
-			FileStream file = new FileStream( strPath, FileMode.Open, FileAccess.Read );
-			StreamReader sr = new StreamReader( file );
-			
-			strData = sr.ReadToEnd();
-			sr.Close();
-			file.Close();
-		}
-
-		return strData;
+        return LoadFileWithPath( strPath );
 	}
 
     //////////////////////////////////////////
@@ -90,7 +93,7 @@ public static class DataUtils {
     /// Loads a generic dictionary of data
     /// from the streaming assets folder.
     //////////////////////////////////////////
-    public static void LoadDataOld<T>( Dictionary<string, T> i_dictData, string i_strFolder ) where T : GenericData {
+    public static void LoadDataAsDictionary<T>( Dictionary<string, T> i_dictData, string i_strFolder ) where T : GenericData {
         // get all files in the folder (their contents)
         List<string> listFiles = LoadFiles( i_strFolder );
 

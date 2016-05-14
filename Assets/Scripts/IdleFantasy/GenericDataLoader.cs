@@ -29,7 +29,7 @@ namespace IdleFantasy {
                 return default ( T );
             }
 
-            Hashtable dataOfType = mData[i_type];
+            Hashtable dataOfType = mData[i_type]; 
 
             if ( dataOfType.ContainsKey( i_key ) ) {
                 return (T)dataOfType[i_key];
@@ -65,7 +65,6 @@ namespace IdleFantasy {
                 mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Got title data for " + i_className, "" );
 
                 Dictionary<string, T> dataAsDictionary = DeserializeData<T>( data, i_className );
-
                 StoreDictionaryDataAsHash<T>( dataAsDictionary, i_className );
             } );
            

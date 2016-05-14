@@ -18,7 +18,9 @@ namespace IdleFantasy.UnitTests {
         };
 
         [SetUp]
-        public void BeforeTests() {
+        public void BeforeTest() {
+            UnitTestUtils.LoadOfflineData();
+
             mTrainerData = new TrainerData( new ViewModel(), new Dictionary<string, int>() );
         }
 

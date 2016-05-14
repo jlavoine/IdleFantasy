@@ -1,9 +1,16 @@
 ﻿using NUnit.Framework;
+using MyLibrary;
 
 #pragma warning disable 0414
 
 namespace IdleFantasy.UnitTests {
+    [TestFixture]
     public class BuildingUpgradeTests {
+
+        [SetUp]
+        public void BeforeTest() {
+            UnitTestUtils.LoadOfflineData();
+        }
 
         [Test]
         public void UpgradeIncreasesCapacity() {            
