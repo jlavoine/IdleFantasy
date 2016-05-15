@@ -9,7 +9,7 @@ namespace MyLibrary {
             DontDestroyOnLoad( this );
 
             IMessageService messenger = new MyMessenger();
-            IntegrationTestLogger logger = new IntegrationTestLogger( messenger );
+            IntegrationTestLogger logger = new IntegrationTestLogger( messenger );            
         }
     }
 }

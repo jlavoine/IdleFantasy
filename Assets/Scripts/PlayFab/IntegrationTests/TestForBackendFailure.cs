@@ -14,36 +14,19 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IMessageService mMessenger;
         private IBackend mBackend;
 
-        public void Start() {
+        void Start() {
             mMessenger = new MyMessenger();
-            mBackend = new PlayFabBackend( mMessenger );
-
-            mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
-
-            mBackend.Authenticate();
+            mMessenger.AddListener<IBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
         }
 
         void OnDestroy() {
-            mMessenger.RemoveListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.RemoveListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
-        }
+            mMessenger.RemoveListener<IBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
+        }    
 
-        private void OnAuthenticationSucess( IAuthenticationSuccess i_success ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate success", "" );
-            mBackend.SetUpCloudServices( false );
-        }
+        private void LogInComplete( IBackend i_backend ) {
+            mBackend = i_backend;
 
-        private void OnBackendFailure( IBackendFailure i_failure ) {            
-            IntegrationTest.Fail( i_failure.GetMessage() );
-        }
-
-        private void OnCloudSetupSuccess() {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
-
-            StartCoroutine(RunAllTests());
+            StartCoroutine( RunAllTests() );
         }
 
         private IEnumerator RunAllTests() {
