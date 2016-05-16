@@ -44,17 +44,19 @@ handlers.getAllDataForClass = function (args) {
 /////////////////////////////////////////////////
 
 handlers.initiateUpgrade = function (args) {
-    var className = args.data["Class"];
+    //var className = args.data["Class"];
     
     //var upgradeableData = GetLevelsForClass(className);
     //log.info(upgradeableData);
 
-    var data = GetTitleDataForClass(className);
+    //var data = GetTitleDataForClass(className);
 
-    for (var key in data) {
-        var obj = data[key];
-        log.info(obj["ID"]);
-    }
+    //for (var key in data) {
+    //    var obj = data[key];
+    //    log.info(obj["ID"]);
+    //}
+
+    return { outOfSync : true };
 }
 
 function GetTitleDataForClass(className) {

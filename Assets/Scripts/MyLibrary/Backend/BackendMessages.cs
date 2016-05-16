@@ -16,7 +16,6 @@ namespace MyLibrary {
         public const string CURRENCY_REQUEST_FAIL = "GetCurrencyFail";
         public const string PLAYER_DATA_REQUEST_FAIL = "PlayerDataFail";
 
-
         public const string LOGIN_SUCCESS = "LoginComplete";
     }
 }

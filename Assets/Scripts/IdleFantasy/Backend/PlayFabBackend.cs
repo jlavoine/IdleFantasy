@@ -4,11 +4,13 @@ using PlayFab;
 using PlayFab.ClientModels;
 using MyLibrary.PlayFab;
 using Newtonsoft.Json;
+using System;
 
 namespace MyLibrary {
     public class PlayFabBackend : IBasicBackend {
         private const string TITLE_ID = "B9C6";
         public const string PLAYFAB = "PlayFab";
+        public const string CLIENT_OUT_OF_SYNC_KEY = "outOfSync";
 
         protected IMessageService mMessenger;
 
@@ -18,6 +20,12 @@ namespace MyLibrary {
             set { mCloudRequestCount = value; }
         }
 
+        private bool mClientOutOfSync;
+        public bool ClientOutOfSync {
+            get { return mClientOutOfSync; }
+            set { mClientOutOfSync = value; }
+        }
+
         public string PlayFabId;
 
         public PlayFabBackend( IMessageService i_messenger ) {
@@ -25,7 +33,7 @@ namespace MyLibrary {
         }
 
         public bool IsBusy() {
-            return mCloudRequestCount > 0;
+            return CloudRequestCount > 0;
         }
 
         public void Authenticate() {
@@ -144,22 +152,33 @@ namespace MyLibrary {
             }, ( error ) => { HandleError( error, BackendMessages.TITLE_DATA_FAIL ); } );
         }
 
-        private void HandleError( PlayFabError i_error, string i_messageType ) {
-            RequestComplete( "Backend failure!", LogTypes.Error );
+        protected void HandleError( PlayFabError i_error, string i_messageType ) {
+            RequestComplete( "Backend failure(" + i_messageType + "): " + i_error.ErrorMessage, LogTypes.Error );
 
             IBackendFailure failure = new BackendFailure( i_error.ErrorMessage );
             mMessenger.Send<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, failure );
             mMessenger.Send<IBackendFailure>( i_messageType, failure );
         }
 
-        private void StartRequest( string i_message ) {
+        protected void StartRequest( string i_message ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, i_message, PLAYFAB );
             CloudRequestCount++;
         }
 
-        private void RequestComplete( string i_message, LogTypes i_messageType ) {
+        protected void RequestComplete( string i_message, LogTypes i_messageType ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, i_messageType, i_message, PLAYFAB );
             CloudRequestCount--;
+        }
+
+        public bool IsClientOutOfSync() {
+            return ClientOutOfSync;
+        }
+
+        protected void CheckForOutOfSyncState( Dictionary<string, string> results ) {
+            if ( results.ContainsKey(CLIENT_OUT_OF_SYNC_KEY ) ) {
+                bool outOfSync = bool.Parse( results[CLIENT_OUT_OF_SYNC_KEY] );
+                ClientOutOfSync = outOfSync;
+            }
         }
     }
 }

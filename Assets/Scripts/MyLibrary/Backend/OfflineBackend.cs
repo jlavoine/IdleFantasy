@@ -31,6 +31,10 @@ namespace MyLibrary {
             throw new NotImplementedException();
         }
 
+        public bool IsClientOutOfSync() {
+            throw new NotImplementedException();
+        }
+
         public void SetUpCloudServices( bool i_testing ) {
             throw new NotImplementedException();
         }

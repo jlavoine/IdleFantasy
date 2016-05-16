@@ -6,7 +6,7 @@ using System.Collections;
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {
 
-        private IBackend mBackend;
+        private IdleFantasyBackend mBackend;
         private IMessageService mMessenger;
 
         void Start() {
@@ -36,6 +36,8 @@ namespace IdleFantasy {
             PlayerData playerData = new PlayerData();
             playerData.Init( mBackend );
             PlayerManager.Init( playerData );
+
+            mBackend.MakeUpgradeCall();
 
             while ( mBackend.IsBusy() ) {
                 yield return 0;

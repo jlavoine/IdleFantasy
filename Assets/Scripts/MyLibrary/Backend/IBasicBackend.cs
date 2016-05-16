@@ -9,6 +9,7 @@ namespace MyLibrary {
         void GetPlayerData( string i_key, Callback<string> requestSuccessCallback );
         void GetVirtualCurrency( string i_key, Callback<int> requetSuccessCallback );
 
+        bool IsClientOutOfSync();
         bool IsBusy();
     }
 }
