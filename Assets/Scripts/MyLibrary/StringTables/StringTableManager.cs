@@ -7,7 +7,7 @@ namespace MyLibrary {
 
         private static IMessageService mMessenger;
 
-        public static void Init( string i_langauge, IBackend i_backend, IMessageService i_messenger ) {
+        public static void Init( string i_langauge, IBasicBackend i_backend, IMessageService i_messenger ) {
             mMessenger = i_messenger;
 
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing string table for " + i_langauge, "" );

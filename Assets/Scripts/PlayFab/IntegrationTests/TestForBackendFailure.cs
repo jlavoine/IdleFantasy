@@ -12,18 +12,18 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestForBackendFailure : MonoBehaviour {
 
         private IMessageService mMessenger;
-        private IBackend mBackend;
+        private IBasicBackend mBackend;
 
         void Start() {
             mMessenger = new MyMessenger();
-            mMessenger.AddListener<IBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
+            mMessenger.AddListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
         }
 
         void OnDestroy() {
-            mMessenger.RemoveListener<IBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
+            mMessenger.RemoveListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
         }    
 
-        private void LogInComplete( IBackend i_backend ) {
+        private void LogInComplete( IBasicBackend i_backend ) {
             mBackend = i_backend;
 
             StartCoroutine( RunAllTests() );

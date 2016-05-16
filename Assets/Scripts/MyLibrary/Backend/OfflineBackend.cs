@@ -3,7 +3,7 @@ using UnityEngine;
 using MyLibrary.PlayFab;    // this is here just for string clean up/deserialization since I just copy the json on the playfab servers for offline usage (unit tests)
 
 namespace MyLibrary {
-    public class OfflineBackend : IBackend {
+    public class OfflineBackend : IBasicBackend {
         public void Authenticate() {
             throw new NotImplementedException();
         }

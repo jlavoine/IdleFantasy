@@ -13,12 +13,12 @@ namespace IdleFantasy {
         public const string TEST_BUILDING = "BASE_BUILDING_1";
         public const string TEST_UNIT = "BASE_UNIT_1";
 
-        private static IBackend mBackend;
+        private static IBasicBackend mBackend;
         private static IMessageService mMessenger;
 
         private static Dictionary<string, Hashtable> mData = new Dictionary<string, Hashtable>();
 
-        public static void Init( IBackend i_backend, IMessageService i_messenger ) {
+        public static void Init( IBasicBackend i_backend, IMessageService i_messenger ) {
             mBackend = i_backend;
             mMessenger = i_messenger;
         }

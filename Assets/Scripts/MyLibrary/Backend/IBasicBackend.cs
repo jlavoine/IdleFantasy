@@ -1,6 +1,6 @@
 ﻿
 namespace MyLibrary {
-    public interface IBackend  {
+    public interface IBasicBackend  {
         void Authenticate();
         void SetUpCloudServices( bool i_testing );
 

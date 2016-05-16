@@ -7,7 +7,7 @@ namespace IdleFantasy.IntegrationTests {
 
         void Start() {
             mMessenger = new MyMessenger();                       
-            IBackend playFabBackend = new PlayFabBackend( mMessenger );
+            IBackend playFabBackend = new IdleFantasyBackend( mMessenger );
 
             mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
 

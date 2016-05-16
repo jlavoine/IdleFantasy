@@ -19,9 +19,9 @@ namespace IdleFantasy {
 
         private ViewModel mModel;
 
-        private IBackend mBackend;
+        private IBasicBackend mBackend;
         
-        public void Init( IBackend i_backend ) {
+        public void Init( IBasicBackend i_backend ) {
             mBackend = i_backend;
             mModel = new ViewModel();
 

@@ -6,7 +6,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         public const string LOG_IN_DONE = "LogInComplete";
 
         private IMessageService mMessenger;
-        private IBackend mBackend;
+        private IBasicBackend mBackend;
 
         public void Start() {
             mMessenger = new MyMessenger();
@@ -36,7 +36,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private void OnCloudSetupSuccess() {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
-            mMessenger.Send<IBackend>( LOG_IN_DONE, mBackend );
+            mMessenger.Send<IBasicBackend>( LOG_IN_DONE, mBackend );
         }
     }
 }

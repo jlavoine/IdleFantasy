@@ -6,11 +6,11 @@ using MyLibrary.PlayFab;
 using Newtonsoft.Json;
 
 namespace MyLibrary {
-    public class PlayFabBackend : IBackend {
+    public class PlayFabBackend : IBasicBackend {
         private const string TITLE_ID = "B9C6";
         public const string PLAYFAB = "PlayFab";
 
-        private IMessageService mMessenger;
+        protected IMessageService mMessenger;
 
         private int mCloudRequestCount = 0;
         public int CloudRequestCount {

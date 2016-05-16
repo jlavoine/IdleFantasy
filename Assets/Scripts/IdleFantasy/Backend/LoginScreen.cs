@@ -11,7 +11,7 @@ namespace IdleFantasy {
 
         void Start() {
             mMessenger = new MyMessenger();            
-            mBackend = new PlayFabBackend( mMessenger );
+            mBackend = new IdleFantasyBackend( mMessenger );
 
             mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
 
