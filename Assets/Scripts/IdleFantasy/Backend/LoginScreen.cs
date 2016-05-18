@@ -12,6 +12,7 @@ namespace IdleFantasy {
         void Start() {
             mMessenger = new MyMessenger();            
             mBackend = new IdleFantasyBackend( mMessenger );
+            BackendManager.Init( mBackend );
 
             mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
 
@@ -36,8 +37,6 @@ namespace IdleFantasy {
             PlayerData playerData = new PlayerData();
             playerData.Init( mBackend );
             PlayerManager.Init( playerData );
-
-            mBackend.MakeUpgradeCall();
 
             while ( mBackend.IsBusy() ) {
                 yield return 0;

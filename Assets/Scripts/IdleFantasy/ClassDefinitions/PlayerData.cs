@@ -5,8 +5,8 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
-        public const string BUILDING_PROGRESS = "BuildingProgress";
-        public const string UNIT_PROGRESS = "UnitProgress";
+        public const string BUILDING_PROGRESS = "BuildingsProgress";
+        public const string UNIT_PROGRESS = "UnitsProgress";
 
         public Dictionary<string, UnitProgress> UnitProgress;
         public Dictionary<string, int> UnitTrainingLevels;
@@ -50,15 +50,15 @@ namespace IdleFantasy {
         }
 
         public int Gold {
-            get { return mModel.GetPropertyValue<int>( "Gold" ); }
+            get { return mModel.GetPropertyValue<int>( VirtualCurrencies.GOLD ); }
             set {
-                mModel.SetProperty( "Gold", value );
+                mModel.SetProperty( VirtualCurrencies.GOLD, value );
 
-                if ( !mInventory.ContainsKey( "Gold" ) ) {
-                    mInventory.Add( "Gold", value );
+                if ( !mInventory.ContainsKey( VirtualCurrencies.GOLD ) ) {
+                    mInventory.Add( VirtualCurrencies.GOLD, value );
                 }
                 else {
-                    mInventory["Gold"] = value;
+                    mInventory[VirtualCurrencies.GOLD] = value;
                 }
             }
         }

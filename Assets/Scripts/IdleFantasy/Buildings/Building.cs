@@ -53,7 +53,7 @@ namespace IdleFantasy {
             NextUnitProgress = 0;
 
             mLevel = new Upgradeable();
-            mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
+            mLevel.SetPropertyToUpgrade( mModel, mData.Level );
             mLevel.UpgradeCompleteEvent += OnUpgraded;
             Level.Value = 1;
 

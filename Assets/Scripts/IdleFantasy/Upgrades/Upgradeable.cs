@@ -16,6 +16,10 @@ namespace IdleFantasy {
             mData = i_data;
         }
 
+        public UpgradeData UpgradeData {
+            get { return mData; }
+        }
+
         public int Value {
             get { return mModel.GetPropertyValue<int>( mData.PropertyName ); }
             set {

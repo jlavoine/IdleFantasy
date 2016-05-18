@@ -10,6 +10,10 @@ namespace IdleFantasy {
             set;
         }
 
+        UpgradeData UpgradeData {
+            get;
+        }
+
         int MaxLevel {
             get;
         }

@@ -44,19 +44,58 @@ handlers.getAllDataForClass = function (args) {
 /////////////////////////////////////////////////
 
 handlers.initiateUpgrade = function (args) {
-    //var className = args.data["Class"];
+    var className = args.data["Class"];
+    var targetID = args.data["TargetID"];
+    var upgradeID = args.data["UpgradeID"];
     
     //var upgradeableData = GetLevelsForClass(className);
     //log.info(upgradeableData);
 
-    //var data = GetTitleDataForClass(className);
+    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);    
+    log.info(upgradeData);
+
+    var progressData = GetProgressForTarget(className, targetID);
+    log.info(progressData);
 
     //for (var key in data) {
     //    var obj = data[key];
     //    log.info(obj["ID"]);
     //}
 
-    return { outOfSync : true };
+    if ( CanUpgrade(upgradeData, progressData) ) {
+        log.info("can!");
+        PayForUpgrade();
+
+        Upgrade(progressData);
+    } else {
+        log.info("fail");
+        return { outOfSync : true };
+    }
+}
+
+function GetProgressForTarget(className, targetID) {
+    var progressKey = className + "Progress";
+    var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [progressKey] });
+    var actualData = rawData["Data"];
+    var allProgressData = actualData[progressKey];
+    var valueData = JSON.parse(allProgressData["Value"]);
+    var progressData = valueData[targetID];
+    
+    return progressData;
+}
+
+function GetUpgradeDataForTarget(className, targetID, upgradeID) {
+    var dataForTarget = GetDataForTarget(className, targetID);
+    var upgradeData = JSON.parse(dataForTarget[upgradeID]);
+
+    return upgradeData;
+}
+
+function GetDataForTarget(className, targetID) {
+    var allDataForClass = GetTitleDataForClass(className);
+    var dataForTarget = allDataForClass[targetID];
+
+    return dataForTarget;
 }
 
 function GetTitleDataForClass(className) {
@@ -96,21 +135,43 @@ function GetLevelsForClass(className) {
     return upgradeableData;
 }
 
-handlers.canUpgrade = function (args) {
+function CanUpgrade(upgradeData, progressData) {
+    if (IsAtMaxLevel(upgradeData, progressData) || !CanAffordUpgrade(upgradeData, progressData)) {
+        return false;
+    }
+
+    return true;
+}
+
+function IsAtMaxLevel(upgradeData, progressData) {
+    return progressData["Level"] >= upgradeData["MaxLevel"];
+}
+
+function CanAffordUpgrade(upgradeData, progressData) {
+    var resourcesToUpgrade = upgradeData["ResourcesToUpgrade"];
+    var nextLevel = progressData["Level"] +1;
+
+    for (var resource in resourcesToUpgrade) {
+        var costPerLevel = resourcesToUpgrade[resource];
+        var cost = costPerLevel * nextLevel;
+        log.info(cost);
+    }
+
+    return true;
+}
+
+function PayForUpgrade() {
     
+}
+
+function Upgrade(progressData) {
+    var level = progressData["Level"] + 1;
 }
 
 handlers.getUpgradeCost = function (args) {
     
 }
 
-handlers.payForUpgrade = function (args) {
-    
-}
-
-handlers.upgrade = function (args) {
-    
-}
 
 /////////////////////////////////////////////////
 /// ~Upgradeables

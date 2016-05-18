@@ -16,6 +16,12 @@ namespace IdleFantasy {
             }
         }
 
+        public UpgradeData UpgradeData {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public int Value {
             get {
                 throw new NotImplementedException();
