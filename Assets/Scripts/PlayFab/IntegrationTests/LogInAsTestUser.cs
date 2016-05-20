@@ -5,18 +5,21 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public class LogInAsTestUser : MonoBehaviour {
         public const string LOG_IN_DONE = "LogInComplete";
 
+        public string ID;
+
         private IMessageService mMessenger;
-        private IBasicBackend mBackend;
+        private IdleFantasyBackend mBackend;
 
         public void Start() {
             mMessenger = new MyMessenger();
-            mBackend = new PlayFabBackend( mMessenger );
+            mBackend = new IdleFantasyBackend( mMessenger );
+            BackendManager.Init( mBackend );
 
             mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
             mMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
             mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
-            mBackend.Authenticate();
+            mBackend.Authenticate( ID );
         }
 
         void OnDestroy() {

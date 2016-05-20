@@ -26,7 +26,7 @@ namespace IdleFantasy {
             mMessenger.AddListener<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, OnCloudSetupFailure );
 
             mLoginTimer.Start();
-            mBackend.Authenticate();
+            mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
         }
 
         void OnDestroy() {

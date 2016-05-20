@@ -26,6 +26,8 @@ namespace MyLibrary {
             set { mClientOutOfSync = value; }
         }
 
+        private bool mCloudServicesSetUp = false;
+
         public string PlayFabId;
 
         public PlayFabBackend( IMessageService i_messenger ) {
@@ -33,10 +35,10 @@ namespace MyLibrary {
         }
 
         public bool IsBusy() {
-            return CloudRequestCount > 0;
+            return CloudRequestCount > 0 || !mCloudServicesSetUp;
         }
 
-        public void Authenticate() {
+        public void Authenticate( string i_id ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authentication attempt for title " + TITLE_ID, PLAYFAB );
 
             PlayFabSettings.TitleId = TITLE_ID;
@@ -44,7 +46,7 @@ namespace MyLibrary {
             LoginWithCustomIDRequest request = new LoginWithCustomIDRequest() {
                 TitleId = TITLE_ID,
                 CreateAccount = true,
-                CustomId = SystemInfo.deviceUniqueIdentifier
+                CustomId = i_id
             };
 
             PlayFabClientAPI.LoginWithCustomID( request, ( result ) => {
@@ -63,9 +65,38 @@ namespace MyLibrary {
             };
 
             PlayFabClientAPI.GetCloudScriptUrl( request, ( result ) => {
+                mCloudServicesSetUp = true;
                 mMessenger.Send( BackendMessages.CLOUD_SETUP_SUCCESS );
             },
             ( error ) => { HandleError( error, BackendMessages.CLOUD_SETUP_FAIL ); } );
+        }
+
+        public void MakeCloudCall( string i_methodName, Dictionary<string,string> i_params, Callback<Dictionary<string, string>> i_requestSuccessCallback ) {
+            StartRequest( "Request for cloud call " + i_methodName );
+
+            RunCloudScriptRequest request = new RunCloudScriptRequest() {
+                ActionId = i_methodName,
+                Params = new { data = i_params }
+            };
+
+            PlayFabClientAPI.RunCloudScript( request, ( result ) => {
+                RequestComplete( "Cloud logs for " + i_methodName + " call " + ": " + result.ActionLog, LogTypes.Info );
+
+                Dictionary<string, string> resultsDeserialized = new Dictionary<string, string>();
+
+                if ( result.Results != null ) {
+                    string resultAsString = result.Results.ToString();
+                    resultAsString = resultAsString.CleanStringForJsonDeserialization();
+
+                    resultsDeserialized = JsonConvert.DeserializeObject<Dictionary<string, string>>( resultAsString );
+
+                    CheckForOutOfSyncState( resultsDeserialized );
+                }
+
+                if ( i_requestSuccessCallback != null ) {
+                    i_requestSuccessCallback( resultsDeserialized );
+                }
+            }, ( error ) => { HandleError( error, i_methodName ); } );
         }
 
         public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {

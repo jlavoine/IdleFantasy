@@ -19,6 +19,48 @@ handlers.myTest = function (args) {
     return result;
 }
 
+function isTesting() {
+    var internalData = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: ["Testing"] });    
+    var data = internalData["Data"];
+    var value = data["Testing"];
+    var isTesting = value["Value"] == "true";
+    
+    return isTesting;
+}
+
+handlers.setPlayerData = function(args) {
+    if (!isTesting) {
+        return;
+    }
+
+    var key = args.data["Key"];
+    var value = args.data["Value"];
+
+    var dataToSave = {};
+    dataToSave[key] = value;
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: dataToSave, Permission: "Public"});
+}
+
+handlers.setPlayerCurrency = function(args) {
+    if (!isTesting) {
+        return;
+    }
+
+    var amountToSet = args.data["Amount"];
+    var currencyType = args.data["Type"];
+
+    var playerInventory = GetPlayerInventory();    
+    var currentAmount = GetAmountOfCurrency(playerInventory, currencyType);
+    var changeInCurrency = currentAmount - amountToSet;    
+
+    if (changeInCurrency > 0) {
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: changeInCurrency });
+    } else if (changeInCurrency < 0) {
+        server.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: Math.abs(changeInCurrency) });
+    }
+}
+
 handlers.canTrainUnit = function (args) {
     var saveData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: ["BASE_MELEE_1"] });
 
@@ -47,39 +89,42 @@ handlers.initiateUpgrade = function (args) {
     var className = args.data["Class"];
     var targetID = args.data["TargetID"];
     var upgradeID = args.data["UpgradeID"];
-    
-    //var upgradeableData = GetLevelsForClass(className);
-    //log.info(upgradeableData);
 
-    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);    
-    log.info(upgradeData);
+    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
+    var readOnlyData = GetReadOnlyProgressData(className);
+    var progressData = GetProgressForTarget(readOnlyData, targetID);
 
-    var progressData = GetProgressForTarget(className, targetID);
-    log.info(progressData);
+    var playerInventory = GetPlayerInventory();
 
-    //for (var key in data) {
-    //    var obj = data[key];
-    //    log.info(obj["ID"]);
-    //}
+    if ( CanUpgrade(upgradeData, progressData, playerInventory) ) {
+        PayForUpgrade(upgradeData, progressData, playerInventory);
 
-    if ( CanUpgrade(upgradeData, progressData) ) {
-        log.info("can!");
-        PayForUpgrade();
-
-        Upgrade(progressData);
+        Upgrade(readOnlyData, className, progressData, targetID);
     } else {
-        log.info("fail");
         return { outOfSync : true };
     }
 }
 
-function GetProgressForTarget(className, targetID) {
-    var progressKey = className + "Progress";
+function GetPlayerInventory() {
+    return server.GetUserInventory({ PlayFabId: currentPlayerId });
+}
+
+function GetReadOnlyProgressData(className) {
+    var progressKey = GetProgressKey(className);
     var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [progressKey] });
     var actualData = rawData["Data"];
-    var allProgressData = actualData[progressKey];
-    var valueData = JSON.parse(allProgressData["Value"]);
-    var progressData = valueData[targetID];
+    var data = actualData[progressKey];
+    var valueData = JSON.parse(data["Value"]);
+
+    return valueData;    
+}
+
+function GetProgressKey(className) {
+    return className + "Progress";
+}
+
+function GetProgressForTarget(readOnlyData, targetID) {    
+    var progressData = readOnlyData[targetID];
     
     return progressData;
 }
@@ -135,8 +180,8 @@ function GetLevelsForClass(className) {
     return upgradeableData;
 }
 
-function CanUpgrade(upgradeData, progressData) {
-    if (IsAtMaxLevel(upgradeData, progressData) || !CanAffordUpgrade(upgradeData, progressData)) {
+function CanUpgrade(upgradeData, progressData, playerInventory) {
+    if (IsAtMaxLevel(upgradeData, progressData) || !CanAffordUpgrade(upgradeData, progressData, playerInventory)) {
         return false;
     }
 
@@ -147,63 +192,72 @@ function IsAtMaxLevel(upgradeData, progressData) {
     return progressData["Level"] >= upgradeData["MaxLevel"];
 }
 
-function CanAffordUpgrade(upgradeData, progressData) {
+function CanAffordUpgrade(upgradeData, progressData, playerInventory) {
+    var playerCurrencies = GetPlayerCurrenciesFromInventory(playerInventory);
     var resourcesToUpgrade = upgradeData["ResourcesToUpgrade"];
-    var nextLevel = progressData["Level"] +1;
+    var level = progressData["Level"];
 
     for (var resource in resourcesToUpgrade) {
         var costPerLevel = resourcesToUpgrade[resource];
-        var cost = costPerLevel * nextLevel;
-        log.info(cost);
+        var cost = costPerLevel * level;
+        
+        if(!HasEnoughCurrency(playerCurrencies, resource, cost)) {
+            return false;
+        }
     }
 
     return true;
 }
 
-function PayForUpgrade() {
-    
+function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
+    var currentCurrency = playerCurrencies[currencyType];    
+    return currentCurrency >= amount;
 }
 
-function Upgrade(progressData) {
-    var level = progressData["Level"] + 1;
+function GetAmountOfCurrency(playerInventory, currencyType) {
+    var playerCurrencies = playerInventory["VirtualCurrency"];
+    return playerCurrencies[currencyType];
+}
+
+function GetPlayerCurrenciesFromInventory(playerInventory) {    
+    var playerCurrencies = playerInventory["VirtualCurrency"];
+
+    return playerCurrencies;
+}
+
+function PayForUpgrade(upgradeData, progressData, playerInventory) {
+    var resourcesToUpgrade = upgradeData["ResourcesToUpgrade"];
+    var level = progressData["Level"];
+
+    for (var resource in resourcesToUpgrade) {
+        var costPerLevel = resourcesToUpgrade[resource];
+        var cost = costPerLevel * level;
+                
+        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: resource, Amount: cost });
+    }
+}
+
+function Upgrade(readOnlyData, className, progressData, targetID) {
+    progressData["Level"] += 1;
+    readOnlyData[targetID] = progressData;
+
+    var dataAsString = JSON.stringify(readOnlyData);
+
+    var progressKey = GetProgressKey(className);
+    log.info(progressKey);
+    log.info(dataAsString);
+
+    var data = {};
+    data[progressKey] = dataAsString;
+    log.info(data);
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
 }
 
 handlers.getUpgradeCost = function (args) {
     
 }
 
-
 /////////////////////////////////////////////////
 /// ~Upgradeables
-/////////////////////////////////////////////////
-
-/////////////////////////////////////////////////
-/// Buildings
-/////////////////////////////////////////////////
-
-handlers.building_initiateUpgrade = function (args) {
-    var buildingSaveData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: ["BuildingLevels"] });
-    log.info(buildingSaveData);
-    log.info(buildingSaveData["Data"]["BuildingLevels"]);
-    log.info(buildingSaveData["Data"]["BuildingLevels"]["Value"]);
-
-    var data = JSON.parse(buildingSaveData["Data"]["BuildingLevels"]["Value"]);
-    log.info(data);
-
-    data["BASE_BUILDING_1"] = 111;
-
-    log.info(data);
-
-    var dataAsString = JSON.stringify(data);
-
-    server.UpdateUserReadOnlyData({
-        PlayFabId: currentPlayerId,
-        Data: {
-            BuildingLevels : dataAsString
-        }
-    });
-}
-
-/////////////////////////////////////////////////
-/// ~Buildings
 /////////////////////////////////////////////////

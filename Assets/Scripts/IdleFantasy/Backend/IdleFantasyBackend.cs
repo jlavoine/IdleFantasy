@@ -20,23 +20,7 @@ namespace IdleFantasy {
             upgradeParams.Add( "TargetID", i_targetID );
             upgradeParams.Add( "UpgradeID", i_upgradeID );
 
-            RunCloudScriptRequest request = new RunCloudScriptRequest() {
-                ActionId = "initiateUpgrade",
-                Params = new { data = upgradeParams }
-            };
-
-            PlayFabClientAPI.RunCloudScript( request, ( result ) => {
-                RequestComplete( "Cloud logs for upgrade call " + ": " + result.ActionLog, LogTypes.Info );
-
-                if ( result.Results != null ) {
-                    string resultAsString = result.Results.ToString();
-                    resultAsString = resultAsString.CleanStringForJsonDeserialization();
-
-                    Dictionary<string, string> resultsDeserialized = JsonConvert.DeserializeObject<Dictionary<string, string>>( resultAsString );
-
-                    CheckForOutOfSyncState( resultsDeserialized );                    
-                }
-            }, ( error ) => { HandleError( error, "MakeUpgradeFail" ); } );
+            MakeCloudCall( "initiateUpgrade", upgradeParams, null );
         }
     }
 }

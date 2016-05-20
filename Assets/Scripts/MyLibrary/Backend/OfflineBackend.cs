@@ -1,10 +1,11 @@
 ﻿using System;
 using UnityEngine;
 using MyLibrary.PlayFab;    // this is here just for string clean up/deserialization since I just copy the json on the playfab servers for offline usage (unit tests)
+using System.Collections.Generic;
 
 namespace MyLibrary {
     public class OfflineBackend : IBasicBackend {
-        public void Authenticate() {
+        public void Authenticate( string i_id ) {
             throw new NotImplementedException();
         }
 
@@ -32,6 +33,10 @@ namespace MyLibrary {
         }
 
         public bool IsClientOutOfSync() {
+            throw new NotImplementedException();
+        }
+
+        public void MakeCloudCall( string i_methodName, Dictionary<string, string> i_params, Callback<Dictionary<string, string>> requestSuccessCallback ) {
             throw new NotImplementedException();
         }
 
