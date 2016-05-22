@@ -7,13 +7,13 @@ namespace MyLibrary.PlayFab {
         /// deserialization. This method will clean it up for proper deserialization.
         /// </summary>
         public static string CleanStringForJsonDeserialization( this string i_string ) {
+            i_string = i_string.Replace( "\\\"", "\"" );
+
             i_string = i_string.Replace( "\"[", "[" );
             i_string = i_string.Replace( "]\"", "]" );
 
             i_string = i_string.Replace( "\"{", "{" );
-            i_string = i_string.Replace( "}\"", "}" );
-
-            i_string = i_string.Replace( "\\\"", "\"" );
+            i_string = i_string.Replace( "}\"", "}" );            
 
             return i_string;
         }

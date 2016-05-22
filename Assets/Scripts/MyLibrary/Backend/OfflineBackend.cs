@@ -2,6 +2,7 @@
 using UnityEngine;
 using MyLibrary.PlayFab;    // this is here just for string clean up/deserialization since I just copy the json on the playfab servers for offline usage (unit tests)
 using System.Collections.Generic;
+using System.Collections;
 
 namespace MyLibrary {
     public class OfflineBackend : IBasicBackend {
@@ -41,6 +42,10 @@ namespace MyLibrary {
         }
 
         public void SetUpCloudServices( bool i_testing ) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerator WaitUntilNotBusy() {
             throw new NotImplementedException();
         }
     }

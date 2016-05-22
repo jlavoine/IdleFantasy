@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 
 namespace MyLibrary {
     public interface IBasicBackend  {
@@ -13,6 +14,8 @@ namespace MyLibrary {
         void GetVirtualCurrency( string i_key, Callback<int> requetSuccessCallback );
 
         bool IsClientOutOfSync();
+
         bool IsBusy();
+        IEnumerator WaitUntilNotBusy();
     }
 }

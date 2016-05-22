@@ -28,6 +28,23 @@ function isTesting() {
     return isTesting;
 }
 
+handlers.getProgressData = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var className = args.data["Class"];
+    var targetID = args.data["TargetID"];
+
+    var readOnlyData = GetReadOnlyProgressData(className);
+    var progressData = GetProgressForTarget(readOnlyData, targetID);
+        
+    var dataToString = JSON.stringify(progressData);
+    var data = { data : dataToString };
+
+    return data;    
+}
+
 handlers.setPlayerData = function(args) {
     if (!isTesting) {
         return;

@@ -1,10 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using PlayFab;
 using PlayFab.ClientModels;
 using MyLibrary.PlayFab;
 using Newtonsoft.Json;
-using System;
+using System.Collections;
 
 namespace MyLibrary {
     public class PlayFabBackend : IBasicBackend {
@@ -86,8 +85,6 @@ namespace MyLibrary {
 
                 if ( result.Results != null ) {
                     string resultAsString = result.Results.ToString();
-                    resultAsString = resultAsString.CleanStringForJsonDeserialization();
-
                     resultsDeserialized = JsonConvert.DeserializeObject<Dictionary<string, string>>( resultAsString );
 
                     CheckForOutOfSyncState( resultsDeserialized );
@@ -192,12 +189,12 @@ namespace MyLibrary {
         }
 
         protected void StartRequest( string i_message ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, i_message, PLAYFAB );
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "START REQUEST: " + i_message, PLAYFAB );
             CloudRequestCount++;
         }
 
         protected void RequestComplete( string i_message, LogTypes i_messageType ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, i_messageType, i_message, PLAYFAB );
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, i_messageType, "REQUEST COMPLETE: " + i_message, PLAYFAB );
             CloudRequestCount--;
         }
 
@@ -209,6 +206,12 @@ namespace MyLibrary {
             if ( results.ContainsKey(CLIENT_OUT_OF_SYNC_KEY ) ) {
                 bool outOfSync = bool.Parse( results[CLIENT_OUT_OF_SYNC_KEY] );
                 ClientOutOfSync = outOfSync;
+            }
+        }
+
+        public IEnumerator WaitUntilNotBusy() {
+            while ( IsBusy() ) {
+                yield return 0;
             }
         }
     }
