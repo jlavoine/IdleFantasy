@@ -7,7 +7,7 @@ namespace IdleFantasy {
     public class TrainerManager : ITrainerManager {
         public const string TOTAL_TRAINERS = "TotalTrainers";
         public const string CURRENT_TRAINERS = "CurrentTrainers";
-        public const string NORMAL_TRAINERS = "NormalTrainers";
+        public const string NORMAL_TRAINERS = "Normal";
 
         public const string STARTING_COST_KEY = "TrainerStartingCost";
 
@@ -85,13 +85,13 @@ namespace IdleFantasy {
 
         public bool CanAffordTrainerPurchase( IResourceInventory i_inventory ) {
             int cost = GetNextTrainerCost();
-            bool canTrain = i_inventory.HasEnoughResources( NormalInventory.GOLD, cost );
+            bool canTrain = i_inventory.HasEnoughResources( VirtualCurrencies.GOLD, cost );
             return canTrain;
         }
 
         public void ChargeForTrainerPurchase( IResourceInventory i_inventory ) {
             int cost = GetNextTrainerCost();
-            i_inventory.SpendResources( NormalInventory.GOLD, cost );
+            i_inventory.SpendResources( VirtualCurrencies.GOLD, cost );
         }
 
         public void AddTrainer( string i_type, int i_count ) {

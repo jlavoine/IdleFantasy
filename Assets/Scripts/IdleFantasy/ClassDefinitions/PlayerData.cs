@@ -14,8 +14,8 @@ namespace IdleFantasy {
 
         public Dictionary<string, BuildingProgress> BuildingProgress;
 
-        public TrainerSaveData TrainerSaveData;
-        private ITrainerManager mTrainerManager;
+        private TrainerSaveData mTrainerSaveData;
+        public ITrainerManager TrainerManager;
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
@@ -36,8 +36,8 @@ namespace IdleFantasy {
             } );
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
-                TrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
-                mTrainerManager = new TrainerManager( mModel, TrainerSaveData );
+                mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
+                TrainerManager = new TrainerManager( mModel, mTrainerSaveData );
             } );
 
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {

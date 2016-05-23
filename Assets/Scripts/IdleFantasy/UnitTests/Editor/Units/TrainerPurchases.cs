@@ -82,7 +82,7 @@ namespace IdleFantasy.UnitTests {
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();
-            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
+            realInventory.SetResource( VirtualCurrencies.GOLD, costForNextTrainer );
 
             bool canAfford = mTrainerData.CanAffordTrainerPurchase( realInventory );
 
@@ -98,11 +98,11 @@ namespace IdleFantasy.UnitTests {
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();
-            realInventory.SetResource( NormalInventory.GOLD, costForNextTrainer );
+            realInventory.SetResource( VirtualCurrencies.GOLD, costForNextTrainer );
 
             mTrainerData.InitiateTrainerPurchase( realInventory );
 
-            Assert.AreEqual( realInventory.GetResourceCount( NormalInventory.GOLD ), 0 );
+            Assert.AreEqual( realInventory.GetResourceCount( VirtualCurrencies.GOLD ), 0 );
         }
 
         [Test]
