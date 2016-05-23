@@ -9,6 +9,8 @@ namespace IdleFantasy {
             set;
         }
 
+        //BuildingProgress GetBuildingProgress( string i_ID );
+
         object GetData( string i_key );
 
         /*ITrainerData TrainerData {

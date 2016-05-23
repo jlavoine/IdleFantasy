@@ -24,7 +24,7 @@ namespace IdleFantasy {
             mockPlayer.Gold = 10000;
 
             BuildingData buildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
-            mTestBuilding = new Building( buildingData, testUnit );
+            mTestBuilding = new Building( buildingData, testUnit, new BuildingProgress() );
 
             foreach ( MajorResourcesView view in views ) {
                 view.SetModel( mockPlayer.GetViewModel() );

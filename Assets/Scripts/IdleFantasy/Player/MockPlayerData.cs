@@ -71,5 +71,12 @@ namespace IdleFantasy {
         public object GetData( string i_key ) {
             throw new NotImplementedException();
         }
+
+        public BuildingProgress GetBuildingProgress( string i_ID ) {
+            BuildingProgress progress = new BuildingProgress();
+            progress.Level = 1;
+
+            return progress;
+        }
     }
 }
