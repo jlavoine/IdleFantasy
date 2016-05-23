@@ -5,15 +5,15 @@ using System;
 namespace IdleFantasy {
     public class MockPlayerData : IPlayerData, IResourceInventory {
         private ViewModel mModel;
-        private ITrainerData mTrainerData;
+        private ITrainerManager mTrainerData;
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();        
 
         public MockPlayerData() {
             mModel = new ViewModel();
 
-            Dictionary<string, int> mockTrainerData = new Dictionary<string, int>() { { IdleFantasy.TrainerData.NORMAL_TRAINERS, 1 } };
-            mTrainerData = new TrainerData( mModel, mockTrainerData );
+            Dictionary<string, int> mockTrainerCount = new Dictionary<string, int>() { { IdleFantasy.TrainerManager.NORMAL_TRAINERS, 1 } };
+            mTrainerData = new TrainerManager( mModel, new TrainerSaveData() { TrainerCounts = mockTrainerCount } );
         }
 
         public int Gold {
@@ -30,7 +30,7 @@ namespace IdleFantasy {
             }
         }
 
-        public ITrainerData TrainerData {
+        public ITrainerManager TrainerData {
             get { return mTrainerData; }
         }
 

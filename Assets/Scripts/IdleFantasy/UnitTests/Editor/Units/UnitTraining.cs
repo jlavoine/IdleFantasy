@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace IdleFantasy.UnitTests {
     [TestFixture]
     public class UnitTraining {
-        private ITrainerData mTrainerData;
+        private ITrainerManager mTrainerData;
         private IUnit mUnit;
 
         static object[] UnitTrainingChanges = {
@@ -44,7 +44,7 @@ namespace IdleFantasy.UnitTests {
         [SetUp]
         public void BeforeTests() {
             UnitTestUtils.LoadOfflineData();
-            mTrainerData = new TrainerData( new ViewModel(), new Dictionary<string, int>() );
+            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
             mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ) );
         }
 

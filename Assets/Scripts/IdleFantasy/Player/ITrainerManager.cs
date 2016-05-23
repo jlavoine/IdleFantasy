@@ -1,6 +1,6 @@
 ﻿
 namespace IdleFantasy {
-    public interface ITrainerData {
+    public interface ITrainerManager {
         int AvailableTrainers {
             get;
             set;

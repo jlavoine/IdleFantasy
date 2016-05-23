@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace IdleFantasy.UnitTests {
     [TestFixture]
     public class TrainerPurchases {
-        private ITrainerData mTrainerData;
+        private ITrainerManager mTrainerData;
 
         static object[] NewTrainerCostTests = {
             new object[] { 0, 1000 },
@@ -21,7 +21,7 @@ namespace IdleFantasy.UnitTests {
         public void BeforeTest() {
             UnitTestUtils.LoadOfflineData();
 
-            mTrainerData = new TrainerData( new ViewModel(), new Dictionary<string, int>() );
+            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace IdleFantasy.UnitTests {
             mTrainerData.TotalTrainers = 1;
             mTrainerData.AvailableTrainers = 1;
 
-            mTrainerData.AddTrainer( TrainerData.NORMAL_TRAINERS, 1 );
+            mTrainerData.AddTrainer( TrainerManager.NORMAL_TRAINERS, 1 );
 
             Assert.AreEqual( 2, mTrainerData.AvailableTrainers );
         }
@@ -41,7 +41,7 @@ namespace IdleFantasy.UnitTests {
             trainers.Add( "Type_2", 3 );
             trainers.Add( "Type_3", 5 );
 
-            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
 
             Assert.AreEqual( mTrainerData.TotalTrainers, 9 );
         }
@@ -64,9 +64,9 @@ namespace IdleFantasy.UnitTests {
         [TestCaseSource( "NewTrainerCostTests" )]
         public void VerifyNextTrainerCosts( int i_numTrainers, int i_expectedCostForNextTrainer ) {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
-            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
+            trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
 
-            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
 
@@ -77,8 +77,8 @@ namespace IdleFantasy.UnitTests {
         [TestCaseSource( "NewTrainerCostTests" )]
         public void CanAffordNewTrainer_RealInventory( int i_numTrainers, int i_expectedCostForNextTrainer ) {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
-            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
-            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();
@@ -93,8 +93,8 @@ namespace IdleFantasy.UnitTests {
         [TestCaseSource( "NewTrainerCostTests" )]
         public void VerifyNextTrainerPurchaseSpendsResources( int i_numTrainers, int i_expectedCostForNextTrainer ) {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
-            trainers.Add( TrainerData.NORMAL_TRAINERS, i_numTrainers );
-            mTrainerData = new TrainerData( new ViewModel(), trainers );
+            trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();
@@ -115,6 +115,13 @@ namespace IdleFantasy.UnitTests {
             mTrainerData.InitiateTrainerPurchase( new FullInventory() );
 
             Assert.AreEqual( mTrainerData.TotalTrainers, expectedTrainersAfterPurchase );
+        }
+
+        private TrainerSaveData CreateTrainerSaveData_WithCounts( Dictionary<string, int> i_trainerCounts ) {
+            TrainerSaveData data = new TrainerSaveData();
+            data.TrainerCounts = i_trainerCounts;
+
+            return data;
         }
     }
 }

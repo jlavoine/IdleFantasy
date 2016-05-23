@@ -4,7 +4,7 @@ using System;
 using MyLibrary;
 
 namespace IdleFantasy {
-    public class TrainerData : ITrainerData {
+    public class TrainerManager : ITrainerManager {
         public const string TOTAL_TRAINERS = "TotalTrainers";
         public const string CURRENT_TRAINERS = "CurrentTrainers";
         public const string NORMAL_TRAINERS = "NormalTrainers";
@@ -40,8 +40,8 @@ namespace IdleFantasy {
             }
         }
 
-        public TrainerData( ViewModel i_playerModel, Dictionary<string, int> i_trainerData ) {
-            mTrainers = i_trainerData;
+        public TrainerManager( ViewModel i_playerModel, TrainerSaveData i_trainerData ) {
+            mTrainers = i_trainerData.TrainerCounts;
             mPlayerModel = i_playerModel;
 
             TotalTrainers = GetTotalTrainers();

@@ -2,6 +2,8 @@
 using UnityEngine.SceneManagement;
 using MyLibrary;
 using System.Collections;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {

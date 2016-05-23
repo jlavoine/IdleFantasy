@@ -7,13 +7,15 @@ namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
         public const string BUILDING_PROGRESS = "BuildingsProgress";
         public const string UNIT_PROGRESS = "UnitsProgress";
+        public const string TRAINER_SAVE_DATA = "TrainerSaveData";
 
         public Dictionary<string, UnitProgress> UnitProgress;
         public Dictionary<string, int> UnitTrainingLevels;
 
-        public Dictionary<string, int> Trainers;
-
         public Dictionary<string, BuildingProgress> BuildingProgress;
+
+        public TrainerSaveData TrainerSaveData;
+        private ITrainerManager mTrainerManager;
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
@@ -31,6 +33,11 @@ namespace IdleFantasy {
 
             mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
                 UnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
+            } );
+
+            mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
+                TrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
+                mTrainerManager = new TrainerManager( mModel, TrainerSaveData );
             } );
 
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
