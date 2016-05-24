@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
         public static string INIT_UPGRADE = "initiateUpgrade";
+        public static string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
+
         public static string TEST_SET_DATA = "setPlayerData";
         public static string TEST_SET_CURRENCY = "setPlayerCurrency";
 
@@ -22,6 +24,11 @@ namespace IdleFantasy {
             upgradeParams.Add( "UpgradeID", i_upgradeID );
 
             MakeCloudCall( INIT_UPGRADE, upgradeParams, null );
+        }
+
+        public void MakeTrainerPurchase() {
+
+            MakeCloudCall( INIT_TRAINER_PURCHASE, null, null );
         }
     }
 }

@@ -15,9 +15,18 @@ const UPGRADE_LEVEL = "Level";  // key for a level upgrade
 const CLASS = "Class";          // key used from client as to what type of data (building, unit, etc) is involved in the call
 const TARGET_ID = "TargetID";   // key used from client as to what specific object is involved in the call
 
+// currencies
+const CURRENCY_GOLD = "G1";
+
 // upgrade related
 const UPGRADE_ID = "UpgradeID";                 // key used from client as to what upgradeable on the target is involed in the call
 const UPGRADE_RESOURCES = "ResourcesToUpgrade"; // key for finding list of resources that an upgrade requires
+
+// trainer related
+const TRAINER_SAVE_DATA = "TrainerSaveData";    // key for player's trainer save data
+const TRAINER_COUNTS = "TrainerCounts";         // key for trainer counts within the trainer save data object
+const NORMAL_TRAINER = "Normal";                // the normal trainers a player can purchase
+const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
 
 /// game modules
 const MODULE_BASE = "Base";    // the base game!
@@ -238,6 +247,82 @@ function GetProgressForTarget(readOnlyData, targetID) {
 
 /////////////////////////////////////////////////
 /// ~ProgressData
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// TrainerPurchasing
+/// Related to trainer purchasing.
+/////////////////////////////////////////////////
+
+/// The client calls this method to initiate a purchase of a normal trainer
+handlers.initiateTrainerPurchase = function (args) {
+    var playerInventory = GetPlayerInventory();
+    var trainerSaveData = GetTrainerSaveData();
+
+    if ( CanPurchaseTrainer(trainerSaveData, playerInventory) ) {
+        PayForTrainer(trainerSaveData);
+
+        AddTrainer(trainerSaveData);
+    } else {
+        return { outOfSync : true };
+    }
+}
+
+function GetTrainerSaveData() {
+    var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [TRAINER_SAVE_DATA] });
+    var actualData = rawData[DATA];
+    var data = actualData[TRAINER_SAVE_DATA];
+    var valueData = JSON.parse(data[VALUE]);
+
+    log.info("Got trainer save data: " + data[VALUE]);
+
+    return valueData;  
+}
+
+function CanPurchaseTrainer(trainerSaveData, playerInventory) {
+    var playerCurrencies = GetPlayerCurrenciesFromInventory(playerInventory);
+    var cost = GetNextTrainerCost(trainerSaveData);
+
+    var canPurchase = HasEnoughCurrency(playerCurrencies, CURRENCY_GOLD, cost);
+    log.info("Can purchase new trainer: " + canPurchase);
+
+    return canPurchase;
+}
+
+function GetNextTrainerCost(trainerSaveData) {
+    var trainerCounts = trainerSaveData[TRAINER_COUNTS];
+    var normalTrainers = trainerCounts[NORMAL_TRAINER];
+    var cost = (normalTrainers + 1) * BASE_TRAINER_COST;
+
+    log.info("Cost for a new normal trainer: " + cost);
+    return cost;
+}
+
+function PayForTrainer(trainerSaveData) {
+    var cost = GetNextTrainerCost(trainerSaveData);
+
+    log.info("Paying for trainer: " + cost);
+
+    server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: CURRENCY_GOLD, Amount: cost });
+}
+
+function AddTrainer(trainerSaveData) {
+    var trainerCounts = trainerSaveData[TRAINER_COUNTS];
+    trainerCounts[NORMAL_TRAINER] += 1;
+
+    var dataAsString = JSON.stringify(trainerSaveData);
+
+    log.info("About to save new trainer data: " + dataAsString);
+
+    var data = {};
+    data[TRAINER_SAVE_DATA] = dataAsString;
+    log.info(data);
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+}
+
+/////////////////////////////////////////////////
+/// ~TrainerPurchasing
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////

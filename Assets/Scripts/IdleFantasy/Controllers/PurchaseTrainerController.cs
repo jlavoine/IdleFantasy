@@ -12,6 +12,8 @@ namespace IdleFantasy {
 
         public void PurchaseClicked() {
             mTrainerManager.InitiateTrainerPurchase( mResources );
+
+            BackendManager.Backend.MakeTrainerPurchase();
         }
     }
 }
