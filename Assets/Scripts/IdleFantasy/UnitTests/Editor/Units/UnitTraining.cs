@@ -45,7 +45,7 @@ namespace IdleFantasy.UnitTests {
         public void BeforeTests() {
             UnitTestUtils.LoadOfflineData();
             mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
-            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ) );
+            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ), new ViewModel() );
         }
 
         [Test]

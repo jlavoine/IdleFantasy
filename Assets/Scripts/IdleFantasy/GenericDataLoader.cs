@@ -11,7 +11,7 @@ namespace IdleFantasy {
 
         // convenient constants for testing
         public const string TEST_BUILDING = "BASE_BUILDING_1";
-        public const string TEST_UNIT = "BASE_UNIT_1";
+        public const string TEST_UNIT = "BASE_MELEE_1";
 
         private static IBasicBackend mBackend;
         private static IMessageService mMessenger;

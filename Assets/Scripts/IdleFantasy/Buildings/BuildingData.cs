@@ -9,7 +9,7 @@ namespace IdleFantasy {
 
         public int StartingSize;
 
-        public UpgradeData Level;        
+        public UpgradeData BuildingLevel;        
 
         public string GetName() {
             return StringTableManager.Get( "BUILDING_NAME_" + ID );

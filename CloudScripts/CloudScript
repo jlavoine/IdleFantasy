@@ -74,7 +74,7 @@ handlers.getProgressData = function (args) {
     var className = args.data[CLASS];
     var targetID = args.data[TARGET_ID];
 
-    var readOnlyData = GetReadOnlyProgressData(className);
+    var readOnlyData = GetProgressData(className);
     var progressData = GetProgressForTarget(readOnlyData, targetID);
         
     var dataToString = JSON.stringify(progressData);
@@ -91,7 +91,7 @@ handlers.getTrainerCount = function (args) {
         return;    
     }
 
-    var trainerSaveData = GetTrainerSaveData();
+    var trainerSaveData = GetReadOnlySaveData(TRAINER_SAVE_DATA);
     var trainerCounts = trainerSaveData[TRAINER_COUNTS];
     var normalTrainers = trainerCounts[NORMAL_TRAINER];
 
@@ -207,8 +207,23 @@ function GetAllModules() {
 /// server methods.
 /////////////////////////////////////////////////
 
+function GetReadOnlySaveData(key) {
+    var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [key] });
+    var actualData = rawData[DATA];
+    var data = actualData[key];
+    var valueData = JSON.parse(data[VALUE]);
+
+    log.info("Got read only save data: " + data[VALUE]);
+
+    return valueData;  
+}
+
 function GetPlayerInventory() {
-    return server.GetUserInventory({ PlayFabId: currentPlayerId });
+    var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
+
+    log.info("Getting player inventory: " + JSON.stringify(inventory));
+
+    return inventory;
 }
 
 function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
@@ -238,14 +253,11 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
 /////////////////////////////////////////////////
 
 /// returns actual progress data from the player's read only data
-function GetReadOnlyProgressData(className) {
+function GetProgressData(className) {
     var progressKey = GetProgressKey(className);
-    var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [progressKey] });
-    var actualData = rawData[DATA];
-    var data = actualData[progressKey];
-    var valueData = JSON.parse(data[VALUE]);
+    var data = GetReadOnlySaveData(progressKey);
 
-    return valueData;    
+    return data;
 }
 
 /// returns the key for progress data based on a class name
@@ -273,7 +285,7 @@ function GetProgressForTarget(readOnlyData, targetID) {
 /// The client calls this method to initiate a purchase of a normal trainer
 handlers.initiateTrainerPurchase = function (args) {
     var playerInventory = GetPlayerInventory();
-    var trainerSaveData = GetTrainerSaveData();
+    var trainerSaveData = GetReadOnlySaveData(TRAINER_SAVE_DATA);
 
     if ( CanPurchaseTrainer(trainerSaveData, playerInventory) ) {
         PayForTrainer(trainerSaveData);
@@ -282,17 +294,6 @@ handlers.initiateTrainerPurchase = function (args) {
     } else {
         return { outOfSync : true };
     }
-}
-
-function GetTrainerSaveData() {
-    var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [TRAINER_SAVE_DATA] });
-    var actualData = rawData[DATA];
-    var data = actualData[TRAINER_SAVE_DATA];
-    var valueData = JSON.parse(data[VALUE]);
-
-    log.info("Got trainer save data: " + data[VALUE]);
-
-    return valueData;  
 }
 
 function CanPurchaseTrainer(trainerSaveData, playerInventory) {
@@ -354,7 +355,7 @@ handlers.initiateUpgrade = function (args) {
     var upgradeID = args.data[UPGRADE_ID];
 
     var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
-    var readOnlyData = GetReadOnlyProgressData(className);
+    var readOnlyData = GetProgressData(className);
     var progressData = GetProgressForTarget(readOnlyData, targetID);
 
     var playerInventory = GetPlayerInventory();

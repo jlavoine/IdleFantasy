@@ -21,16 +21,16 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( testBuildingData.StartingSize, 10 );            
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
 
-            Assert.AreEqual( testBuildingData.Level.MaxLevel, 50 );
-            Assert.Contains( new KeyValuePair<string, int>( "Gold", 1000 ), testBuildingData.Level.ResourcesToUpgrade );
-            Assert.AreEqual( "Level", testBuildingData.Level.PropertyName );            
+            Assert.AreEqual( testBuildingData.BuildingLevel.MaxLevel, 50 );
+            Assert.Contains( new KeyValuePair<string, int>( "G1", 1000 ), testBuildingData.BuildingLevel.ResourcesToUpgrade );
+            Assert.AreEqual( "BuildingLevel", testBuildingData.BuildingLevel.PropertyName );            
         }
 
         [Test]
         public void VerifyTestUnit() {
             UnitData testUnitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
 
-            Assert.AreEqual( "BASE_UNIT_1", testUnitData.ID );
+            Assert.AreEqual( "BASE_MELEE_1", testUnitData.ID );
             Assert.AreEqual( 1f, testUnitData.BaseProgressPerSecond );
         }
     }

@@ -28,12 +28,12 @@ namespace IdleFantasy {
             }
         }
 
-        public Unit( UnitData i_data ) {
-            mModel = new ViewModel();
+        public Unit( UnitData i_data, ViewModel i_model ) {
+            mModel = i_model;// new ViewModel();
             mData = i_data;
 
             mLevel = new Upgradeable();
-            mLevel.SetPropertyToUpgrade( mModel, mData.LevelUpgrade );
+            mLevel.SetPropertyToUpgrade( mModel, mData.UnitLevel );
             Level.Value = 1;
 
             TrainingLevel = 0;

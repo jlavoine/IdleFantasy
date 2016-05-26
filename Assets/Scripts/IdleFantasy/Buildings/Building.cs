@@ -45,7 +45,7 @@ namespace IdleFantasy {
             get { return mLevel; }
         }
 
-        public Building( BuildingData i_data, IUnit i_unit, BuildingProgress i_progress ) {
+        public Building( BuildingData i_data, BuildingProgress i_progress ) {
             mModel = new ViewModel();
             mData = i_data;
             Name = i_data.GetName();
@@ -53,11 +53,12 @@ namespace IdleFantasy {
             NextUnitProgress = 0;
 
             mLevel = new Upgradeable();
-            mLevel.SetPropertyToUpgrade( mModel, mData.Level );
+            mLevel.SetPropertyToUpgrade( mModel, mData.BuildingLevel );
             mLevel.UpgradeCompleteEvent += OnUpgraded;
             Level.Value = i_progress.Level;
 
-            Unit = i_unit;
+            UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, Data.Unit );
+            Unit = new Unit( unitData, mModel );
 
             UpdateCapacity();
         }

@@ -13,7 +13,7 @@ namespace IdleFantasy {
             //TestUnit();
             //TestBuilding();
             //return;
-            UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
+            /*UnitData unitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
             Unit testUnit = new Unit( unitData );
 
             BuildingView viewToTest = FindObjectOfType<BuildingView>();
@@ -34,7 +34,7 @@ namespace IdleFantasy {
             controllerToTest.Init( mTestBuilding, mockPlayer );
 
             SetUpMajorResourcesView();
-            
+            */
             //IntegrationTest.Pass();
         }
 
@@ -68,7 +68,7 @@ namespace IdleFantasy {
             upgrade.MaxLevel = 10;
             upgrade.PropertyName = "Level";
             upgrade.ResourcesToUpgrade = new Dictionary<string, int>() { { "Gold", 1000 }, { "Wood", 10 } };
-            data.LevelUpgrade = upgrade;
+            data.UnitLevel = upgrade;
 
             //JsonSerializerSettings settings = new JsonSerializerSettings();
             //settings.TypeNameHandling = TypeNameHandling.All;
@@ -90,7 +90,7 @@ namespace IdleFantasy {
             upgrade.PropertyName = "Level";
             upgrade.ResourcesToUpgrade = new Dictionary<string, int>() { { "Gold", 1000 } };
 
-            data.Level = upgrade;
+            data.BuildingLevel = upgrade;
 
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;

@@ -14,7 +14,7 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
 
             UnitData data = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
-            mUnit = new Unit( data );
+            mUnit = new Unit( data, new MyLibrary.ViewModel() );
 
             mBuilding = BuildingUpgradeTests.GetMockBuilding();
             mBuilding.SetUnit( mUnit );
