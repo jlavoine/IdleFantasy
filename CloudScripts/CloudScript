@@ -85,6 +85,22 @@ handlers.getProgressData = function (args) {
     return data;    
 }
 
+/// returns the normal trainer count of the player
+handlers.getTrainerCount = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var trainerSaveData = GetTrainerSaveData();
+    var trainerCounts = trainerSaveData[TRAINER_COUNTS];
+    var normalTrainers = trainerCounts[NORMAL_TRAINER];
+
+    var data = { data : normalTrainers };
+    log.info("Returning trainer count data: " + data);
+
+    return data;
+}
+
 /// sets player data of a key to a value
 handlers.setPlayerData = function(args) {
     if (!isTesting) {
