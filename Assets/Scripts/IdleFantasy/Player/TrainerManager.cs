@@ -12,6 +12,7 @@ namespace IdleFantasy {
         public const string STARTING_COST_KEY = "TrainerStartingCost";
 
         private Dictionary<string, int> mTrainers = new Dictionary<string, int>();
+        private Dictionary<string, int> mTrainerAssignments = new Dictionary<string, int>();
 
         private ViewModel mPlayerModel;
 
@@ -42,10 +43,11 @@ namespace IdleFantasy {
 
         public TrainerManager( ViewModel i_playerModel, TrainerSaveData i_trainerData ) {
             mTrainers = i_trainerData.TrainerCounts;
+            mTrainerAssignments = i_trainerData.TrainerAssignments;
             mPlayerModel = i_playerModel;
 
             TotalTrainers = GetTotalTrainers();
-            AvailableTrainers = TotalTrainers;
+            AvailableTrainers = GetAvailableTrainers();
             // TODO: need to use save data somewhere here
         }
 
@@ -56,6 +58,24 @@ namespace IdleFantasy {
             }
 
             return totalTrainers;
+        }
+
+        private int GetAvailableTrainers() {
+            int availableTrainers = TotalTrainers;
+
+            foreach ( KeyValuePair<string, int> trainerAssignment in mTrainerAssignments ) {
+                availableTrainers -= trainerAssignment.Value;
+            }
+
+            return availableTrainers;
+        }
+
+        public int GetAssignedTrainers( string i_id ) {
+            int assignedTrainers = 0;
+
+            mTrainerAssignments.TryGetValue( i_id, out assignedTrainers );
+
+            return assignedTrainers;
         }
 
         public int GetTotalTrainersOfType( string i_type ) {

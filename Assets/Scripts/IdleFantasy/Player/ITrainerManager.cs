@@ -12,6 +12,7 @@ namespace IdleFantasy {
         }
 
         int GetTotalTrainersOfType( string i_type );
+        int GetAssignedTrainers( string i_id );
 
         int GetNextTrainerCost();
         void InitiateTrainerPurchase( IResourceInventory i_inventory );

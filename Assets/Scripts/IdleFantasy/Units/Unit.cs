@@ -5,7 +5,6 @@ using IdleFantasy.Data;
 namespace IdleFantasy {
     public class Unit : IUnit {
         private UnitData mData;
-        private int mTrainingLevel;
 
         private ViewModel mModel;
         public ViewModel GetModel() {
@@ -18,13 +17,14 @@ namespace IdleFantasy {
         }
 
         public int TrainingLevel {
-            get { return mTrainingLevel; }
+            get { return mModel.GetPropertyValue<int>( "TrainingLevel" ); }
 
             set {
                 if (value < 0) {
                     value = 0;
                 }
-                mTrainingLevel = value;
+
+                mModel.SetProperty( "TrainingLevel", value );
             }
         }
 
@@ -32,13 +32,22 @@ namespace IdleFantasy {
             mModel = i_model;
             mData = i_data;
 
+            SetUnitLevel();
+
+            SetUnitTraining();            
+        }
+
+        private void SetUnitTraining() {
+            ITrainerManager trainerManager = PlayerManager.Data.TrainerManager;
+            TrainingLevel = trainerManager.GetAssignedTrainers( mData.ID );
+        }
+
+        private void SetUnitLevel() {
             UnitProgress progress = PlayerManager.Data.UnitProgress[mData.ID];
 
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.UnitLevel );
             Level.Value = progress.Level;
-
-            TrainingLevel = 0;
         }
 
         public string GetID() {
