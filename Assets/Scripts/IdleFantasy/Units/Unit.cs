@@ -29,12 +29,14 @@ namespace IdleFantasy {
         }
 
         public Unit( UnitData i_data, ViewModel i_model ) {
-            mModel = i_model;// new ViewModel();
+            mModel = i_model;
             mData = i_data;
+
+            UnitProgress progress = PlayerManager.Data.UnitProgress[mData.ID];
 
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.UnitLevel );
-            Level.Value = 1;
+            Level.Value = progress.Level;
 
             TrainingLevel = 0;
         }

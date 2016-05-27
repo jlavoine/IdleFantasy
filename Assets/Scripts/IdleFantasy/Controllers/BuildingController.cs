@@ -19,7 +19,7 @@ namespace IdleFantasy {
         public void UpgradeUnitClicked() {
             mBuilding.Unit.Level.InitiateUpgrade( mInventory );
 
-            //BackendManager.Backend.MakeUpgradeCall( GenericDataLoader.UNITS, mBuilding.Unit.GetID(), mBuilding.Unit.Level.UpgradeData.PropertyName );
+            BackendManager.Backend.MakeUpgradeCall( GenericDataLoader.UNITS, mBuilding.Unit.GetID(), mBuilding.Unit.Level.UpgradeData.PropertyName );
         }
     }
 }

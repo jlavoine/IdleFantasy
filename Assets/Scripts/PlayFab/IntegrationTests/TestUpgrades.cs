@@ -5,29 +5,59 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestUpgrades : IntegrationTestBase {
-
-        private string SAVE_KEY = "BuildingsProgress";
-        private string SAVE_VALUE = "{\"BASE_BUILDING_1\":{\"Level\":$NUM$}}";
-        private string TEST_ID = "BASE_BUILDING_1";
-        private string TEST_CLASS = "Buildings";
-        private string TEST_UPGRADE_ID = "Level";
-
-        private int MAX_LEVEL = 50;
-        private int COST = 1000;
+        private List<UpgradeTestData> mUpgradeTests;
+        private UpgradeTestData mCurrentTestData;
 
         protected override IEnumerator RunAllTests() {
             yield return mBackend.WaitUntilNotBusy();
 
-            yield return Test_CanAffordUpgrade();
-            yield return Test_CannotAffordUpgrade();
-            yield return Test_CannotUpgradeAtMaxLevel();
+            SetTestData();
+
+            foreach ( UpgradeTestData testData in mUpgradeTests ) {
+                mCurrentTestData = testData;
+
+                yield return Test_CanAffordUpgrade();
+                yield return Test_CannotAffordUpgrade();
+                yield return Test_CannotUpgradeAtMaxLevel();
+            }
 
             DoneWithTests();
         }
 
+        private void SetTestData() {
+            mUpgradeTests = new List<UpgradeTestData>();
+
+            SetBuildingTestData();
+            SetUnitTestData();
+        }
+
+        private void SetBuildingTestData() {
+            UpgradeTestData testData = new UpgradeTestData();
+            testData.SaveKey = "BuildingsProgress";
+            testData.SaveValue = "{\"BASE_BUILDING_1\":{\"Level\":$NUM$}}";
+            testData.TestID = "BASE_BUILDING_1";
+            testData.TestClass = "Buildings";
+            testData.TestUpgradeID = "BuildingLevel";
+            testData.MaxLevel = 50;
+            testData.Cost = 1000;
+            mUpgradeTests.Add( testData );
+        }
+
+        private void SetUnitTestData() {
+            UpgradeTestData testData = new UpgradeTestData();
+            testData.SaveKey = "UnitsProgress";
+            testData.SaveValue = "{\"BASE_MELEE_1\":{\"Level\":$NUM$}}";
+            testData.TestID = "BASE_MELEE_1";
+            testData.TestClass = "Units";
+            testData.TestUpgradeID = "UnitLevel";
+            testData.MaxLevel = 50;
+            testData.Cost = 1000;
+            mUpgradeTests.Add( testData );
+        }
+
         private IEnumerator Test_CanAffordUpgrade() {
-            SetPlayerData( SAVE_KEY, DrsStringUtils.Replace( SAVE_VALUE, "NUM", 1 ) );
-            SetPlayerCurrency( COST );
+            SetPlayerData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
+            SetPlayerCurrency( mCurrentTestData.Cost );
 
             yield return mBackend.WaitUntilNotBusy();
 
@@ -40,7 +70,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator Test_CannotUpgradeAtMaxLevel() {
-            SetPlayerData( SAVE_KEY, DrsStringUtils.Replace( SAVE_VALUE, "NUM", MAX_LEVEL ) );
+            SetPlayerData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", mCurrentTestData.MaxLevel ) );
             SetPlayerCurrency( 100000 );
 
             yield return mBackend.WaitUntilNotBusy();
@@ -51,7 +81,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator Test_CannotAffordUpgrade() {
-            SetPlayerData( SAVE_KEY, DrsStringUtils.Replace( SAVE_VALUE, "NUM", 1 ) );
+            SetPlayerData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
             SetPlayerCurrency( 0 );
 
             yield return mBackend.WaitUntilNotBusy();
@@ -62,14 +92,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator MakeUpgradeCall() {
-            mBackend.MakeUpgradeCall( TEST_CLASS, TEST_ID, TEST_UPGRADE_ID );
+            mBackend.MakeUpgradeCall( mCurrentTestData.TestClass, mCurrentTestData.TestID, mCurrentTestData.TestUpgradeID );
             yield return mBackend.WaitUntilNotBusy();
         }
 
         private void FailTestIfNotProgressLevel( int i_level ) {
             Dictionary<string, string> getParams = new Dictionary<string, string>();
-            getParams.Add( "Class", TEST_CLASS );
-            getParams.Add( "TargetID", TEST_ID );
+            getParams.Add( "Class", mCurrentTestData.TestClass );
+            getParams.Add( "TargetID", mCurrentTestData.TestID );
 
             mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {
