@@ -1,15 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TrainerAssignmentController : MonoBehaviour {
+namespace IdleFantasy {
+    public class TrainerAssignmentController : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+        private IUnit mUnit;
+
+        public void Init( IUnit i_unit ) {
+            mUnit = i_unit;
+        }
+
+        public void IncreaseTrainingLevel() {
+            PlayerManager.Data.TrainerManager.InitiateChangeInTraining( mUnit, true );
+        }
+
+        public void DecreaseTrainingLevel() {
+            PlayerManager.Data.TrainerManager.InitiateChangeInTraining( mUnit, false );
+        }
+    }
 }

@@ -35,7 +35,9 @@ namespace IdleFantasy {
             BuildingData buildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, i_key );            
             BuildingProgress buildingProgress = PlayerManager.Data.BuildingProgress[buildingData.ID];
 
-            Building building = new Building( buildingData, buildingProgress );
+            UnitProgress unitProgress = PlayerManager.Data.UnitProgress[buildingData.Unit];
+
+            Building building = new Building( buildingData, buildingProgress, unitProgress );
             return building;
         }
 

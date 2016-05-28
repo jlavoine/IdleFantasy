@@ -134,21 +134,25 @@ namespace IdleFantasy {
 
         public bool CanChangeUnitTraining( IUnit i_unit, bool i_isTraining ) {
             if ( i_isTraining ) {
-                int costInTrainers = GetTrainersToTrainUnit( i_unit );
-                return AvailableTrainers >= costInTrainers;
+                return HasTrainersAvailable( i_unit ) && i_unit.CanTrain();                
             }
             else {
                 return i_unit.TrainingLevel > 0;
             }
         }
 
+        private bool HasTrainersAvailable( IUnit i_unit ) {
+            int costInTrainers = GetTrainersToTrainUnit( i_unit );
+            return AvailableTrainers >= costInTrainers;
+        }
+
         public int GetTrainersToTrainUnit( IUnit i_unit ) {
-            return i_unit.TrainingLevel + 1;
+            return 1;// i_unit.TrainingLevel + 1;
         }
 
         public void ChangeAvailableTrainers( IUnit i_unit, bool i_isTraining ) {
-            int levelsToChangeBy = i_isTraining ? i_unit.TrainingLevel : i_unit.TrainingLevel - 1;
-            int change = i_isTraining ? levelsToChangeBy : -levelsToChangeBy;
+            int trainerCost = GetTrainersToTrainUnit( i_unit );
+            int change = i_isTraining ? trainerCost : -trainerCost;
             AvailableTrainers -= change;
         }
 

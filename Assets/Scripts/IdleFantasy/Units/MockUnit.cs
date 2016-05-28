@@ -41,5 +41,9 @@ namespace IdleFantasy {
         public int GetRoundedStat( string i_stat ) {
             return TrainingLevel;
         }
+
+        public bool CanTrain() {
+            return true;
+        }
     }
 }

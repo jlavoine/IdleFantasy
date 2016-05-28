@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using MyLibrary;
 
 #pragma warning disable 0414
 
@@ -14,7 +15,9 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
 
             UnitData data = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
-            mUnit = new Unit( data, new MyLibrary.ViewModel() );
+            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
+                new UnitProgress() { Level = 1, Trainers = 1 },
+                new ViewModel() );
 
             mBuilding = BuildingUpgradeTests.GetMockBuilding();
             mBuilding.SetUnit( mUnit );

@@ -5,6 +5,7 @@ using IdleFantasy.Data;
 namespace IdleFantasy {
     public class Unit : IUnit {
         private UnitData mData;
+        private UnitProgress mProgress;
 
         private ViewModel mModel;
         public ViewModel GetModel() {
@@ -28,9 +29,10 @@ namespace IdleFantasy {
             }
         }
 
-        public Unit( UnitData i_data, ViewModel i_model ) {
+        public Unit( UnitData i_data, UnitProgress i_progress, ViewModel i_model ) {
             mModel = i_model;
             mData = i_data;
+            mProgress = i_progress;
 
             SetUnitLevel();
 
@@ -38,16 +40,13 @@ namespace IdleFantasy {
         }
 
         private void SetUnitTraining() {
-            ITrainerManager trainerManager = PlayerManager.Data.TrainerManager;
-            TrainingLevel = trainerManager.GetAssignedTrainers( mData.ID );
+            TrainingLevel = mProgress.Trainers;
         }
 
         private void SetUnitLevel() {
-            UnitProgress progress = PlayerManager.Data.UnitProgress[mData.ID];
-
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.UnitLevel );
-            Level.Value = progress.Level;
+            Level.Value = mProgress.Level;
         }
 
         public string GetID() {
@@ -55,9 +54,18 @@ namespace IdleFantasy {
         }
 
         public float GetProgressFromTimeElapsed( TimeSpan i_timeSpan ) {
-            float progressPerSecond = mData.BaseProgressPerSecond / Level.Value;
+            int speed = GetProgressSpeed();
+            float progressPerSecond = mData.BaseProgressPerSecond / speed;
             float progress = (float)(i_timeSpan.TotalSeconds * progressPerSecond);
             return progress;
+        }
+
+        private int GetProgressSpeed() {
+            int speed = Level.Value + 1 - TrainingLevel;
+
+            speed = Math.Max( speed, 1 );
+
+            return speed;
         }
 
         public bool HasStat( string i_stat ) {
@@ -74,6 +82,9 @@ namespace IdleFantasy {
             
             return (int)Math.Ceiling( totalValue );
         }
-    }
 
+        public bool CanTrain() {
+            return TrainingLevel < Level.Value;
+        }
+    }
 }

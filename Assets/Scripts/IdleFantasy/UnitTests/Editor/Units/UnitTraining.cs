@@ -20,18 +20,18 @@ namespace IdleFantasy.UnitTests {
         };
 
         static object[] UnitTrainingWithCosts = {
-            new object[] { 1, 2 },
+            new object[] { 1, 1 },
             new object[] { 0, 1 },
             new object[] { -1, 1 },
-            new object[] { 10, 11 },
-            new object[] { 100, 101 }
+            new object[] { 10, 1 },
+            new object[] { 100, 1 }
         };
 
         static object[] CanTrainUnitsSource = {
-            new object[] { 1, 2, true },
+            new object[] { 1, 2, false },
             new object[] { 0, 1, true },
             new object[] { 0, 0, false },
-            new object[] { 5, 6, true }
+            new object[] { 5, 6, false }
         };
 
         static object[] CanUntrainUnitsSource = {
@@ -45,7 +45,9 @@ namespace IdleFantasy.UnitTests {
         public void BeforeTests() {
             UnitTestUtils.LoadOfflineData();
             mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
-            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ), new ViewModel() );
+            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
+                new UnitProgress() { Level = 1, Trainers = 1 },
+                new ViewModel() );
         }
 
         [Test]
