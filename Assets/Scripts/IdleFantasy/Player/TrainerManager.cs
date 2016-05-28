@@ -43,7 +43,6 @@ namespace IdleFantasy {
 
         public TrainerManager( ViewModel i_playerModel, TrainerSaveData i_trainerData ) {
             mTrainers = i_trainerData.TrainerCounts;
-            mTrainerAssignments = i_trainerData.TrainerAssignments;
             mPlayerModel = i_playerModel;
 
             TotalTrainers = GetTotalTrainers();
