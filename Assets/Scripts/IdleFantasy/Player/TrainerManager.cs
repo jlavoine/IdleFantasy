@@ -74,7 +74,6 @@ namespace IdleFantasy {
             AvailableTrainers = 0;
 
             foreach ( KeyValuePair<string, UnitProgress> trainerAssignment in i_unitProgress ) {
-                UnityEngine.Debug.LogError( "Resetting " + trainerAssignment.Key );
                 i_unitProgress[trainerAssignment.Key].Trainers = 0;
             }
         }

@@ -36,13 +36,16 @@ namespace IdleFantasy {
             } );
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
-                mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
-                TrainerManager = new TrainerManager( mModel, mTrainerSaveData, UnitProgress );
+                mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );                
             } );
 
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 Gold = numGold;
             } );
+        }
+
+        public void CreateManagers() {
+            TrainerManager = new TrainerManager( mModel, mTrainerSaveData, UnitProgress );
         }
 
         public object GetData( string i_key ) {

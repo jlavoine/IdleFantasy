@@ -44,6 +44,8 @@ namespace IdleFantasy {
                 yield return 0;
             }
 
+            playerData.CreateManagers();
+
             DoneLoadingData();
         }
 
