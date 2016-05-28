@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using MyLibrary;
-using System.Collections.Generic;
+using System;
 
 #pragma warning disable 0414
 
@@ -48,6 +48,32 @@ namespace IdleFantasy.UnitTests {
             mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
+        }
+
+        [Test]
+        public void TrainingUnitIncreasesSpeed() {
+            mUnit.Level.Value = 3;
+            mUnit.TrainingLevel = 1;
+            TimeSpan testSpan = new TimeSpan( 10000000 );
+
+            float increasePerSecondBeforeTraining = mUnit.GetProgressFromTimeElapsed( testSpan );
+            mUnit.TrainingLevel = 2;
+            float increasePerSecondAfterTraining = mUnit.GetProgressFromTimeElapsed( testSpan );
+
+            Assert.Greater( increasePerSecondAfterTraining, increasePerSecondBeforeTraining );
+        }
+
+        [Test]
+        public void TrainingUnitDecreasesSpeed() {
+            mUnit.Level.Value = 3;
+            mUnit.TrainingLevel = 2;
+            TimeSpan testSpan = new TimeSpan( 10000000 );
+
+            float increasePerSecondBeforeTraining = mUnit.GetProgressFromTimeElapsed( testSpan );
+            mUnit.TrainingLevel = 1;
+            float increasePerSecondAfterTraining = mUnit.GetProgressFromTimeElapsed( testSpan );
+
+            Assert.Greater( increasePerSecondBeforeTraining, increasePerSecondAfterTraining );
         }
 
         [Test]
