@@ -13,7 +13,7 @@ namespace IdleFantasy {
             mModel = new ViewModel();
 
             Dictionary<string, int> mockTrainerCount = new Dictionary<string, int>() { { IdleFantasy.TrainerManager.NORMAL_TRAINERS, 1 } };
-            mTrainerData = new TrainerManager( mModel, new TrainerSaveData() { TrainerCounts = mockTrainerCount } );
+            mTrainerData = new TrainerManager( mModel, new TrainerSaveData() { TrainerCounts = mockTrainerCount }, new Dictionary<string, UnitProgress>() );
         }
 
         public int Gold {

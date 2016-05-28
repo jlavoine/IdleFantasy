@@ -23,6 +23,8 @@ namespace IdleFantasy {
             set {
                 if (value < 0) {
                     value = 0;
+                } else if ( value > GetMaxTrainingLevel() ) {
+                    value = GetMaxTrainingLevel();
                 }
 
                 mModel.SetProperty( "TrainingLevel", value );
@@ -84,7 +86,11 @@ namespace IdleFantasy {
         }
 
         public bool CanTrain() {
-            return TrainingLevel < Level.Value;
+            return TrainingLevel < GetMaxTrainingLevel();
+        }
+
+        private int GetMaxTrainingLevel() {
+            return Level.Value;
         }
     }
 }

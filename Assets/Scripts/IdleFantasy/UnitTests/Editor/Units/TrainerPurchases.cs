@@ -21,7 +21,7 @@ namespace IdleFantasy.UnitTests {
         public void BeforeTest() {
             UnitTestUtils.LoadOfflineData();
 
-            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
+            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData(), new Dictionary<string, UnitProgress>() );
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace IdleFantasy.UnitTests {
             trainers.Add( "Type_2", 3 );
             trainers.Add( "Type_3", 5 );
 
-            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ), new Dictionary<string, UnitProgress>() );
 
             Assert.AreEqual( mTrainerData.TotalTrainers, 9 );
         }
@@ -66,7 +66,7 @@ namespace IdleFantasy.UnitTests {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
             trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
 
-            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ), new Dictionary<string, UnitProgress>() );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
 
@@ -78,7 +78,7 @@ namespace IdleFantasy.UnitTests {
         public void CanAffordNewTrainer_RealInventory( int i_numTrainers, int i_expectedCostForNextTrainer ) {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
             trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
-            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ), new Dictionary<string, UnitProgress>() );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();
@@ -94,7 +94,7 @@ namespace IdleFantasy.UnitTests {
         public void VerifyNextTrainerPurchaseSpendsResources( int i_numTrainers, int i_expectedCostForNextTrainer ) {
             Dictionary<string, int> trainers = new Dictionary<string, int>();
             trainers.Add( TrainerManager.NORMAL_TRAINERS, i_numTrainers );
-            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ) );
+            mTrainerData = new TrainerManager( new ViewModel(), CreateTrainerSaveData_WithCounts( trainers ), new Dictionary<string, UnitProgress>() );
 
             int costForNextTrainer = mTrainerData.GetNextTrainerCost();
             NormalInventory realInventory = new NormalInventory();

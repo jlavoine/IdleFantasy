@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using MyLibrary;
 using System;
+using System.Collections.Generic;
 
 #pragma warning disable 0414
 
@@ -11,7 +12,7 @@ namespace IdleFantasy.UnitTests {
         private IUnit mUnit;
 
         static object[] UnitTrainingChanges = {
-            new object[] { 1, true, 2 },
+            new object[] { 1, true, 1 },
             new object[] { 1, false, 0 },
             new object[] { 0, true, 1 },
             new object[] { 0, false, 0 },
@@ -44,7 +45,7 @@ namespace IdleFantasy.UnitTests {
         [SetUp]
         public void BeforeTests() {
             UnitTestUtils.LoadOfflineData();
-            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData() );
+            mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData(), new Dictionary<string, UnitProgress>() );
             mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
@@ -98,6 +99,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void TrainingUnitIncreasesTrainingLevel() {
+            mUnit.Level.Value = 2;
             mUnit.TrainingLevel = 1;
 
             mTrainerData.ChangeUnitTrainingLevel( mUnit, true );
@@ -107,6 +109,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void UntrainingUnitDecreasesTrainingLevel() {
+            mUnit.Level.Value = 2;
             mUnit.TrainingLevel = 2;
 
             mTrainerData.ChangeUnitTrainingLevel( mUnit, false );

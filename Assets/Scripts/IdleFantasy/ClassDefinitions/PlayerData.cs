@@ -37,7 +37,7 @@ namespace IdleFantasy {
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
                 mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
-                TrainerManager = new TrainerManager( mModel, mTrainerSaveData );
+                TrainerManager = new TrainerManager( mModel, mTrainerSaveData, UnitProgress );
             } );
 
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {

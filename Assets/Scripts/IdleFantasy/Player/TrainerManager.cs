@@ -41,12 +41,12 @@ namespace IdleFantasy {
             }
         }
 
-        public TrainerManager( ViewModel i_playerModel, TrainerSaveData i_trainerData ) {
+        public TrainerManager( ViewModel i_playerModel, TrainerSaveData i_trainerData, Dictionary<string, UnitProgress> i_unitProgress ) {
             mTrainers = i_trainerData.TrainerCounts;
             mPlayerModel = i_playerModel;
 
             TotalTrainers = GetTotalTrainers();
-            AvailableTrainers = GetAvailableTrainers();
+            AvailableTrainers = GetAvailableTrainers( i_unitProgress );
             // TODO: need to use save data somewhere here
         }
 
@@ -59,14 +59,34 @@ namespace IdleFantasy {
             return totalTrainers;
         }
 
-        private int GetAvailableTrainers() {
-            int availableTrainers = TotalTrainers;
+        private int GetAvailableTrainers( Dictionary<string, UnitProgress> i_unitProgress ) {
+            int totalAssignedTrainers = GetTotalAssignedTrainers( i_unitProgress );
 
-            foreach ( KeyValuePair<string, int> trainerAssignment in mTrainerAssignments ) {
-                availableTrainers -= trainerAssignment.Value;
+            if ( totalAssignedTrainers > TotalTrainers ) {
+                ResetAllTrainerAssignments( i_unitProgress );
+                return TotalTrainers;
+            } else {
+                return TotalTrainers - totalAssignedTrainers;
+            }
+        }
+
+        private void ResetAllTrainerAssignments( Dictionary<string, UnitProgress> i_unitProgress ) {
+            AvailableTrainers = 0;
+
+            foreach ( KeyValuePair<string, UnitProgress> trainerAssignment in i_unitProgress ) {
+                UnityEngine.Debug.LogError( "Resetting " + trainerAssignment.Key );
+                i_unitProgress[trainerAssignment.Key].Trainers = 0;
+            }
+        }
+
+        public int GetTotalAssignedTrainers( Dictionary<string, UnitProgress> i_unitProgress ) {
+            int totalAssignedTrainers = 0;
+
+            foreach ( KeyValuePair<string, UnitProgress> trainerAssignment in i_unitProgress ) {
+                totalAssignedTrainers += trainerAssignment.Value.Trainers;
             }
 
-            return availableTrainers;
+            return totalAssignedTrainers;
         }
 
         public int GetAssignedTrainers( string i_id ) {
