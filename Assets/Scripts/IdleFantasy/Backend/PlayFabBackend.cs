@@ -72,7 +72,8 @@ namespace MyLibrary {
 
         public void MakeCloudCall( string i_methodName, Dictionary<string,string> i_params, Callback<Dictionary<string, string>> i_requestSuccessCallback ) {
             StartRequest( "Request for cloud call " + i_methodName );
-
+            LogCloudCallParams( i_params );
+            
             RunCloudScriptRequest request = new RunCloudScriptRequest() {
                 ActionId = i_methodName,
                 Params = new { data = i_params }
@@ -94,6 +95,16 @@ namespace MyLibrary {
                     i_requestSuccessCallback( resultsDeserialized );
                 }
             }, ( error ) => { HandleError( error, i_methodName ); } );
+        }
+
+        private void LogCloudCallParams( Dictionary<string, string> i_params ) {
+            if ( i_params != null ) {
+                string paramsAsString = "Params: ";
+                foreach ( KeyValuePair<string, string> pair in i_params ) {
+                    paramsAsString += "\n" + pair.Key + " : " + pair.Value;
+                }
+                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, paramsAsString, PLAYFAB );
+            }
         }
 
         public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {

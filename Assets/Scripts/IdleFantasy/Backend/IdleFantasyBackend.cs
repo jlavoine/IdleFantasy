@@ -9,6 +9,7 @@ namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
         public static string INIT_UPGRADE = "initiateUpgrade";
         public static string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
+        public static string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
 
         public static string TEST_SET_DATA = "setPlayerData";
         public static string TEST_SET_CURRENCY = "setPlayerCurrency";
@@ -27,8 +28,15 @@ namespace IdleFantasy {
         }
 
         public void MakeTrainerPurchase() {
-
             MakeCloudCall( INIT_TRAINER_PURCHASE, null, null );
+        }
+
+        public void ChangeAssignedTrainers( string i_unitID, int i_change ) {
+            Dictionary<string, string> assignParams = new Dictionary<string, string>();
+            assignParams.Add( "Change", i_change.ToString() );
+            assignParams.Add( "TargetID", i_unitID );
+
+            MakeCloudCall( INIT_TRAINING_CHANGE, assignParams, null );
         }
     }
 }

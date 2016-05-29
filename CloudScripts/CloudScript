@@ -14,6 +14,7 @@
 const UPGRADE_LEVEL = "Level";  // key for a level upgrade
 const CLASS = "Class";          // key used from client as to what type of data (building, unit, etc) is involved in the call
 const TARGET_ID = "TargetID";   // key used from client as to what specific object is involved in the call
+const CHANGE = "Change";        // key used from client to pass up a change
 
 // currencies
 const CURRENCY_GOLD = "G1";
@@ -26,13 +27,15 @@ const UPGRADE_RESOURCES = "ResourcesToUpgrade"; // key for finding list of resou
 const TRAINER_SAVE_DATA = "TrainerSaveData";    // key for player's trainer save data
 const TRAINER_COUNTS = "TrainerCounts";         // key for trainer counts within the trainer save data object
 const NORMAL_TRAINER = "Normal";                // the normal trainers a player can purchase
+const TRAINERS_ASSIGNED = "Trainers";           // key in unit progress data for the # of trainers assigned to the unit
 const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
 
 /// game modules
 const MODULE_BASE = "Base";    // the base game!
 
 /// classes of objects in the game
-const BUILDING = "Building";    // game buildings that produce units
+const CLASS_BUILDING = "Buildings";     // game buildings that produce units
+const CLASS_UNIT = "Units";             // units that are apart of buildings
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
@@ -275,6 +278,100 @@ function GetProgressForTarget(readOnlyData, targetID) {
 
 /////////////////////////////////////////////////
 /// ~ProgressData
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// ~TrainerAssignment
+/// Related to assigning/unassigning trainers
+/// to units.
+/////////////////////////////////////////////////
+
+handlers.initiateChangeInTraining = function (args) {
+    var targetUnitID = args.data[TARGET_ID];
+    var changeInTrainingLevel = parseInt(args.data[CHANGE], 10);
+
+    log.info(targetUnitID);
+    log.info("initiateChangeInTraining for " + targetUnitID + " by " + changeInTrainingLevel);
+
+    var allProgressData = GetProgressData(CLASS_UNIT);
+    var progressDataForUnit = GetProgressForTarget(allProgressData, targetUnitID);
+    log.info("Progress data: " + JSON.stringify(progressDataForUnit));
+
+    if (CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel)) {
+        ChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel, targetUnitID, CLASS_UNIT)
+    } else {
+        return { outOfSync : true };
+    }
+}
+
+function GetAvailableTrainers(allProgressData) {
+    var totalTrainers = GetTotalTrainers();
+    var trainersInUse = 0;
+
+    for (var unitKey in allProgressData) {
+        var unit = allProgressData[unitKey];
+        trainersInUse += unit[TRAINERS_ASSIGNED];
+    }
+    
+    var availableTrainers = totalTrainers - trainersInUse;
+    log.info("Available Trainers: " + availableTrainers);
+    return availableTrainers;
+}
+
+function GetTotalTrainers() {
+    var trainerSaveData = GetReadOnlySaveData(TRAINER_SAVE_DATA);
+    var trainerCounts = trainerSaveData[TRAINER_COUNTS];
+    var totalTrainers = 0;
+
+    for (var trainerType in trainerCounts) {
+        totalTrainers += trainerCounts[trainerType];
+    }
+
+    log.info("Total trainers: " + totalTrainers);
+    return totalTrainers;   
+}
+
+function CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel) {
+    var maxLevel = GetMaxTrainingLevel(progressDataForUnit);
+    var changeResult = parseInt(progressDataForUnit[TRAINERS_ASSIGNED], 10) + changeInTrainingLevel;
+    var availableTrainers = GetAvailableTrainers(allProgressData);
+
+    var isChangeOK = false;
+    if (changeInTrainingLevel < 0) {
+        isChangeOK = changeResult >= 0;
+    } else {
+        isChangeOK = availableTrainers > 0 && changeResult <= maxLevel;
+    }
+
+    log.info("Checking change against max level " + maxLevel + " with a changeResult " + changeResult);
+    log.info("Can make change: " + isChangeOK);
+    return isChangeOK;
+}
+
+function GetMaxTrainingLevel(progressDataForUnit) {
+    return progressDataForUnit[UPGRADE_LEVEL];
+}
+
+function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, targetID, className) {
+    var trainersAssigned = parseInt(progressData[TRAINERS_ASSIGNED], 10) + changeInTrainers;
+    progressData[TRAINERS_ASSIGNED] = trainersAssigned;
+    allProgressData[targetID] = progressData;
+
+    var dataAsString = JSON.stringify(allProgressData);
+
+    var progressKey = GetProgressKey(className);
+    log.info(progressKey);
+    log.info(dataAsString);
+
+    var data = {};
+    data[progressKey] = dataAsString;
+    log.info(data);
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+}
+
+/////////////////////////////////////////////////
+/// ~TrainerAssignment
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////

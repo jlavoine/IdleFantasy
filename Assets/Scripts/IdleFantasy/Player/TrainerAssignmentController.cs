@@ -11,10 +11,14 @@ namespace IdleFantasy {
 
         public void IncreaseTrainingLevel() {
             PlayerManager.Data.TrainerManager.InitiateChangeInTraining( mUnit, true );
+
+            BackendManager.Backend.ChangeAssignedTrainers( mUnit.GetID(), 1 );
         }
 
         public void DecreaseTrainingLevel() {
             PlayerManager.Data.TrainerManager.InitiateChangeInTraining( mUnit, false );
+
+            BackendManager.Backend.ChangeAssignedTrainers( mUnit.GetID(), -1 );
         }
     }
 }
