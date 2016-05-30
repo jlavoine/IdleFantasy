@@ -99,7 +99,18 @@ handlers.getTrainerCount = function (args) {
     var normalTrainers = trainerCounts[NORMAL_TRAINER];
 
     var data = { data : normalTrainers };
-    log.info("Returning trainer count data: " + data);
+    log.info("Returning trainer count data: " + JSON.stringify(data));
+
+    return data;
+}
+
+/// returns the # of available trainers
+handlers.getAvailableTrainers = function(args) {
+    var allProgressData = GetProgressData(CLASS_UNIT);
+    var availableTrainers = GetAvailableTrainers(allProgressData);
+
+    var data = { data : availableTrainers };
+    log.info("Returning available trainers: " + JSON.stringify(data));
 
     return data;
 }
@@ -310,7 +321,7 @@ function GetAvailableTrainers(allProgressData) {
 
     for (var unitKey in allProgressData) {
         var unit = allProgressData[unitKey];
-        trainersInUse += unit[TRAINERS_ASSIGNED];
+        trainersInUse += parseInt(unit[TRAINERS_ASSIGNED], 10);
     }
     
     var availableTrainers = totalTrainers - trainersInUse;
@@ -337,7 +348,8 @@ function CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTr
     var availableTrainers = GetAvailableTrainers(allProgressData);
 
     var isChangeOK = false;
-    if (changeInTrainingLevel < 0) {
+    if (changeInTrainingLevel
+     < 0) {
         isChangeOK = changeResult >= 0;
     } else {
         isChangeOK = availableTrainers > 0 && changeResult <= maxLevel;

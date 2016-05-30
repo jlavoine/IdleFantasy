@@ -1,12 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using System.Collections;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestTrainerPurchases : IntegrationTestBase {
         private string SAVE_KEY = "TrainerSaveData";
-        private string SAVE_VALUE = "{\"TrainerCounts\":{\"Normal\":$NUM$},\"TrainerAssignments\":{}}";
+        private string SAVE_VALUE = "{\"TrainerCounts\":{\"Normal\":$NUM$}}";
 
         private int COST = 2000;
 
