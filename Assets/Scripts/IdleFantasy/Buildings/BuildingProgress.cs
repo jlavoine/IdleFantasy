@@ -1,6 +1,5 @@
 ﻿
 namespace IdleFantasy {
-    public class BuildingProgress {
-        public int Level;
+    public class BuildingProgress : ProgressBase {
     }
 }

@@ -10,6 +10,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private const string PROGRESS_DATA = "{\"BASE_MELEE_1\":{\"Level\":$LEVEL$,\"Trainers\":$TRAINERS$}}";
         private const string UNIT_ID = "BASE_MELEE_1";
 
+        private const string GET_AVAILABLE_TRAINERS_CLOUD_METHOD = "getAvailableTrainers";
+
         protected override IEnumerator RunAllTests() {
             yield return mBackend.WaitUntilNotBusy();
 
@@ -30,7 +32,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             yield return MakeAssignmentChange( 1 );
 
-            FailTestIfAvailableTrainersDoesNotEqual( 0 );
+            FailTestIfReturnedCallDoesNotEqual( GET_AVAILABLE_TRAINERS_CLOUD_METHOD, 0 );
             FailTestIfAssignedTrainersDoesNotEqual( 1 );
 
             yield return mBackend.WaitUntilNotBusy();
@@ -70,20 +72,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return MakeAssignmentChange( -1 );
 
             FailTestIfClientInSync( "Test_CannotUntrainWithZeroAssignedTrainers" );
-        }
-
-        private void FailTestIfAvailableTrainersDoesNotEqual( int i_count ) {
-            mBackend.MakeCloudCall( "getAvailableTrainers", null, ( results ) => {
-                if ( results.ContainsKey( "data" ) ) {
-                    int count = int.Parse( results["data"] );
-                    if ( count != i_count ) {
-                        IntegrationTest.Fail( "Count did not match: " + i_count );
-                    }
-                }
-                else {
-                    IntegrationTest.Fail( "Results did not have data." );
-                }
-            } );
         }
 
         private void FailTestIfAssignedTrainersDoesNotEqual( int i_trainers ) {

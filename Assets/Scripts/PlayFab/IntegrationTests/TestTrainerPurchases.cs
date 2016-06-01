@@ -5,6 +5,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private string SAVE_KEY = "TrainerSaveData";
         private string SAVE_VALUE = "{\"TrainerCounts\":{\"Normal\":$NUM$}}";
 
+        private const string GET_TRAINER_COUNT_CLOUD_METHOD = "getTrainerCount";
+
         private int COST = 2000;
 
         protected override IEnumerator RunAllTests() {
@@ -25,23 +27,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return MakePurchaseCall();
 
             FailTestIfCurrencyDoesNotEqual( 0 );
-            FailTestIfNotTrainerCount( 2 );
+            FailTestIfReturnedCallDoesNotEqual( GET_TRAINER_COUNT_CLOUD_METHOD, 2 );
 
             yield return mBackend.WaitUntilNotBusy();
-        }
-
-        private void FailTestIfNotTrainerCount( int i_count ) {
-            mBackend.MakeCloudCall( "getTrainerCount", null, ( results ) => {
-                if ( results.ContainsKey( "data" ) ) {
-                    int count = int.Parse( results["data"] );
-                    if ( count != i_count ) {
-                        IntegrationTest.Fail( "Count did not match: " + i_count );
-                    }
-                }
-                else {
-                    IntegrationTest.Fail( "Results did not have data." );
-                }
-            } );
         }
 
         private IEnumerator Test_CannotAffordNewTrainer() {

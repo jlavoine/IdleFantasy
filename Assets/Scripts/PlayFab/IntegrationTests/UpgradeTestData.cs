@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class UpgradeTestData {
         public string SaveKey;

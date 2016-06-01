@@ -64,7 +64,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return MakeUpgradeCall();
 
             FailTestIfCurrencyDoesNotEqual( 0 );
-            FailTestIfNotProgressLevel( 2 );
+            FailTestIfNotProgressLevel( mCurrentTestData.TestClass, mCurrentTestData.TestID, 2 );
 
             yield return mBackend.WaitUntilNotBusy();
         }
@@ -94,23 +94,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IEnumerator MakeUpgradeCall() {
             mBackend.MakeUpgradeCall( mCurrentTestData.TestClass, mCurrentTestData.TestID, mCurrentTestData.TestUpgradeID );
             yield return mBackend.WaitUntilNotBusy();
-        }
-
-        private void FailTestIfNotProgressLevel( int i_level ) {
-            Dictionary<string, string> getParams = new Dictionary<string, string>();
-            getParams.Add( "Class", mCurrentTestData.TestClass );
-            getParams.Add( "TargetID", mCurrentTestData.TestID );
-
-            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
-                if ( results.ContainsKey( "data" ) ) {
-                    BuildingProgress progress = JsonConvert.DeserializeObject<BuildingProgress>( results["data"] );
-                    if ( progress.Level != i_level ) {
-                        IntegrationTest.Fail( "Level did not match: " + i_level );
-                    }
-                } else {
-                    IntegrationTest.Fail( "Results did not have data." );
-                }
-            } );
         }
     }
 }

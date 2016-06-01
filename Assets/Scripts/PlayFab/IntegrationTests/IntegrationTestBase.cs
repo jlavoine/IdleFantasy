@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class IntegrationTestBase : MonoBehaviour {
@@ -41,6 +42,38 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 if ( numGold != i_amount ) {
                     IntegrationTest.Fail( "Currency did not equal " + i_amount );
+                }
+            } );
+        }
+
+        protected void FailTestIfNotProgressLevel( string i_class, string i_targetID, int i_level ) {
+            Dictionary<string, string> getParams = new Dictionary<string, string>();
+            getParams.Add( "Class", i_class );
+            getParams.Add( "TargetID", i_targetID );
+
+            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    ProgressBase progress = JsonConvert.DeserializeObject<ProgressBase>( results["data"] );
+                    if ( progress.Level != i_level ) {
+                        IntegrationTest.Fail( "Level did not match: " + i_level );
+                    }
+                }
+                else {
+                    IntegrationTest.Fail( "Results did not have data." );
+                }
+            } );
+        }
+
+        protected void FailTestIfReturnedCallDoesNotEqual( string i_cloudMethod, int i_count ) {
+            mBackend.MakeCloudCall( i_cloudMethod, null, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    int count = int.Parse( results["data"] );
+                    if ( count != i_count ) {
+                        IntegrationTest.Fail( "Count did not match: " + i_count );
+                    }
+                }
+                else {
+                    IntegrationTest.Fail( "Results did not have data." );
                 }
             } );
         }
