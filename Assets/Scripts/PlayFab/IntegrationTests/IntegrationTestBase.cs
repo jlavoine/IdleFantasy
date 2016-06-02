@@ -11,7 +11,15 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         void Start() {
             mBackend = BackendManager.Backend;
-            StartCoroutine( RunAllTests() );
+            StartCoroutine( StartTests() );
+        }
+
+        private IEnumerator StartTests() {
+            yield return mBackend.WaitUntilNotBusy();
+
+            yield return RunAllTests();
+
+            DoneWithTests();
         }
 
         protected void SetPlayerData( string i_key, string i_value ) {
