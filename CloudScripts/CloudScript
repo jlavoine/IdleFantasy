@@ -256,6 +256,15 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
     return playerCurrencies;
 }
 
+function SetReadOnlyData(dataKey, dataAsObject) {
+    var dataAsString = JSON.stringify(dataAsObject);
+    var data = {};
+    data[dataKey] = dataAsString;
+    log.info("Saving data for key " + dataKey + ": " + data);
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});    
+}
+
 /////////////////////////////////////////////////
 /// ~Misc
 /////////////////////////////////////////////////
@@ -365,21 +374,12 @@ function GetMaxTrainingLevel(progressDataForUnit) {
 }
 
 function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, targetID, className) {
+    var progressKey = GetProgressKey(className);
     var trainersAssigned = parseInt(progressData[TRAINERS_ASSIGNED], 10) + changeInTrainers;
     progressData[TRAINERS_ASSIGNED] = trainersAssigned;
-    allProgressData[targetID] = progressData;
+    allProgressData[targetID] = progressData;    
 
-    var dataAsString = JSON.stringify(allProgressData);
-
-    var progressKey = GetProgressKey(className);
-    log.info(progressKey);
-    log.info(dataAsString);
-
-    var data = {};
-    data[progressKey] = dataAsString;
-    log.info(data);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+    SetReadOnlyData(progressKey, allProgressData);
 }
 
 /////////////////////////////////////////////////
@@ -436,15 +436,7 @@ function AddTrainer(trainerSaveData) {
     var trainerCounts = trainerSaveData[TRAINER_COUNTS];
     trainerCounts[NORMAL_TRAINER] += 1;
 
-    var dataAsString = JSON.stringify(trainerSaveData);
-
-    log.info("About to save new trainer data: " + dataAsString);
-
-    var data = {};
-    data[TRAINER_SAVE_DATA] = dataAsString;
-    log.info(data);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+    SetReadOnlyData(TRAINER_SAVE_DATA, trainerSaveData);
 }
 
 /////////////////////////////////////////////////
@@ -529,20 +521,11 @@ function PayForUpgrade(upgradeData, progressData, playerInventory) {
 
 /// actually upgrades a target and saves it to the player's save data
 function Upgrade(readOnlyData, className, progressData, targetID) {
-    progressData[UPGRADE_LEVEL] += 1;
-    readOnlyData[targetID] = progressData;
-
-    var dataAsString = JSON.stringify(readOnlyData);
-
     var progressKey = GetProgressKey(className);
-    log.info(progressKey);
-    log.info(dataAsString);
+    progressData[UPGRADE_LEVEL] += 1;
+    readOnlyData[targetID] = progressData;    
 
-    var data = {};
-    data[progressKey] = dataAsString;
-    log.info(data);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+    SetReadOnlyData(progressKey, readOnlyData);
 }
 
 /// given the resources to upgrade a target, a given resource, and the progress data for the target,
