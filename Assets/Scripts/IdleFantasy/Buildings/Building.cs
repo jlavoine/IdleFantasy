@@ -49,8 +49,8 @@ namespace IdleFantasy {
             mModel = new ViewModel();
             mData = i_data;
             Name = i_data.GetName();
-            NumUnits = 0;            
-            NextUnitProgress = 0;
+            NumUnits = (int)Math.Floor( i_unitProgress.Count ); 
+            NextUnitProgress = i_unitProgress.Count - NumUnits;
 
             mLevel = new Upgradeable();
             mLevel.SetPropertyToUpgrade( mModel, mData.BuildingLevel );

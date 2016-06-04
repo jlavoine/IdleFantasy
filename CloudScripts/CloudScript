@@ -16,6 +16,15 @@ const CLASS = "Class";          // key used from client as to what type of data 
 const TARGET_ID = "TargetID";   // key used from client as to what specific object is involved in the call
 const CHANGE = "Change";        // key used from client to pass up a change
 
+// unit counting
+const LAST_UNIT_COUNT = "LastUnitCountTime";        // key for timestamp of last unit count update
+const UNIT_COUNT = "Count";                         // key in unit's save data for # of that unit
+const UNIT_BASE_PROGRESS = "BaseProgressPerSecond"; // key in unit's title data for base progress per second
+
+// buildings
+const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
+const BUILDING_UNIT = "Unit";                       // key for building title data: the building's unit
+
 // currencies
 const CURRENCY_GOLD = "G1";
 
@@ -162,6 +171,18 @@ handlers.setPlayerCurrency = function(args) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Login
+/////////////////////////////////////////////////
+
+handlers.onLogin = function (args) {
+    UpdateUnitCounts();
+}
+
+/////////////////////////////////////////////////
+/// ~Login
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// Client data accessing
 /// Methods the client can call to access data
 /// that it can't normally access or change.
@@ -201,6 +222,8 @@ function GetTitleDataForClass(className) {
         }
     }
 
+    log.info("Getting title data for " + className + ": " + JSON.stringify(classData));
+
     return classData;
 }
 
@@ -232,6 +255,17 @@ function GetReadOnlySaveData(key) {
     return valueData;  
 }
 
+function GetInternalSaveData(key) {
+    var rawData = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: [key] });
+    var actualData = rawData[DATA];
+    var data = actualData[key];
+    var valueData = JSON.parse(data[VALUE]);
+
+    log.info("Got internal save data: " + data[VALUE]);
+
+    return valueData;   
+}
+
 function GetPlayerInventory() {
     var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
 
@@ -260,9 +294,60 @@ function SetReadOnlyData(dataKey, dataAsObject) {
     var dataAsString = JSON.stringify(dataAsObject);
     var data = {};
     data[dataKey] = dataAsString;
-    log.info("Saving data for key " + dataKey + ": " + data);
+    log.info("Saving read only data for key " + dataKey + ": " + dataAsString);
 
     server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});    
+}
+
+function SetInternalData(dataKey, dataAsObject) {
+    var dataAsString = JSON.stringify(dataAsObject);
+    var data = {};
+    data[dataKey] = dataAsString;
+    log.info("Saving internal data for " + dataKey + ": " + dataAsString);
+
+    server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data });
+}
+
+function GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData) {
+    var buildingKey = GetBuildingKeyForUnit(unitKey, allBuildingData);
+    var capacity = 0;
+
+    if (buildingKey != null) {
+        var buildingSaveData = allBuildingProgress[buildingKey];
+        var buildingTitleData = allBuildingData[buildingKey];
+
+        var buildingLevel = GetLevelFromProgress(buildingSaveData);
+        var buildingStartSize = GetBuildingStartingSize(buildingTitleData);
+        capacity = buildingLevel * buildingStartSize;
+    }
+
+    log.info("Getting capacity for building " + buildingKey + ": " + capacity);
+    return capacity;
+}
+
+function GetBuildingKeyForUnit(unitKey, allBuildingData) {
+    log.info("trying to get building for unit " + unitKey + ": " + JSON.stringify(allBuildingData));
+    for (var buildingKey in allBuildingData) {
+        log.info("Looking for unit key in " + buildingKey);
+        var buildingData = allBuildingData[buildingKey];
+        var buildingUnitKey = GetBuildingUnitKey(buildingData);
+
+        if (unitKey == buildingUnitKey) {
+            return buildingKey;
+        }
+    }
+
+    return null;
+}
+
+function GetBuildingUnitKey(buildingData) {
+    var key = buildingData[BUILDING_UNIT];
+    return key;
+}
+
+function GetBuildingStartingSize(buildingTitleData) {
+    var startingSize = buildingTitleData[BUILDING_START_SIZE];
+    return startingSize;
 }
 
 /////////////////////////////////////////////////
@@ -296,12 +381,92 @@ function GetProgressForTarget(readOnlyData, targetID) {
     return progressData;
 }
 
+function GetLevelFromProgress(progressData) {
+    var level = parseInt(progressData[UPGRADE_LEVEL], 10);
+
+    return level;
+}
+
 /////////////////////////////////////////////////
 /// ~ProgressData
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
-/// ~TrainerAssignment
+/// UnitCounting
+/////////////////////////////////////////////////
+
+function UpdateUnitCounts() {
+    log.info("Updating unit counts");
+
+    var allUnitProgress = GetProgressData(CLASS_UNIT);
+    var allUnitData = GetTitleDataForClass(CLASS_UNIT);
+    var allBuildingProgress = GetProgressData(CLASS_BUILDING);
+    var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
+    var lastUpdateTime = GetInternalSaveData(LAST_UNIT_COUNT);
+
+    for (var unitKey in allUnitProgress) {
+        UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, lastUpdateTime);        
+    }
+
+    UpdateUnitSaveData(allUnitProgress);
+    UpdateUnitCountTimestamp();    
+}
+
+function UpdateUnitSaveData(allUnitProgress) {
+    var key = GetProgressKey(CLASS_UNIT);
+    SetReadOnlyData(key, allUnitProgress);
+}
+
+function UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, lastUpdateTime) {
+    log.info("Updating count for " + unitKey);
+    var unitSaveData = allUnitProgress[unitKey];
+    var unitTitleData = allUnitData[unitKey];    
+    var unitProgress = GetUnitCountProgress(unitSaveData, unitTitleData, lastUpdateTime);
+
+    var maxCount = GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData);
+    var oldCount = unitSaveData[UNIT_COUNT];
+    var newCount = Math.min(oldCount + unitProgress, maxCount);
+    unitSaveData[UNIT_COUNT] = newCount;
+
+    log.info("Setting count for " + unitKey + " from " + oldCount + " to " + newCount);
+}
+
+function GetUnitCountProgress(unitSaveData, unitTitleData, lastUpdateTime) {
+    var now = Date.now();
+    var timeDifference = now - lastUpdateTime;
+    var timeDifferenceSeconds = timeDifference / 1000;
+    log.info("Getting unit count progress with time difference: " + timeDifference);
+    log.info("Whats the secs: " + timeDifferenceSeconds);
+
+    var speed = GetUnitProgressSpeed(unitSaveData);
+    var progressPerSecond = unitTitleData[UNIT_BASE_PROGRESS] / speed;
+    var progress = timeDifferenceSeconds * progressPerSecond;
+
+    log.info("The progress is: " + progress);
+    return progress;
+}
+
+function GetUnitProgressSpeed(unitSaveData) {    
+    var level = GetLevelFromProgress(unitSaveData);
+    var trainerLevel = GetTrainerLevelFromProgress(unitSaveData);
+    var speed = level + 1 - trainerLevel;
+    speed = Math.max( speed, 1 );
+    log.info("Getting unit progress speed: " + speed);
+
+    return speed;
+}
+
+function UpdateUnitCountTimestamp() {
+    var now = Date.now();
+    SetInternalData(LAST_UNIT_COUNT, now);
+}
+
+/////////////////////////////////////////////////
+/// ~UnitCounting
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// TrainerAssignment
 /// Related to assigning/unassigning trainers
 /// to units.
 /////////////////////////////////////////////////
@@ -380,6 +545,12 @@ function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, ta
     allProgressData[targetID] = progressData;    
 
     SetReadOnlyData(progressKey, allProgressData);
+}
+
+function GetTrainerLevelFromProgress(progressData) {
+    var trainingLevel = parseInt(progressData[TRAINERS_ASSIGNED], 10);
+
+    return trainingLevel;
 }
 
 /////////////////////////////////////////////////

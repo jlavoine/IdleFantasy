@@ -1,6 +1,6 @@
 ﻿using MyLibrary;
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class Login {
@@ -51,6 +51,12 @@ namespace IdleFantasy {
 
         private void OnCloudSetupSuccess() {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
+
+            mBackend.MakeCloudCall( "onLogin", null, OnLogin );
+        }
+
+        private void OnLogin( Dictionary<string, string> i_result ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Login success", "" );
 
             mLoginTimer.StopAndSend();
 
