@@ -13,7 +13,7 @@ using System.ComponentModel;
 /// used instead of the one in data.
 ///////////////////////////////////////////
 
-public class Constants {
+public class Constants_OLD {
 	// hash of all constants
 	private static Hashtable hashConstants;
 	

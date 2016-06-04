@@ -38,7 +38,7 @@ public class DrsAudioSource : MonoBehaviour {
 		audioSource.clip = clip; 
 
 		// set the default volume (may be overriden)
-		float fDefaultVolume = Constants.GetConstant<float>( "DefaultVolume" );
+		float fDefaultVolume = Constants_OLD.GetConstant<float>( "DefaultVolume" );
 		audioSource.volume = fDefaultVolume;
 
 		ID_Audio dataAudio = IDL_Audio.GetData( strResource );

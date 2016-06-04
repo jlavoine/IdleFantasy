@@ -1,7 +1,8 @@
 ﻿
 namespace MyLibrary {
-    public class StringTableEntry {
+    public class ConstantsEntry {
         public string ID;
+        public string Type;
         public string Value;
     }
 }

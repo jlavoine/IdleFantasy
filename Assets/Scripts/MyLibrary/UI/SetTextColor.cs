@@ -18,7 +18,7 @@ public class SetTextColor : MonoBehaviour {
 	void Start () {
 		TextMesh mesh = gameObject.GetComponent<TextMesh>();
 		if ( mesh ) {
-			Color colorText = Constants.GetConstant<Color>( TextColor );
+			Color colorText = Constants_OLD.GetConstant<Color>( TextColor );
 			mesh.color = colorText;
 		}
 		else

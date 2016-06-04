@@ -32,6 +32,7 @@ namespace IdleFantasy {
 
         private IEnumerator LoadDataFromBackend() {
             StringTableManager.Init( "English", mBackend, mMessenger );
+            Constants.Init( mBackend, mMessenger );
             GenericDataLoader.Init( mBackend, mMessenger );
             GenericDataLoader.LoadDataOfClass<BuildingData>( GenericDataLoader.BUILDINGS );
             GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );

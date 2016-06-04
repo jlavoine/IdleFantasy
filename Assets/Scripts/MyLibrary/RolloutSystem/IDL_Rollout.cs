@@ -198,7 +198,7 @@ public class IDL_Rollout {
 			string strVal = (string)pair.Value;
 
 			// then create a list of T from the string value we loaded from xml
-			List<T> list = Constants.ParseList<T>( strVal );
+			List<T> list = Constants_OLD.ParseList<T>( strVal );
 			hash[key] = list;
 		}
 
