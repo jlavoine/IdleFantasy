@@ -12,8 +12,7 @@ namespace MyLibrary {
 
         public void GetAllTitleDataForClass( string i_className, Callback<string> requestSuccessCallback ) {
             string filePath = Application.streamingAssetsPath + "/OfflineData/" + i_className + ".json";
-            string data = DataUtils.LoadFileWithPath( filePath );
-            data = data.CleanStringForJsonDeserialization();
+            string data = GetCleanTextAtPath( filePath );
             requestSuccessCallback( data );
         }
 
@@ -22,7 +21,11 @@ namespace MyLibrary {
         }
 
         public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {
-            throw new NotImplementedException();
+            if ( i_key == Constants.TITLE_DATA_KEY ) {
+                string filePath = Application.streamingAssetsPath + "/OfflineData/Constants.json";
+                string data = GetCleanTextAtPath( filePath );
+                requestSuccessCallback( data );
+            }
         }
 
         public void GetVirtualCurrency( string i_key, Callback<int> requetSuccessCallback ) {
@@ -47,6 +50,13 @@ namespace MyLibrary {
 
         public IEnumerator WaitUntilNotBusy() {
             throw new NotImplementedException();
+        }
+
+        private string GetCleanTextAtPath( string i_path ) {
+            string data = DataUtils.LoadFileWithPath( i_path );
+            data = data.CleanStringForJsonDeserialization();
+
+            return data;
         }
     }
 }

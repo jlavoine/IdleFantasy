@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace MyLibrary {
     public class Constants {
-        private const string TITLE_DATA_KEY = "Constants";
+        public const string TITLE_DATA_KEY = "Constants";
 
         // types of constants currently supported
         private const string STRING_KEY = "String";
