@@ -1,9 +1,5 @@
 ﻿using MyLibrary;
-using MyLibrary.PlayFab;
-using PlayFab;
-using PlayFab.ClientModels;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
@@ -16,6 +12,7 @@ namespace IdleFantasy {
         public const string TEST_UPDATE_UNIT_COUNT = "testUpdateUnitCount";
         public const string TEST_GET_INTERNAL_DATA = "getInternalData";
         public const string TEST_SET_INTERNAL_DATA = "setInternalData";
+        public const string TEST_UPGRADE = "testUpgrade";
 
         public IdleFantasyBackend( IMessageService i_messenger ) : base(i_messenger) {
             mMessenger = i_messenger;

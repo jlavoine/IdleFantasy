@@ -13,7 +13,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             yield return UpdateUnitCounts( TIME_ELAPSED );
 
-            yield return FailTestIfLastCountTimeNotUpdated( 0 );
+            yield return FailTestIfLastCountTimeDoesNotEqual( TIME_ELAPSED );
         }
     }
 }

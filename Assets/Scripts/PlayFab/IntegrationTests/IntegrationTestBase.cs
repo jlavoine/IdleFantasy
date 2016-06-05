@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class IntegrationTestBase : MonoBehaviour {
         protected const string TARGET_ID = "TargetID";
+        protected const string CLASS = "Class";
 
         protected const string SAVE_KEY = "SaveKey";    // used in params sent to cloud for test methods
 
@@ -61,6 +62,22 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 if ( numGold != i_amount ) {
                     IntegrationTest.Fail( "Currency did not equal " + i_amount );
+                }
+            } );
+        }
+
+        protected void GetProgressData<T>( string i_class, string i_targetID, Callback<T> i_resultsCallback ) {
+            Dictionary<string, string> getParams = new Dictionary<string, string>();
+            getParams.Add( "Class", i_class );
+            getParams.Add( "TargetID", i_targetID );
+
+            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    T progress = JsonConvert.DeserializeObject<T>( results["data"] );
+                    i_resultsCallback( progress );
+                }
+                else {
+                    IntegrationTest.Fail( "Results did not have data." );
                 }
             } );
         }
