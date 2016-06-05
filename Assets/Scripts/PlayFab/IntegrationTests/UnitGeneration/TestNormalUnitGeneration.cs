@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestNormalUnitGeneration : TestUnitGeneration {
@@ -11,9 +10,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator Test_NormalUnitGeneration() {
-            SetPlayerData( SAVE_KEY_UNITS, SAVE_VALUE_UNITS );
-            SetPlayerData( SAVE_KEY_BUILDINGS, SAVE_VALUE_BUILDINGS );
-            yield return mBackend.WaitUntilNotBusy();
+            yield return SetDataForTestPrep();
 
             yield return UpdateUnitCounts( TIME_ELAPSED );
 

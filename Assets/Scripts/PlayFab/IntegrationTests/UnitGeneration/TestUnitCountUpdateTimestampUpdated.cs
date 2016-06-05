@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestUnitCountUpdateTimestampUpdated : TestUnitGeneration {
@@ -10,14 +9,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator Test_UnitCountUpdateTimestampUpdated() {
-            SetPlayerData( SAVE_KEY_UNITS, SAVE_VALUE_UNITS );
-            SetPlayerData( SAVE_KEY_BUILDINGS, SAVE_VALUE_BUILDINGS );
-            SetInternalData( "LastUnitCountTime", "0" );
-            yield return mBackend.WaitUntilNotBusy();
+            yield return SetDataForTestPrep();
 
             yield return UpdateUnitCounts( TIME_ELAPSED );
 
-            yield return FailTestIfLastUpdateTimestampNotUpdated( 0 );
+            yield return FailTestIfLastCountTimeNotUpdated( 0 );
         }
     }
 }
