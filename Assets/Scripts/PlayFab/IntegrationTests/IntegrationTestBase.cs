@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class IntegrationTestBase : MonoBehaviour {
+        protected const string TARGET_ID = "TargetID";
+
         protected abstract IEnumerator RunAllTests();
 
         protected IdleFantasyBackend mBackend;
@@ -27,6 +29,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             setDataParams["Key"] = i_key;
             setDataParams["Value"] = i_value;
             mBackend.MakeCloudCall( IdleFantasyBackend.TEST_SET_DATA, setDataParams, null );
+        }
+
+        protected void SetInternalData( string i_key, string i_value ) {
+            Dictionary<string, string> setDataParams = new Dictionary<string, string>();
+            setDataParams["SaveKey"] = i_key;
+            setDataParams["Value"] = i_value;
+            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_SET_INTERNAL_DATA, setDataParams, null );
         }
 
         protected void SetPlayerCurrency( int i_amount ) {
@@ -72,12 +81,28 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             } );
         }
 
-        protected void FailTestIfReturnedCallDoesNotEqual( string i_cloudMethod, int i_count ) {
-            mBackend.MakeCloudCall( i_cloudMethod, null, ( results ) => {
+        protected void FailTestIfReturnedCallDoesNotEqual( string i_cloudMethod, double i_count, Dictionary<string,string> i_params = null ) {
+            mBackend.MakeCloudCall( i_cloudMethod, i_params, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {
-                    int count = int.Parse( results["data"] );
+                    double count = double.Parse( results["data"] );
+                    UnityEngine.Debug.Log( i_count + " vs " + count );
                     if ( count != i_count ) {
                         IntegrationTest.Fail( "Count did not match: " + i_count );
+                    }
+                }
+                else {
+                    IntegrationTest.Fail( "Results did not have data." );
+                }
+            } );
+        }
+
+        protected void FailTestIfReturnedCallEquals( string i_cloudMethod, double i_count, Dictionary<string, string> i_params = null ) {
+            mBackend.MakeCloudCall( i_cloudMethod, i_params, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    double count = double.Parse( results["data"] );
+                    UnityEngine.Debug.Log( i_count + " vs " + count );
+                    if ( count == i_count ) {
+                        IntegrationTest.Fail( "Counts match: " + i_count );
                     }
                 }
                 else {

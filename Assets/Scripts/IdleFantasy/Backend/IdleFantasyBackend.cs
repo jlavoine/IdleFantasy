@@ -7,12 +7,15 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
-        public static string INIT_UPGRADE = "initiateUpgrade";
-        public static string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
-        public static string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
+        public const string INIT_UPGRADE = "initiateUpgrade";
+        public const string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
+        public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
 
-        public static string TEST_SET_DATA = "setPlayerData";
-        public static string TEST_SET_CURRENCY = "setPlayerCurrency";
+        public const string TEST_SET_DATA = "setPlayerData";
+        public const string TEST_SET_CURRENCY = "setPlayerCurrency";
+        public const string TEST_UPDATE_UNIT_COUNT = "testUpdateUnitCount";
+        public const string TEST_GET_INTERNAL_DATA = "getInternalData";
+        public const string TEST_SET_INTERNAL_DATA = "setInternalData";
 
         public IdleFantasyBackend( IMessageService i_messenger ) : base(i_messenger) {
             mMessenger = i_messenger;

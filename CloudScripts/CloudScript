@@ -20,6 +20,7 @@ const CHANGE = "Change";        // key used from client to pass up a change
 const LAST_UNIT_COUNT = "LastUnitCountTime";        // key for timestamp of last unit count update
 const UNIT_COUNT = "Count";                         // key in unit's save data for # of that unit
 const UNIT_BASE_PROGRESS = "BaseProgressPerSecond"; // key in unit's title data for base progress per second
+const TIME_ELAPSED = "TimeElapsed";                 // for testing unit counting; how much time to pretend passed
 
 // buildings
 const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
@@ -45,6 +46,9 @@ const MODULE_BASE = "Base";    // the base game!
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
 const CLASS_UNIT = "Units";             // units that are apart of buildings
+
+/// testing
+const SAVE_KEY = "SaveKey";             // for accessing some save data
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
@@ -74,6 +78,35 @@ function isTesting() {
     log.info("Account Test Status: " + isTesting);
 
     return isTesting;
+}
+
+/// use this method to test if unit counts are updating properly
+handlers.testUpdateUnitCount = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var timeElapsed = parseInt(args.data[TIME_ELAPSED], 10);
+    UpdateUnitCounts(timeElapsed);
+}
+
+/// returns the # of units the player currently has
+handlers.getUnitCount = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var readOnlyData = GetProgressData(CLASS_UNIT);
+    var targetID = args.data[TARGET_ID];    
+    var progressData = GetProgressForTarget(readOnlyData, targetID);
+
+    var count = GetUnitCount(progressData);
+    log.info("Returning unit count for " + targetID + ": " + count);
+
+    var dataToString = JSON.stringify(count);
+    var data = { data : dataToString }
+
+    return data;
 }
 
 /// returns the progress data for a specific class and ID.
@@ -113,6 +146,17 @@ handlers.getTrainerCount = function (args) {
     return data;
 }
 
+/// for getting at internal data
+handlers.getInternalData = function(args) {
+    var key = args.data[SAVE_KEY];
+    var value = GetInternalSaveData(key);   
+    
+    var data = { data : value };
+    log.info("Returning internal value for " + key + ": " + JSON.stringify(data));
+
+    return data;
+}
+
 /// returns the # of available trainers
 handlers.getAvailableTrainers = function(args) {
     var allProgressData = GetProgressData(CLASS_UNIT);
@@ -139,6 +183,18 @@ handlers.setPlayerData = function(args) {
     log.info("Setting player data " + key + " to " + value);
 
     server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: dataToSave, Permission: "Public"});
+}
+
+/// sets internal data of a key to a value
+handlers.setInternalData = function(args) {
+    if (!isTesting) {
+        return;
+    }
+
+    var key = args.data[SAVE_KEY];
+    var value = args.data[VALUE];
+
+    SetInternalData(key, value);
 }
 
 /// sets a type of the player's currency to a value.
@@ -175,7 +231,11 @@ handlers.setPlayerCurrency = function(args) {
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    UpdateUnitCounts();
+    var lastUpdateTime = GetInternalSaveData(LAST_UNIT_COUNT);
+    var now = Date.now();
+    var timeElapsed = now - lastUpdateTime;
+
+    UpdateUnitCounts(timeElapsed);
 }
 
 /////////////////////////////////////////////////
@@ -350,6 +410,11 @@ function GetBuildingStartingSize(buildingTitleData) {
     return startingSize;
 }
 
+function GetUnitCount(unitSaveData) {
+    var count = unitSaveData[UNIT_COUNT];
+    return count;
+}
+
 /////////////////////////////////////////////////
 /// ~Misc
 /////////////////////////////////////////////////
@@ -395,17 +460,18 @@ function GetLevelFromProgress(progressData) {
 /// UnitCounting
 /////////////////////////////////////////////////
 
-function UpdateUnitCounts() {
+function UpdateUnitCounts(timeElapsed) {
     log.info("Updating unit counts");
+
+    timeElapsed = Math.max(timeElapsed, 0);
 
     var allUnitProgress = GetProgressData(CLASS_UNIT);
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
     var allBuildingProgress = GetProgressData(CLASS_BUILDING);
     var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
-    var lastUpdateTime = GetInternalSaveData(LAST_UNIT_COUNT);
-
+    
     for (var unitKey in allUnitProgress) {
-        UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, lastUpdateTime);        
+        UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, timeElapsed);        
     }
 
     UpdateUnitSaveData(allUnitProgress);
@@ -417,26 +483,23 @@ function UpdateUnitSaveData(allUnitProgress) {
     SetReadOnlyData(key, allUnitProgress);
 }
 
-function UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, lastUpdateTime) {
+function UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, timeElapsed) {
     log.info("Updating count for " + unitKey);
     var unitSaveData = allUnitProgress[unitKey];
     var unitTitleData = allUnitData[unitKey];    
-    var unitProgress = GetUnitCountProgress(unitSaveData, unitTitleData, lastUpdateTime);
+    var unitProgress = GetUnitCountProgress(unitSaveData, unitTitleData, timeElapsed);
 
     var maxCount = GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData);
-    var oldCount = unitSaveData[UNIT_COUNT];
+    var oldCount = GetUnitCount(unitSaveData);
     var newCount = Math.min(oldCount + unitProgress, maxCount);
     unitSaveData[UNIT_COUNT] = newCount;
 
     log.info("Setting count for " + unitKey + " from " + oldCount + " to " + newCount);
 }
 
-function GetUnitCountProgress(unitSaveData, unitTitleData, lastUpdateTime) {
-    var now = Date.now();
-    var timeDifference = now - lastUpdateTime;
-    var timeDifferenceSeconds = timeDifference / 1000;
-    log.info("Getting unit count progress with time difference: " + timeDifference);
-    log.info("Whats the secs: " + timeDifferenceSeconds);
+function GetUnitCountProgress(unitSaveData, unitTitleData, timeElapsed) {
+    var timeDifferenceSeconds = timeElapsed / 1000;
+    log.info("Getting unit count progress with time difference: " + timeDifferenceSeconds);
 
     var speed = GetUnitProgressSpeed(unitSaveData);
     var progressPerSecond = unitTitleData[UNIT_BASE_PROGRESS] / speed;
