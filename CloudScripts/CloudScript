@@ -100,6 +100,17 @@ handlers.testUpgrade = function (args) {
     Upgrade(allProgressData, className, progressForTarget, targetID);
 }
 
+/// use this method if you want to train a unit, bypassing all other normal checks
+handlers.testChangeTraining = function (args) {
+    var className = args.data[CLASS];
+    var targetID = args.data[TARGET_ID];
+    var changeInTrainers = parseInt(args.data[CHANGE], 10);
+    var allProgressData = GetProgressData(className);
+    var progressForTarget = GetProgressForTarget(allProgressData, targetID);
+
+    ChangeTrainingLevel(allProgressData, progressForTarget, changeInTrainers, targetID, className);
+}
+
 /// returns the # of units the player currently has
 handlers.getUnitCount = function (args) {
     if (!isTesting) {
@@ -609,12 +620,11 @@ function CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTr
     var availableTrainers = GetAvailableTrainers(allProgressData);
 
     var isChangeOK = false;
-    if (changeInTrainingLevel
-     < 0) {
+    if (changeInTrainingLevel < 0) {
         isChangeOK = changeResult >= 0;
     } else {
         isChangeOK = availableTrainers > 0 && changeResult <= maxLevel;
-    }
+    }    
 
     log.info("Checking change against max level " + maxLevel + " with a changeResult " + changeResult);
     log.info("Can make change: " + isChangeOK);
@@ -626,12 +636,22 @@ function GetMaxTrainingLevel(progressDataForUnit) {
 }
 
 function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, targetID, className) {
+    UpdateCountDueToChangeInTraining(targetID, allProgressData);    
+
     var progressKey = GetProgressKey(className);
     var trainersAssigned = parseInt(progressData[TRAINERS_ASSIGNED], 10) + changeInTrainers;
     progressData[TRAINERS_ASSIGNED] = trainersAssigned;
     allProgressData[targetID] = progressData;    
 
     SetReadOnlyData(progressKey, allProgressData);
+}
+
+function UpdateCountDueToChangeInTraining(targetID, allProgressData) {
+    var allUnitData = GetTitleDataForClass(CLASS_UNIT);
+    var allBuildingProgress = GetProgressData(CLASS_BUILDING);
+    var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
+
+    UpdateCountForUnit(targetID, allProgressData, allUnitData, allBuildingProgress, allBuildingData, Date.now());
 }
 
 function GetTrainerLevelFromProgress(progressData) {

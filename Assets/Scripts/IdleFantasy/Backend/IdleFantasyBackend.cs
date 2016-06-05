@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
+        public const string CHANGE = "Change";
+
         public const string INIT_UPGRADE = "initiateUpgrade";
         public const string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
         public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
@@ -13,6 +15,7 @@ namespace IdleFantasy {
         public const string TEST_GET_INTERNAL_DATA = "getInternalData";
         public const string TEST_SET_INTERNAL_DATA = "setInternalData";
         public const string TEST_UPGRADE = "testUpgrade";
+        public const string TEST_CHANGE_TRAINING = "testChangeTraining";
 
         public IdleFantasyBackend( IMessageService i_messenger ) : base(i_messenger) {
             mMessenger = i_messenger;
@@ -33,7 +36,7 @@ namespace IdleFantasy {
 
         public void ChangeAssignedTrainers( string i_unitID, int i_change ) {
             Dictionary<string, string> assignParams = new Dictionary<string, string>();
-            assignParams.Add( "Change", i_change.ToString() );
+            assignParams.Add( CHANGE, i_change.ToString() );
             assignParams.Add( "TargetID", i_unitID );
 
             MakeCloudCall( INIT_TRAINING_CHANGE, assignParams, null );
