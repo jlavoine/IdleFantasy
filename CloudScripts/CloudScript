@@ -80,6 +80,21 @@ function isTesting() {
     return isTesting;
 }
 
+handlers.overLimit = function (args) {
+    var one = isTesting();
+    var two = isTesting();
+    var three = isTesting();
+    var four = isTesting();
+    var five = isTesting();
+    var six = isTesting();
+    var seven = isTesting();
+    var eight = isTesting();
+    var nine = isTesting();
+    var ten = isTesting();
+    var eleven = isTesting();
+    var twelve = isTesting();
+}
+
 /// use this method to test if unit counts are updating properly
 handlers.testUpdateUnitCount = function (args) {
     if (!isTesting) {
@@ -428,11 +443,19 @@ function GetBuildingStartingSize(buildingTitleData) {
 }
 
 function GetUnitCount(unitSaveData) {
+    if (!unitSaveData.hasOwnProperty(UNIT_COUNT)) {
+        unitSaveData[UNIT_COUNT] = 0;
+    }
+
     var count = unitSaveData[UNIT_COUNT];
     return count;
 }
 
 function GetUnitLastCountTime(unitSaveData) {
+    if (!unitSaveData.hasOwnProperty(LAST_UNIT_COUNT)) {
+        unitSaveData[LAST_UNIT_COUNT] = Date.now();
+    }
+
     var lastCount = parseInt(unitSaveData[LAST_UNIT_COUNT], 10);
 
     log.info("Last count time for unit: " + lastCount);
