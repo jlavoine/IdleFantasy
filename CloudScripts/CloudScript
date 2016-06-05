@@ -331,9 +331,9 @@ function GetAllModules() {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
-/// Misc
-/// Misc methods that are used by many different
-/// server methods.
+/// Player data access
+/// All calls related to getting or setting
+/// generic player data.
 /////////////////////////////////////////////////
 
 function GetReadOnlySaveData(key) {
@@ -358,6 +358,89 @@ function GetInternalSaveData(key) {
     return valueData;   
 }
 
+function SetReadOnlyData(dataKey, dataAsObject) {
+    var dataAsString = JSON.stringify(dataAsObject);
+    var data = {};
+    data[dataKey] = dataAsString;
+    log.info("Saving read only data for key " + dataKey + ": " + dataAsString);
+
+    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});    
+}
+
+function SetInternalData(dataKey, dataAsObject) {
+    var dataAsString = JSON.stringify(dataAsObject);
+    var data = {};
+    data[dataKey] = dataAsString;
+    log.info("Saving internal data for " + dataKey + ": " + dataAsString);
+
+    server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data });
+}
+
+/////////////////////////////////////////////////
+/// ~Player data access
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Building
+/// Methods directly related to buildings. This
+/// is like a server side version of the Building 
+/// class.
+/// Also contains helper functions for accessing
+/// elements of a building from save data.
+/////////////////////////////////////////////////
+
+function GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData) {
+    var buildingKey = GetBuildingKeyForUnit(unitKey, allBuildingData);
+    var capacity = 0;
+
+    if (buildingKey != null) {
+        var buildingSaveData = allBuildingProgress[buildingKey];
+        var buildingTitleData = allBuildingData[buildingKey];
+
+        var buildingLevel = GetLevelFromProgress(buildingSaveData);
+        var buildingStartSize = GetBuildingStartingSize(buildingTitleData);
+        capacity = buildingLevel * buildingStartSize;
+    }
+
+    log.info("Getting capacity for building " + buildingKey + ": " + capacity);
+    return capacity;
+}
+
+function GetBuildingKeyForUnit(unitKey, allBuildingData) {
+    log.info("Trying to get building for unit " + unitKey + ": " + JSON.stringify(allBuildingData));
+    for (var buildingKey in allBuildingData) {
+        var buildingData = allBuildingData[buildingKey];
+        var buildingUnitKey = GetBuildingUnitKey(buildingData);
+
+        if (unitKey == buildingUnitKey) {
+            log.info("Found the key: " + buildingKey);
+            return buildingKey;
+        }
+    }
+
+    return null;
+}
+
+function GetBuildingUnitKey(buildingData) {
+    var key = buildingData[BUILDING_UNIT];
+    return key;
+}
+
+function GetBuildingStartingSize(buildingTitleData) {
+    var startingSize = buildingTitleData[BUILDING_START_SIZE];
+    return startingSize;
+}
+
+/////////////////////////////////////////////////
+/// ~Building
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Misc
+/// Misc methods that are used by many different
+/// server methods.
+/////////////////////////////////////////////////
+
 function GetPlayerInventory() {
     var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
 
@@ -380,86 +463,6 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
     var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
 
     return playerCurrencies;
-}
-
-function SetReadOnlyData(dataKey, dataAsObject) {
-    var dataAsString = JSON.stringify(dataAsObject);
-    var data = {};
-    data[dataKey] = dataAsString;
-    log.info("Saving read only data for key " + dataKey + ": " + dataAsString);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});    
-}
-
-function SetInternalData(dataKey, dataAsObject) {
-    var dataAsString = JSON.stringify(dataAsObject);
-    var data = {};
-    data[dataKey] = dataAsString;
-    log.info("Saving internal data for " + dataKey + ": " + dataAsString);
-
-    server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data });
-}
-
-function GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData) {
-    var buildingKey = GetBuildingKeyForUnit(unitKey, allBuildingData);
-    var capacity = 0;
-
-    if (buildingKey != null) {
-        var buildingSaveData = allBuildingProgress[buildingKey];
-        var buildingTitleData = allBuildingData[buildingKey];
-
-        var buildingLevel = GetLevelFromProgress(buildingSaveData);
-        var buildingStartSize = GetBuildingStartingSize(buildingTitleData);
-        capacity = buildingLevel * buildingStartSize;
-    }
-
-    log.info("Getting capacity for building " + buildingKey + ": " + capacity);
-    return capacity;
-}
-
-function GetBuildingKeyForUnit(unitKey, allBuildingData) {
-    log.info("trying to get building for unit " + unitKey + ": " + JSON.stringify(allBuildingData));
-    for (var buildingKey in allBuildingData) {
-        log.info("Looking for unit key in " + buildingKey);
-        var buildingData = allBuildingData[buildingKey];
-        var buildingUnitKey = GetBuildingUnitKey(buildingData);
-
-        if (unitKey == buildingUnitKey) {
-            return buildingKey;
-        }
-    }
-
-    return null;
-}
-
-function GetBuildingUnitKey(buildingData) {
-    var key = buildingData[BUILDING_UNIT];
-    return key;
-}
-
-function GetBuildingStartingSize(buildingTitleData) {
-    var startingSize = buildingTitleData[BUILDING_START_SIZE];
-    return startingSize;
-}
-
-function GetUnitCount(unitSaveData) {
-    if (!unitSaveData.hasOwnProperty(UNIT_COUNT)) {
-        unitSaveData[UNIT_COUNT] = 0;
-    }
-
-    var count = unitSaveData[UNIT_COUNT];
-    return count;
-}
-
-function GetUnitLastCountTime(unitSaveData) {
-    if (!unitSaveData.hasOwnProperty(LAST_UNIT_COUNT)) {
-        unitSaveData[LAST_UNIT_COUNT] = Date.now();
-    }
-
-    var lastCount = parseInt(unitSaveData[LAST_UNIT_COUNT], 10);
-
-    log.info("Last count time for unit: " + lastCount);
-    return lastCount;
 }
 
 /////////////////////////////////////////////////
@@ -501,6 +504,19 @@ function GetLevelFromProgress(progressData) {
 
 /////////////////////////////////////////////////
 /// ~ProgressData
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Unit
+/// Methods directly related to units. This
+/// is like a server side version of the Unit 
+/// class.
+/// Also contains helper functions for accessing
+/// elements of a unit from save data.
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// ~Unit
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -556,6 +572,28 @@ function SetUnitCount(unitSaveData, count) {
 
 function SetUnitLastCountTime(unitSaveData, time) {
     unitSaveData[LAST_UNIT_COUNT] = time;
+}
+
+function GetUnitCount(unitSaveData) {
+    if (!unitSaveData.hasOwnProperty(UNIT_COUNT)) {
+        unitSaveData[UNIT_COUNT] = 0;
+    }
+
+    var count = parseInt(unitSaveData[UNIT_COUNT], 10);
+
+    log.info("Returning unit count: " + count);
+    return count;
+}
+
+function GetUnitLastCountTime(unitSaveData) {
+    if (!unitSaveData.hasOwnProperty(LAST_UNIT_COUNT)) {
+        unitSaveData[LAST_UNIT_COUNT] = Date.now();
+    }
+
+    var lastCount = parseInt(unitSaveData[LAST_UNIT_COUNT], 10);
+
+    log.info("Last count time for unit: " + lastCount);
+    return lastCount;
 }
 
 function GetUnitCountIncrease(unitSaveData, unitTitleData, time) {
