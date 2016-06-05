@@ -20,7 +20,7 @@ namespace IdleFantasy.UnitTests {
                 new ViewModel() );
 
             mBuilding = BuildingUpgradeTests.GetMockBuilding();
-            mBuilding.SetUnit( mUnit );
+            mBuilding.Unit = mUnit;
         }
 
 

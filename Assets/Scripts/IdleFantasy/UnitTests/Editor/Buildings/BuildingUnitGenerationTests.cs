@@ -47,7 +47,7 @@ namespace IdleFantasy.UnitTests {
         public void UnitsGeneratedFromTick( TimeSpan i_timeSpan ) {
             Building testBuilding = BuildingUpgradeTests.GetMockBuilding();
             IUnit unit = new MockUnit( 1 );
-            testBuilding.SetUnit( unit );
+            testBuilding.Unit = unit;
             int unitsBeforeTick = testBuilding.NumUnits;
 
             testBuilding.Tick( i_timeSpan );
@@ -56,10 +56,24 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        public void UpgradingUnitResetsCount() {
+            Building testBuilding = BuildingUpgradeTests.GetMockBuilding();
+            IUnit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
+                new UnitProgress() { Level = 1, Trainers = 1 },
+                new ViewModel() );  // using a real Unit here is not great...should really use NSubstitute or something? But this was complex
+            testBuilding.Unit = unit;
+            testBuilding.Tick( new TimeSpan( 1, 0, 0 ) );
+            
+            unit.Level.Upgrade();
+
+            Assert.AreEqual( 0, testBuilding.NumUnits );
+        }
+
+        [Test]
         public void ZeroProgressAtMaxCapacity() {
             Building testBuilding = BuildingUpgradeTests.GetMockBuilding();
             IUnit unit = new MockUnit( .111f );
-            testBuilding.SetUnit( unit );
+            testBuilding.Unit = unit;
 
             testBuilding.Tick( new TimeSpan( 1, 0, 0 ) );
 

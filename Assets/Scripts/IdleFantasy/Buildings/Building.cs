@@ -22,7 +22,14 @@ namespace IdleFantasy {
         private IUnit mUnit;
         public IUnit Unit {
             get { return mUnit; }
-            set { mUnit = value; }
+            set {
+                if ( mUnit != null ) {
+                    mUnit.Level.UpgradeCompleteEvent -= OnUnitUpgraded;
+                }
+
+                mUnit = value;
+                mUnit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
+            }
         }
 
         public float NextUnitProgress {
@@ -65,16 +72,7 @@ namespace IdleFantasy {
 
         private void OnUpgraded() {
             UpdateCapacity();
-        }
-
-        public void SetUnit( IUnit i_unit ) {
-            if ( Unit != null ) {
-                Unit.Level.UpgradeCompleteEvent -= OnUnitUpgraded;
-            }
-
-            Unit = i_unit;
-            Unit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
-        }
+        }    
 
         public void UpdateCapacity() {
             Capacity = Data.StartingSize * Level.Value;
