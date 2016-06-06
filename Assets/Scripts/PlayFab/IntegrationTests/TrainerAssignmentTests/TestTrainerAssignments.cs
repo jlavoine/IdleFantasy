@@ -31,7 +31,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected void SetTrainerCount( int i_trainers ) {
-            SetPlayerData( TRAINER_DATA_KEY, DrsStringUtils.Replace( TRAINER_DATA, "NUM", i_trainers ) );
+            IntegrationTestUtils.SetPlayerData( TRAINER_DATA_KEY, DrsStringUtils.Replace( TRAINER_DATA, "NUM", i_trainers ) );
         }
 
         protected void SetProgressData( int i_level, int i_trainers ) {
@@ -39,7 +39,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             data = DrsStringUtils.Replace( data, "LEVEL", i_level );
             data = DrsStringUtils.Replace( data, "TRAINERS", i_trainers );
 
-            SetPlayerData( PROGRESS_KEY, data );
+            IntegrationTestUtils.SetPlayerData( PROGRESS_KEY, data );
         }
 
         protected IEnumerator MakeAssignmentChange( int i_change ) {

@@ -4,8 +4,8 @@ using System.Collections;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestCanAffordUpgrade : TestUpgrades {
         protected override IEnumerator RunTest() {
-            SetPlayerData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
-            SetPlayerCurrency( mCurrentTestData.Cost );
+            IntegrationTestUtils.SetPlayerData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
+            IntegrationTestUtils.SetPlayerCurrency( mCurrentTestData.Cost );
 
             yield return mBackend.WaitUntilNotBusy();
 

@@ -4,12 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public abstract class IntegrationTestBase : MonoBehaviour {
-        protected const string TARGET_ID = "TargetID";
-        protected const string CLASS = "Class";
-
-        protected const string SAVE_KEY = "SaveKey";    // used in params sent to cloud for test methods
-
+    public abstract class IntegrationTestBase : MonoBehaviour {        
         protected abstract IEnumerator RunAllTests();
 
         protected IdleFantasyBackend mBackend;
@@ -25,27 +20,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return RunAllTests();
 
             DoneWithTests();
-        }
-
-        protected void SetPlayerData( string i_key, string i_value ) {
-            Dictionary<string, string> setDataParams = new Dictionary<string, string>();
-            setDataParams["Key"] = i_key;
-            setDataParams["Value"] = i_value;
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_SET_DATA, setDataParams, null );
-        }
-
-        protected void SetInternalData( string i_key, string i_value ) {
-            Dictionary<string, string> setDataParams = new Dictionary<string, string>();
-            setDataParams[SAVE_KEY] = i_key;
-            setDataParams["Value"] = i_value;
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_SET_INTERNAL_DATA, setDataParams, null );
-        }
-
-        protected void SetPlayerCurrency( int i_amount ) {
-            Dictionary<string, string> setCurrencyParams = new Dictionary<string, string>();
-            setCurrencyParams["Type"] = VirtualCurrencies.GOLD;
-            setCurrencyParams["Amount"] = i_amount.ToString();
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_SET_CURRENCY, setCurrencyParams, null );
         }
 
         protected void DoneWithTests() {

@@ -9,20 +9,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator RunTest() {
             yield return SetDataForTestPrep();
-            yield return TrainUnit();
+            yield return IntegrationTestUtils.TrainUnit( UNIT_BEING_COUNTED, 1 );
 
             yield return FailTestIfLastCountTimeNotUpdated();
-        }
-
-        private IEnumerator TrainUnit() {
-            Dictionary<string, string> testParams = new Dictionary<string, string>();
-            testParams[TARGET_ID] = UNIT_BEING_COUNTED;
-            testParams[CLASS] = GenericDataLoader.UNITS;
-            testParams[IdleFantasyBackend.CHANGE] = "1";
-
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_CHANGE_TRAINING, testParams, null );
-
-            yield return mBackend.WaitUntilNotBusy();
         }
     }
 }

@@ -13,20 +13,10 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IEnumerator RunTest() {
             yield return SetDataForTestPrep();
             yield return UpdateUnitCounts( TIME_ELAPSED );
-            yield return UpgradeUnit();
+            yield return IntegrationTestUtils.UpgradeTarget_NoRules( UNIT_BEING_COUNTED ,GenericDataLoader.UNITS );
 
             yield return FailTestIfUnitCountDoesNotEqual( EXPECTED_COUNT );
             yield return FailTestIfLastCountTimeNotUpdated();
-        }
-
-        private IEnumerator UpgradeUnit() {
-            Dictionary<string, string> testParams = new Dictionary<string, string>();
-            testParams[TARGET_ID] = UNIT_BEING_COUNTED;
-            testParams[CLASS] = GenericDataLoader.UNITS;
-
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_UPGRADE, testParams, null );
-
-            yield return mBackend.WaitUntilNotBusy();
         }
     }
 }
