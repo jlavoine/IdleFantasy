@@ -49,6 +49,7 @@ const CLASS_UNIT = "Units";             // units that are apart of buildings
 
 /// testing
 const SAVE_KEY = "SaveKey";             // for accessing some save data
+const DATA_ACCESS = "DataAccess";       // for specifying internal, read only, etc
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
@@ -205,32 +206,16 @@ handlers.getAvailableTrainers = function(args) {
 }
 
 /// sets player data of a key to a value
-handlers.setPlayerData = function(args) {
+handlers.setSaveData = function(args) {
     if (!isTesting) {
         return;
     }
 
     var key = args.data["Key"];
     var value = args.data[VALUE];
+    var access = args.data[DATA_ACCESS];
 
-    var dataToSave = {};
-    dataToSave[key] = value;
-
-    log.info("Setting player data " + key + " to " + value);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: dataToSave, Permission: "Public"});
-}
-
-/// sets internal data of a key to a value
-handlers.setInternalData = function(args) {
-    if (!isTesting) {
-        return;
-    }
-
-    var key = args.data[SAVE_KEY];
-    var value = args.data[VALUE];
-
-    SetInternalData(key, value);
+    SetSaveData(key, value, access);
 }
 
 /// sets a type of the player's currency to a value.
@@ -336,44 +321,51 @@ function GetAllModules() {
 /// generic player data.
 /////////////////////////////////////////////////
 
+const READ_ONLY = "ReadOnly";
+const INTERNAL = "Internal";
+
 function GetReadOnlySaveData(key) {
     var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [key] });
-    var actualData = rawData[DATA];
-    var data = actualData[key];
-    var valueData = JSON.parse(data[VALUE]);
 
-    log.info("Got read only save data: " + data[VALUE]);
-
-    return valueData;  
+    return GetSaveObjectFromRawData(rawData, key); 
 }
 
 function GetInternalSaveData(key) {
     var rawData = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: [key] });
+    
+    return GetSaveObjectFromRawData(rawData, key);   
+}
+
+function GetSaveObjectFromRawData(rawData, key) {
     var actualData = rawData[DATA];
     var data = actualData[key];
     var valueData = JSON.parse(data[VALUE]);
 
-    log.info("Got internal save data: " + data[VALUE]);
+    log.info("Got save data: " + data[VALUE]);
 
-    return valueData;   
+    return valueData; 
 }
 
 function SetReadOnlyData(dataKey, dataAsObject) {
-    var dataAsString = JSON.stringify(dataAsObject);
-    var data = {};
-    data[dataKey] = dataAsString;
-    log.info("Saving read only data for key " + dataKey + ": " + dataAsString);
-
-    server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});    
+    SetSaveData(dataKey, JSON.stringify(dataAsObject), READ_ONLY);    
 }
 
 function SetInternalData(dataKey, dataAsObject) {
-    var dataAsString = JSON.stringify(dataAsObject);
+    SetSaveData(dataKey, JSON.stringify(dataAsObject), INTERNAL); 
+}
+
+function SetSaveData(dataKey, dataAsString, dataType) {
     var data = {};
     data[dataKey] = dataAsString;
-    log.info("Saving internal data for " + dataKey + ": " + dataAsString);
+    log.info("Saving " + dataType + " data for key " + dataKey + ": " + dataAsString);
 
-    server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data });
+    if (dataType == READ_ONLY) {
+        server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+    } else if (dataType == INTERNAL) {
+        server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+    } else {
+        log.info("Can't save to data type: " + dataType);
+    }
 }
 
 /////////////////////////////////////////////////
@@ -493,6 +485,7 @@ function GetProgressKey(className) {
 function GetProgressForTarget(readOnlyData, targetID) {    
     var progressData = readOnlyData[targetID];
     
+    log.info("Progress data for " + targetID + ": " + progressData);
     return progressData;
 }
 

@@ -16,8 +16,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected const string UNIT_BEING_COUNTED = "BASE_MELEE_1";
 
         protected IEnumerator SetDataForTestPrep() {
-            IntegrationTestUtils.SetPlayerData( SAVE_KEY_UNITS, SAVE_VALUE_UNITS );
-            IntegrationTestUtils.SetPlayerData( SAVE_KEY_BUILDINGS, SAVE_VALUE_BUILDINGS );
+            IntegrationTestUtils.SetReadOnlyData( SAVE_KEY_UNITS, SAVE_VALUE_UNITS );
+            IntegrationTestUtils.SetReadOnlyData( SAVE_KEY_BUILDINGS, SAVE_VALUE_BUILDINGS );
                         
             yield return mBackend.WaitUntilNotBusy();
         }

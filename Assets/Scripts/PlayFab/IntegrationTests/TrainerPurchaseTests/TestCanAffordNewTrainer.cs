@@ -7,7 +7,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator CanAffordNewTrainer() {
-            IntegrationTestUtils.SetPlayerData( SAVE_KEY, DrsStringUtils.Replace( SAVE_VALUE, "NUM", 1 ) );
+            IntegrationTestUtils.SetReadOnlyData( SAVE_KEY, DrsStringUtils.Replace( SAVE_VALUE, "NUM", 1 ) );
             IntegrationTestUtils.SetPlayerCurrency( COST );
 
             yield return mBackend.WaitUntilNotBusy();

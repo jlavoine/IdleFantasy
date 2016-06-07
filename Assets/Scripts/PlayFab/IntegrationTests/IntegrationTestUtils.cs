@@ -5,7 +5,12 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public static class IntegrationTestUtils {
         public const string TARGET_ID = "TargetID";
         public const string CLASS = "Class";
-        public const string SAVE_KEY = "SaveKey";    // used in params sent to cloud for test methods
+        public const string SAVE_KEY = "SaveKey";       // used in params sent to cloud for test methods
+        public const string DATA_ACCESS = "DataAccess"; // internal, read only, etc
+
+        // constants on the server
+        public const string ACCESS_INTERNAL = "Internal";
+        public const string ACCESS_READ_ONLY = "ReadOnly";
 
         public static IEnumerator UpgradeTarget_NoRules( string i_targetID, string i_className ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
@@ -28,18 +33,20 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return BackendManager.Backend.WaitUntilNotBusy();
         }
 
-        public static void SetPlayerData( string i_key, string i_value ) {
-            Dictionary<string, string> setDataParams = new Dictionary<string, string>();
-            setDataParams["Key"] = i_key;
-            setDataParams["Value"] = i_value;
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_SET_DATA, setDataParams, null );
+        public static void SetReadOnlyData( string i_key, string i_value ) {
+            SetSaveData( i_key, i_value, ACCESS_READ_ONLY );
         }
 
         public static void SetInternalData( string i_key, string i_value ) {
+            SetSaveData( i_key, i_value, ACCESS_INTERNAL );
+        }
+
+        public static void SetSaveData( string i_key, string i_value, string i_access ) {
             Dictionary<string, string> setDataParams = new Dictionary<string, string>();
-            setDataParams[SAVE_KEY] = i_key;
+            setDataParams["Key"] = i_key;
             setDataParams["Value"] = i_value;
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_SET_INTERNAL_DATA, setDataParams, null );
+            setDataParams[DATA_ACCESS] = i_access;
+            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_SET_DATA, setDataParams, null );
         }
 
         public static void SetPlayerCurrency( int i_amount ) {

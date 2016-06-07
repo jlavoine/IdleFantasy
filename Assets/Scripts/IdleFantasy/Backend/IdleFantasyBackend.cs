@@ -9,11 +9,9 @@ namespace IdleFantasy {
         public const string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
         public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
 
-        public const string TEST_SET_DATA = "setPlayerData";
+        public const string TEST_SET_DATA = "setSaveData";
         public const string TEST_SET_CURRENCY = "setPlayerCurrency";
         public const string TEST_UPDATE_UNIT_COUNT = "testUpdateUnitCount";
-        public const string TEST_GET_INTERNAL_DATA = "getInternalData";
-        public const string TEST_SET_INTERNAL_DATA = "setInternalData";
         public const string TEST_UPGRADE = "testUpgrade";
         public const string TEST_CHANGE_TRAINING = "testChangeTraining";
 
