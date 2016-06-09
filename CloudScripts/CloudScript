@@ -389,7 +389,7 @@ function GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData) {
         var buildingSaveData = allBuildingProgress[buildingKey];
         var buildingTitleData = allBuildingData[buildingKey];
 
-        var buildingLevel = GetLevelFromProgress(buildingSaveData);
+        var buildingLevel = GetNumberFromProgress(UPGRADE_LEVEL, buildingSaveData);
         var buildingStartSize = GetBuildingStartingSize(buildingTitleData);
         capacity = buildingLevel * buildingStartSize;
     }
@@ -489,10 +489,10 @@ function GetProgressForTarget(readOnlyData, targetID) {
     return progressData;
 }
 
-function GetLevelFromProgress(progressData) {
-    var level = parseInt(progressData[UPGRADE_LEVEL], 10);
+function GetNumberFromProgress(key, progressData) {
+    var num = parseInt(progressData[key], 10);
 
-    return level;
+    return num;
 }
 
 /////////////////////////////////////////////////
@@ -604,8 +604,8 @@ function GetUnitCountIncrease(unitSaveData, unitTitleData, time) {
 }
 
 function GetUnitProgressSpeed(unitSaveData) {    
-    var level = GetLevelFromProgress(unitSaveData);
-    var trainerLevel = GetTrainerLevelFromProgress(unitSaveData);
+    var level = GetNumberFromProgress(UPGRADE_LEVEL, unitSaveData);
+    var trainerLevel = GetNumberFromProgress(TRAINERS_ASSIGNED, unitSaveData);
     var speed = level + 1 - trainerLevel;
     speed = Math.max( speed, 1 );
     log.info("Getting unit progress speed: " + speed);
@@ -706,12 +706,6 @@ function UpdateCountDueToChangeInTraining(targetID, allProgressData) {
     var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
 
     UpdateCountForUnit(targetID, allProgressData, allUnitData, allBuildingProgress, allBuildingData, Date.now());
-}
-
-function GetTrainerLevelFromProgress(progressData) {
-    var trainingLevel = parseInt(progressData[TRAINERS_ASSIGNED], 10);
-
-    return trainingLevel;
 }
 
 /////////////////////////////////////////////////
