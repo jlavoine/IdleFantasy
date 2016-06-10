@@ -7,9 +7,14 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {
+        public GameObject LoginFailurePopup;
 
         private IdleFantasyBackend mBackend;
         private IMessageService mMessenger;
+
+        private bool mBackendFailure = false;
+
+        private Login mLogin;   // is this the best way...?
 
         void Start() {
             mMessenger = new MyMessenger();            
@@ -17,13 +22,23 @@ namespace IdleFantasy {
             BackendManager.Init( mBackend );
 
             mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
+            mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
-            Login login = new Login( mMessenger, mBackend );
-            login.Start();
+            mLogin = new Login( mMessenger, mBackend );
+            mLogin.Start();
         }
 
         void OnDestroy() {
+            mLogin.OnDestroy();
             mMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
+            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
+        }
+
+        private void OnBackendFailure( IBackendFailure i_failure ) {            
+            if ( !mBackendFailure ) {
+                mBackendFailure = true;
+                gameObject.InstantiateUI( LoginFailurePopup );
+            }
         }
 
         private void OnLoginSuccess() {
@@ -51,8 +66,9 @@ namespace IdleFantasy {
         }
 
         private void DoneLoadingData() {
-            // load next scene here???
-           SceneManager.LoadScene( "Main" );
+            if ( !mBackendFailure ) {
+                SceneManager.LoadScene( "Main" );
+            }
         }
     }
 }

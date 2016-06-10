@@ -14,39 +14,29 @@ namespace IdleFantasy {
             mMessenger = i_messenger;
 
             mBackend = i_backend;
-
+            
             mLoginTimer = new AnalyticsTimer( i_messenger, LibraryAnalyticEvents.LOGIN_TIME );
         }
 
         public void Start() {                        
-            mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.AddListener<IBackendFailure>( BackendMessages.AUTH_FAIL, OnAuthenticationFailure );
-
+            mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );            
             mMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.AddListener<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, OnCloudSetupFailure );
+            mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
             mLoginTimer.Start();
             mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
         }
 
-        void OnDestroy() {
+        public void OnDestroy() {
             mMessenger.RemoveListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.AUTH_FAIL, OnAuthenticationFailure );
-
             mMessenger.RemoveListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.CLOUD_SETUP_FAIL, OnCloudSetupFailure );
+            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
         }
 
         private void OnAuthenticationSucess( IAuthenticationSuccess i_success ) {
             mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate success", "" );
 
             mBackend.SetUpCloudServices( false );
-        }
-
-        private void OnAuthenticationFailure( IBackendFailure i_failure ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate failure", "" );
-
-            mLoginTimer.Stop();
         }
 
         private void OnCloudSetupSuccess() {
@@ -63,10 +53,9 @@ namespace IdleFantasy {
             mMessenger.Send( BackendMessages.LOGIN_SUCCESS );
         }
 
-        private void OnCloudSetupFailure( IBackendFailure i_failure ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup failure", "" );
-
-            mLoginTimer.Stop();
+        private void OnBackendFailure( IBackendFailure i_failure ) {
+            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, i_failure.GetMessage(), "" );          
+            mLoginTimer.Stop();            
         }       
     }
 }
