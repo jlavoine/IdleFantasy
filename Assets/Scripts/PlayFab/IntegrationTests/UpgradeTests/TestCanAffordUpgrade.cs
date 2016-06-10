@@ -12,7 +12,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return MakeUpgradeCall();
 
             FailTestIfCurrencyDoesNotEqual( 0 );
-            FailTestIfNotProgressLevel( mCurrentTestData.TestClass, mCurrentTestData.TestID, 2 );            
+            FailTestIfNotProgressLevel<ProgressBase>( mCurrentTestData.TestClass, mCurrentTestData.TestID, 2 );            
         }
     }
 }

@@ -56,20 +56,10 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             } );
         }
 
-        protected void FailTestIfNotProgressLevel( string i_class, string i_targetID, int i_level ) {
-            Dictionary<string, string> getParams = new Dictionary<string, string>();
-            getParams.Add( "Class", i_class );
-            getParams.Add( "TargetID", i_targetID );
-
-            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
-                if ( results.ContainsKey( "data" ) ) {
-                    ProgressBase progress = JsonConvert.DeserializeObject<ProgressBase>( results["data"] );
-                    if ( progress.Level != i_level ) {
-                        IntegrationTest.Fail( "Level did not match: " + i_level );
-                    }
-                }
-                else {
-                    IntegrationTest.Fail( "Results did not have data." );
+        protected void FailTestIfNotProgressLevel<T>( string i_class, string i_targetID, int i_level ) where T : ProgressBase {
+            GetProgressData<T>( i_class, i_targetID, ( result ) => {
+                if ( result.Level != i_level ) {
+                    IntegrationTest.Fail( "Level did not match: " + i_level );
                 }
             } );
         }
