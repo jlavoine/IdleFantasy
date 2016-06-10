@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestUpgradingUnitResetsCount : TestUnitGeneration {

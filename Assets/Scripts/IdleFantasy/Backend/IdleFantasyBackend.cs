@@ -14,6 +14,8 @@ namespace IdleFantasy {
         public const string TEST_UPDATE_UNIT_COUNT = "testUpdateUnitCount";
         public const string TEST_UPGRADE = "testUpgrade";
         public const string TEST_CHANGE_TRAINING = "testChangeTraining";
+        public const string TEST_GET_UNIT_CAPACITY = "getCapacityForUnit";
+        public const string TEST_GET_UNIT_TRAIN_TIME = "getTrainTimeForUnit";
 
         public IdleFantasyBackend( IMessageService i_messenger ) : base(i_messenger) {
             mMessenger = i_messenger;

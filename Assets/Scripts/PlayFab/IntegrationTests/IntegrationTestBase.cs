@@ -74,6 +74,20 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             } );
         }
 
+        protected IEnumerator GetNumberFromCloudCall( string i_cloudMethod, Dictionary<string,string> i_params, Callback<double> i_callback) {
+            mBackend.MakeCloudCall( i_cloudMethod, i_params, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    double value = double.Parse( results["data"] );
+                    i_callback( value );
+                }
+                else {
+                    IntegrationTest.Fail( "Results did not have data." );
+                }
+            } );
+
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
         protected void FailTestIfReturnedCallDoesNotEqual( string i_cloudMethod, double i_value, Dictionary<string,string> i_params = null ) {
             mBackend.MakeCloudCall( i_cloudMethod, i_params, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {

@@ -79,9 +79,7 @@ namespace MyLibrary {
                 Params = new { data = i_params }
             };
 
-            PlayFabClientAPI.RunCloudScript( request, ( result ) => {
-                RequestComplete( "Cloud logs for " + i_methodName + " call " + ": " + result.ActionLog, LogTypes.Info );
-
+            PlayFabClientAPI.RunCloudScript( request, ( result ) => {                
                 Dictionary<string, string> resultsDeserialized = new Dictionary<string, string>();
 
                 if ( result.Results != null ) {
@@ -94,6 +92,8 @@ namespace MyLibrary {
                 if ( i_requestSuccessCallback != null ) {
                     i_requestSuccessCallback( resultsDeserialized );
                 }
+
+                RequestComplete( "Cloud logs for " + i_methodName + " call " + ": " + result.ActionLog, LogTypes.Info );
             }, ( error ) => { HandleError( error, i_methodName ); } );
         }
 

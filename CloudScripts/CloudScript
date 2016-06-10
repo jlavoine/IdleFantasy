@@ -108,6 +108,10 @@ handlers.testUpdateUnitCount = function (args) {
 
 /// use this method if you want to upgrade an upgradeable, bypassing all other normal checks
 handlers.testUpgrade = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
     var className = args.data[CLASS];
     var targetID = args.data[TARGET_ID];
     var allProgressData = GetProgressData(className);
@@ -118,6 +122,10 @@ handlers.testUpgrade = function (args) {
 
 /// use this method if you want to train a unit, bypassing all other normal checks
 handlers.testChangeTraining = function (args) {
+    if (!isTesting) {
+        return;    
+    }
+
     var className = args.data[CLASS];
     var targetID = args.data[TARGET_ID];
     var changeInTrainers = parseInt(args.data[CHANGE], 10);
@@ -125,6 +133,41 @@ handlers.testChangeTraining = function (args) {
     var progressForTarget = GetProgressForTarget(allProgressData, targetID);
 
     ChangeTrainingLevel(allProgressData, progressForTarget, changeInTrainers, targetID, className);
+}
+
+/// returns the capacity for a unit
+handlers.getCapacityForUnit = function(args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var unitKey = args.data[TARGET_ID];
+    var allBuildingProgress = GetProgressData(CLASS_BUILDING);
+    var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
+
+    var capacity = GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData);
+    return ReturnDataToClient(capacity);
+}
+
+/// returns the elapsed time needed to train the unit to the desired number
+handlers.getTrainTimeForUnit = function(args) {
+    if (!isTesting) {
+        return;    
+    }
+
+    var unitKey = args.data[TARGET_ID];
+    var change = parseInt(args.data[CHANGE], 10);
+
+    var allUnitProgress = GetProgressData(CLASS_UNIT);
+    var allUnitData = GetTitleDataForClass(CLASS_UNIT);
+
+    var unitSaveData = allUnitProgress[unitKey];
+    var unitTitleData = allUnitData[unitKey];    
+
+    var progressPerSecond = GetUnitProgressPerSecond(unitSaveData, unitTitleData);
+    var elapsedTime = (change / progressPerSecond) * 1000;
+
+    return ReturnDataToClient(elapsedTime);
 }
 
 /// returns the # of units the player currently has
@@ -138,12 +181,7 @@ handlers.getUnitCount = function (args) {
     var progressData = GetProgressForTarget(readOnlyData, targetID);
 
     var count = GetUnitCount(progressData);
-    log.info("Returning unit count for " + targetID + ": " + count);
-
-    var dataToString = JSON.stringify(count);
-    var data = { data : dataToString }
-
-    return data;
+    return ReturnDataToClient(count);
 }
 
 /// returns the progress data for a specific class and ID.
@@ -159,12 +197,7 @@ handlers.getProgressData = function (args) {
     var readOnlyData = GetProgressData(className);
     var progressData = GetProgressForTarget(readOnlyData, targetID);
         
-    var dataToString = JSON.stringify(progressData);
-    var data = { data : dataToString };
-
-    log.info("Returning progress data for " + targetID + "(" + className + "): " + data);
-
-    return data;    
+    return ReturnDataToClient(progressData);    
 }
 
 /// returns the normal trainer count of the player
@@ -177,10 +210,7 @@ handlers.getTrainerCount = function (args) {
     var trainerCounts = trainerSaveData[TRAINER_COUNTS];
     var normalTrainers = trainerCounts[NORMAL_TRAINER];
 
-    var data = { data : normalTrainers };
-    log.info("Returning trainer count data: " + JSON.stringify(data));
-
-    return data;
+    return ReturnDataToClient(normalTrainers);
 }
 
 /// for getting at internal data
@@ -188,10 +218,7 @@ handlers.getInternalData = function(args) {
     var key = args.data[SAVE_KEY];
     var value = GetInternalSaveData(key);   
     
-    var data = { data : value };
-    log.info("Returning internal value for " + key + ": " + JSON.stringify(data));
-
-    return data;
+    return ReturnDataToClient(value);
 }
 
 /// returns the # of available trainers
@@ -199,10 +226,7 @@ handlers.getAvailableTrainers = function(args) {
     var allProgressData = GetProgressData(CLASS_UNIT);
     var availableTrainers = GetAvailableTrainers(allProgressData);
 
-    var data = { data : availableTrainers };
-    log.info("Returning available trainers: " + JSON.stringify(data));
-
-    return data;
+    return ReturnDataToClient(availableTrainers);
 }
 
 /// sets player data of a key to a value
@@ -216,6 +240,15 @@ handlers.setSaveData = function(args) {
     var access = args.data[DATA_ACCESS];
 
     SetSaveData(key, value, access);
+}
+
+/// convenience function that turns some raw data into a json string to send back to client
+function ReturnDataToClient(rawData) {
+    var dataToString = JSON.stringify(rawData);
+    log.info("Returning test data to client: " + dataToString);
+
+    var data = { data : dataToString }
+    return data;
 }
 
 /// sets a type of the player's currency to a value.
@@ -595,12 +628,18 @@ function GetUnitCountIncrease(unitSaveData, unitTitleData, time) {
     var timeElapsedSeconds = timeElapsed / 1000;
     log.info("Getting unit count progress with time difference: " + timeElapsedSeconds);
 
-    var speed = GetUnitProgressSpeed(unitSaveData);
-    var progressPerSecond = unitTitleData[UNIT_BASE_PROGRESS] / speed;
+    var progressPerSecond = GetUnitProgressPerSecond(unitSaveData, unitTitleData);
     var progress = timeElapsedSeconds * progressPerSecond;
 
     log.info("The progress is: " + progress);
     return progress;
+}
+
+function GetUnitProgressPerSecond(unitSaveData, unitTitleData) {
+    var speed = GetUnitProgressSpeed(unitSaveData);
+    var progressPerSecond = unitTitleData[UNIT_BASE_PROGRESS] / speed;
+
+    return progressPerSecond;
 }
 
 function GetUnitProgressSpeed(unitSaveData) {    

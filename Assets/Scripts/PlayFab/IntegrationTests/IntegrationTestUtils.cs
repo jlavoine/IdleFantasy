@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public static class IntegrationTestUtils {
         public const string TARGET_ID = "TargetID";
+        public const string CHANGE = "Change";
         public const string CLASS = "Class";
         public const string SAVE_KEY = "SaveKey";       // used in params sent to cloud for test methods
         public const string DATA_ACCESS = "DataAccess"; // internal, read only, etc
