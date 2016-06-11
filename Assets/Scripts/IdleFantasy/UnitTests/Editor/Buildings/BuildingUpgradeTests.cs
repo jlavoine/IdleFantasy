@@ -14,7 +14,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void UpgradeIncreasesCapacity() {            
-            Building testBuilding = GetMockBuilding();
+            Building testBuilding = GetTestBuilding();
             int capacityBeforeUpgrade = testBuilding.Capacity;
 
             testBuilding.Level.Upgrade();
@@ -22,7 +22,7 @@ namespace IdleFantasy.UnitTests {
             Assert.AreNotEqual( capacityBeforeUpgrade, testBuilding.Capacity );
         }
 
-        public static Building GetMockBuilding() {
+        public static Building GetTestBuilding() {
             BuildingData data = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
             return new Building( data, new BuildingProgress() { Level = 1 }, new UnitProgress() { Level = 1, Trainers = 1 } );
         }

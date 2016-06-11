@@ -19,7 +19,7 @@ namespace IdleFantasy.UnitTests {
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
 
-            mBuilding = BuildingUpgradeTests.GetMockBuilding();
+            mBuilding = BuildingUpgradeTests.GetTestBuilding();
             mBuilding.Unit = mUnit;
         }
 

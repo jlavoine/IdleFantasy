@@ -70,6 +70,7 @@ namespace IdleFantasy {
             UpdateCapacity();
         }
 
+        #region Capacity
         private void OnUpgraded() {
             UpdateCapacity();
         }    
@@ -77,6 +78,7 @@ namespace IdleFantasy {
         public void UpdateCapacity() {
             Capacity = Data.StartingSize * Level.Value;
         }
+        #endregion
 
         #region Unit Generation
         public void Tick( TimeSpan i_timeSpan ) {
@@ -114,6 +116,15 @@ namespace IdleFantasy {
         public void OnUnitUpgraded() {
             NumUnits = 0;
             NextUnitProgress = 0;
+        }
+        #endregion
+
+        #region Unit Power
+        public long GetStatTotal( string i_stat ) {
+            int statPerUnit = Unit.GetRoundedStat( i_stat );
+            int total = NumUnits * statPerUnit;
+
+            return total;
         }
         #endregion
     }
