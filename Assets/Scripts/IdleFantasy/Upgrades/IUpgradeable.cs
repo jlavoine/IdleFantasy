@@ -2,28 +2,17 @@
 using System.Collections.Generic;
 
 namespace IdleFantasy {
-    public interface IUpgradeable {
-        void SetPropertyToUpgrade( ViewModel i_model, UpgradeData i_data );
+    public interface IUpgradeable {       
+        UpgradeData UpgradeData { get; }
 
-        int Value {
-            get;
-            set;
-        }
+        int MaxLevel { get; }
+        int Value { get; set; }        
 
-        UpgradeData UpgradeData {
-            get;
-        }
-
-        int MaxLevel {
-            get;
-        }
-
-        Dictionary<string, int> ResourcesToUpgrade {
-            get;
-        }
+        Dictionary<string, int> ResourcesToUpgrade { get; }
 
         event UpgradeComplete UpgradeCompleteEvent;
 
+        void SetPropertyToUpgrade( ViewModel i_model, UpgradeData i_data );
         void InitiateUpgrade( IResourceInventory i_inventory  );
         void ChargeForUpgrade( IResourceInventory i_inventory  );
         void Upgrade();        
@@ -31,6 +20,12 @@ namespace IdleFantasy {
         bool CanUpgrade( IResourceInventory i_inventory  );        
         bool CanAffordUpgrade( IResourceInventory i_inventory  );
         bool IsAtMaxLevel();
+
         int GetUpgradeCostForResource( string i_resource );
+
+        #region Points
+        int Points { get; set; }
+        float Progress { get; set; }
+        #endregion
     }
 }

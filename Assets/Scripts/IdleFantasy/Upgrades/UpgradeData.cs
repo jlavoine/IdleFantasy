@@ -5,6 +5,7 @@ namespace IdleFantasy {
         public string PropertyName;
 
         public int MaxLevel;
+        public int BaseXpToLevel;
 
         public Dictionary<string, int> ResourcesToUpgrade;
     }

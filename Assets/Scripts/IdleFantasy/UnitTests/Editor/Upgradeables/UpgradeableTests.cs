@@ -4,7 +4,7 @@ using MyLibrary;
 
 #pragma warning disable 0414
 
-namespace IdleFantasy.UnitTests {
+namespace IdleFantasy.UnitTests.Upgradeables {
     [TestFixture]
     public class UpgradeableTests {
         static object[] Levels = {

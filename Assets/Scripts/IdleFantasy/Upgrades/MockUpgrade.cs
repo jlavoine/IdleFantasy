@@ -10,6 +10,26 @@ namespace IdleFantasy {
             }
         }
 
+        public int Points {
+            get {
+                throw new NotImplementedException();
+            }
+
+            set {
+                throw new NotImplementedException();
+            }
+        }
+
+        public float Progress {
+            get {
+                throw new NotImplementedException();
+            }
+
+            set {
+                throw new NotImplementedException();
+            }
+        }
+
         public Dictionary<string, int> ResourcesToUpgrade {
             get {
                 throw new NotImplementedException();
