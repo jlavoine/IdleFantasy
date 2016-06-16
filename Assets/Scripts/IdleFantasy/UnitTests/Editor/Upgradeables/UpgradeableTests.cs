@@ -85,7 +85,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             }
 
             if ( mUpgrade.CanUpgrade( inventory ) ) {
-                mUpgrade.InitiateUpgrade( inventory );
+                mUpgrade.InitiateUpgradeWithResources( inventory );
 
                 foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
                     string resource = cost.Key;
@@ -102,7 +102,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             mUpgrade.Value = i_level;
             int expectedLevel = GetUpgradedLevel( mUpgrade );
 
-            mUpgrade.InitiateUpgrade( fullInventory );
+            mUpgrade.InitiateUpgradeWithResources( fullInventory );
 
             Assert.AreEqual( mUpgrade.Value, expectedLevel );
         }
@@ -123,7 +123,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             mUpgrade.Value = i_level;
 
             int levelBeforeUpgrade = mUpgrade.Value;
-            mUpgrade.InitiateUpgrade( emptyInventory );
+            mUpgrade.InitiateUpgradeWithResources( emptyInventory );
 
             Assert.AreEqual( levelBeforeUpgrade, mUpgrade.Value );
         }

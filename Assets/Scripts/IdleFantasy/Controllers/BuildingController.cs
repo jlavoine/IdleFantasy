@@ -11,13 +11,13 @@ namespace IdleFantasy {
         }
 
         public void UpgradeClicked() {
-            mBuilding.Level.InitiateUpgrade( mInventory );
+            mBuilding.Level.InitiateUpgradeWithResources( mInventory );
 
             BackendManager.Backend.MakeUpgradeCall( GenericDataLoader.BUILDINGS, mBuilding.Data.ID, mBuilding.Level.UpgradeData.PropertyName );
         }
 
         public void UpgradeUnitClicked() {
-            mBuilding.Unit.Level.InitiateUpgrade( mInventory );
+            mBuilding.Unit.Level.InitiateUpgradeWithResources( mInventory );
 
             BackendManager.Backend.MakeUpgradeCall( GenericDataLoader.UNITS, mBuilding.Unit.GetID(), mBuilding.Unit.Level.UpgradeData.PropertyName );
         }

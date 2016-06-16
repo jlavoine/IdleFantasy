@@ -13,7 +13,7 @@ namespace IdleFantasy {
         event UpgradeComplete UpgradeCompleteEvent;
 
         void SetPropertyToUpgrade( ViewModel i_model, UpgradeData i_data );
-        void InitiateUpgrade( IResourceInventory i_inventory  );
+        void InitiateUpgradeWithResources( IResourceInventory i_inventory  );
         void ChargeForUpgrade( IResourceInventory i_inventory  );
         void Upgrade();        
 

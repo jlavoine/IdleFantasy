@@ -44,11 +44,11 @@ namespace IdleFantasy {
             get { return mData.ResourcesToUpgrade; }
         }
 
-        public void InitiateUpgrade( IResourceInventory i_inventory ) {
+        public void InitiateUpgradeWithResources( IResourceInventory i_inventory ) {
             if ( CanUpgrade( i_inventory ) ) {
                 ChargeForUpgrade( i_inventory );
 
-                Upgrade();
+                AddProgress( 1f );
             }
         }
 

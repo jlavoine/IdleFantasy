@@ -70,7 +70,7 @@ namespace IdleFantasy {
             throw new NotImplementedException();
         }
 
-        public void InitiateUpgrade( IResourceInventory i_inventory ) {
+        public void InitiateUpgradeWithResources( IResourceInventory i_inventory ) {
             throw new NotImplementedException();
         }
 
