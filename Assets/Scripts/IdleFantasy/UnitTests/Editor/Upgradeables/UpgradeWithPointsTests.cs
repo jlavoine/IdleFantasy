@@ -8,7 +8,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
     [TestFixture]
     public class UpgradeProgressTests {
 
-        private Upgradeable mUpgrade;
+        private PointsUpgradeable mUpgradeable;
         private ViewModel mTestModel;
 
         [SetUp]
@@ -21,9 +21,9 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             testUpgradeData.PropertyName = "Level";
             testUpgradeData.BaseXpToLevel = 1000;
 
-            mUpgrade = new Upgradeable();
-            mUpgrade.SetPropertyToUpgrade( mTestModel, testUpgradeData );
-            mUpgrade.Value = 1;
+            mUpgradeable = new PointsUpgradeable();
+            mUpgradeable.SetPropertyToUpgrade( mTestModel, testUpgradeData );
+            mUpgradeable.Value = 1;
         }
 
         static object[] ProgressForLevel = {
@@ -37,12 +37,12 @@ namespace IdleFantasy.UnitTests.Upgradeables {
         [Test]
         [TestCaseSource("ProgressForLevel")]
         public void UpgradingByProgress_IncreasesLevel( int i_level, float i_progress, int i_expectedLevel ) {           
-            mUpgrade.Value = i_level;
-            mUpgrade.Points = 0;
+            mUpgradeable.Value = i_level;
+            mUpgradeable.Points = 0;
 
-            mUpgrade.AddProgress( i_progress );
+            mUpgradeable.AddProgress( i_progress );
 
-            Assert.AreEqual( i_expectedLevel, mUpgrade.Value );
+            Assert.AreEqual( i_expectedLevel, mUpgradeable.Value );
         }
 
         static object[] ProgressForXp = {
@@ -56,12 +56,12 @@ namespace IdleFantasy.UnitTests.Upgradeables {
         [Test]
         [TestCaseSource( "ProgressForXp" )]
         public void UpgradingByProgress_SetsCorrectXp( int i_level, float i_progress, int i_expectedXp ) {
-            mUpgrade.Value = i_level;
-            mUpgrade.Points = 0;
+            mUpgradeable.Value = i_level;
+            mUpgradeable.Points = 0;
 
-            mUpgrade.AddProgress( i_progress );
+            mUpgradeable.AddProgress( i_progress );
 
-            Assert.AreEqual( i_expectedXp, mUpgrade.Points );
+            Assert.AreEqual( i_expectedXp, mUpgradeable.Points );
         }
 
         static object[] PointsForLevel = {
@@ -74,18 +74,18 @@ namespace IdleFantasy.UnitTests.Upgradeables {
         [Test]
         [TestCaseSource("PointsForLevel")]
         public void AddingPoints_LeadsToCorrectLevel( int i_level, int i_xp, int i_expectedLevel ) {
-            mUpgrade.Value = i_level;
+            mUpgradeable.Value = i_level;
 
-            mUpgrade.Points += i_xp;
+            mUpgradeable.Points += i_xp;
 
-            Assert.AreEqual( i_expectedLevel, mUpgrade.Value );
+            Assert.AreEqual( i_expectedLevel, mUpgradeable.Value );
         }
 
         [Test]
         public void PointsBelowZero_DoesNotWork() {            
-            mUpgrade.Points -= 1000;
+            mUpgradeable.Points -= 1000;
 
-            Assert.AreEqual( 0, mUpgrade.Points );
+            Assert.AreEqual( 0, mUpgradeable.Points );
         }
     }
 }

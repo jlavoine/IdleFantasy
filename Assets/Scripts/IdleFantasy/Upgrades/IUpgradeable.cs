@@ -22,10 +22,5 @@ namespace IdleFantasy {
         bool IsAtMaxLevel();
 
         int GetUpgradeCostForResource( string i_resource );
-
-        #region Points
-        int Points { get; set; }
-        float Progress { get; set; }
-        #endregion
     }
 }
