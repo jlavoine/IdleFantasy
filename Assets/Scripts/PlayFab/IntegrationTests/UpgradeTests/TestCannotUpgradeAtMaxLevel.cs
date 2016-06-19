@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestCannotUpgradeAtMaxLevel : TestUpgrades {
+    public class TestCannotUpgradeAtMaxLevel : TestStandardUpgrades {
         protected override IEnumerator RunTest() {
             IntegrationTestUtils.SetReadOnlyData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", mCurrentTestData.MaxLevel ) );
             IntegrationTestUtils.SetPlayerCurrency( 100000 );

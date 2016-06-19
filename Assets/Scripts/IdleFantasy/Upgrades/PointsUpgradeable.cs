@@ -60,7 +60,6 @@ namespace IdleFantasy {
             if ( Points >= pointsToLevel ) {
                 Upgrade();
                 Points = Points - pointsToLevel;
-                CheckForUpgrade();
             }
         }
     }

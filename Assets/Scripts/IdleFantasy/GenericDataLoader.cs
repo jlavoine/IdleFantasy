@@ -8,6 +8,7 @@ namespace IdleFantasy {
         // types of data
         public const string BUILDINGS = "Buildings";
         public const string UNITS = "Units";
+        public const string GUILDS = "Guilds";
 
         // convenient constants for testing
         public const string TEST_BUILDING = "BASE_BUILDING_1";

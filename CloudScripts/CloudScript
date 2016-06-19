@@ -32,6 +32,7 @@ const CURRENCY_GOLD = "G1";
 // upgrade related
 const UPGRADE_ID = "UpgradeID";                 // key used from client as to what upgradeable on the target is involed in the call
 const UPGRADE_RESOURCES = "ResourcesToUpgrade"; // key for finding list of resources that an upgrade requires
+const UPGRADE_POINTS = "Points";                // key for a progress data's xp
 
 // trainer related
 const TRAINER_SAVE_DATA = "TrainerSaveData";    // key for player's trainer save data
@@ -46,6 +47,11 @@ const MODULE_BASE = "Base";    // the base game!
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
 const CLASS_UNIT = "Units";             // units that are apart of buildings
+const CLASS_GUILD = "Guilds";     // guilds that augment units
+
+// data in an upgrade
+const MAX_LEVEL = "MaxLevel";               // highest level upgrade can be set to
+const BASE_XP_TO_LEVEL = "BaseXpToLevel";   // base amount of xp required to upgrade 
 
 /// testing
 const SAVE_KEY = "SaveKey";             // for accessing some save data
@@ -98,17 +104,17 @@ handlers.overLimit = function (args) {
 
 /// use this method to test if unit counts are updating properly
 handlers.testUpdateUnitCount = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
-    var time = parseInt(args.data[COUNT_TIME], 10);
+    var time = GetNumberFromArgs(args, COUNT_TIME);
     UpdateAllUnitCounts(time);
 }
 
 /// use this method if you want to upgrade an upgradeable, bypassing all other normal checks
 handlers.testUpgrade = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
@@ -117,18 +123,18 @@ handlers.testUpgrade = function (args) {
     var allProgressData = GetProgressData(className);
     var progressForTarget = GetProgressForTarget(allProgressData, targetID);    
 
-    Upgrade(allProgressData, className, progressForTarget, targetID);
+    UpgradeAndSave(allProgressData, className, progressForTarget, targetID);
 }
 
 /// use this method if you want to train a unit, bypassing all other normal checks
 handlers.testChangeTraining = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
     var className = args.data[CLASS];
     var targetID = args.data[TARGET_ID];
-    var changeInTrainers = parseInt(args.data[CHANGE], 10);
+    var changeInTrainers = GetNumberFromArgs(args, CHANGE);
     var allProgressData = GetProgressData(className);
     var progressForTarget = GetProgressForTarget(allProgressData, targetID);
 
@@ -137,7 +143,7 @@ handlers.testChangeTraining = function (args) {
 
 /// returns the capacity for a unit
 handlers.getCapacityForUnit = function(args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
@@ -149,14 +155,32 @@ handlers.getCapacityForUnit = function(args) {
     return ReturnDataToClient(capacity);
 }
 
+/// returns the total amount of xp required to upgrade the target upgradeable
+handlers.getTotalPointsToUpgrade = function(args) {
+    if (!isTesting()) {
+        return;    
+    }    
+
+    var className = args.data[CLASS];
+    var upgradeID = args.data[UPGRADE_ID];
+    var targetID = args.data[TARGET_ID];
+
+    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
+    var allProgressDataForClass = GetProgressData(className);
+    var progressDataForTarget = GetProgressForTarget(allProgressDataForClass, targetID);
+
+    var points = GetTotalPointsForNextLevel(progressDataForTarget, upgradeData);
+    return ReturnDataToClient(points);
+}
+
 /// returns the elapsed time needed to train the unit to the desired number
 handlers.getTrainTimeForUnit = function(args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
     var unitKey = args.data[TARGET_ID];
-    var change = parseInt(args.data[CHANGE], 10);
+    var change = GetNumberFromArgs(args, CHANGE);
 
     var allUnitProgress = GetProgressData(CLASS_UNIT);
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
@@ -172,7 +196,7 @@ handlers.getTrainTimeForUnit = function(args) {
 
 /// returns the # of units the player currently has
 handlers.getUnitCount = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
@@ -187,7 +211,7 @@ handlers.getUnitCount = function (args) {
 /// returns the progress data for a specific class and ID.
 /// Used to check that a very specific portion of data changed.
 handlers.getProgressData = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
@@ -202,7 +226,7 @@ handlers.getProgressData = function (args) {
 
 /// returns the normal trainer count of the player
 handlers.getTrainerCount = function (args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;    
     }
 
@@ -215,6 +239,10 @@ handlers.getTrainerCount = function (args) {
 
 /// for getting at internal data
 handlers.getInternalData = function(args) {
+    if (!isTesting()) {
+        return;    
+    }
+
     var key = args.data[SAVE_KEY];
     var value = GetInternalSaveData(key);   
     
@@ -223,6 +251,10 @@ handlers.getInternalData = function(args) {
 
 /// returns the # of available trainers
 handlers.getAvailableTrainers = function(args) {
+    if (!isTesting()) {
+        return;    
+    }
+
     var allProgressData = GetProgressData(CLASS_UNIT);
     var availableTrainers = GetAvailableTrainers(allProgressData);
 
@@ -231,7 +263,7 @@ handlers.getAvailableTrainers = function(args) {
 
 /// sets player data of a key to a value
 handlers.setSaveData = function(args) {
-    if (!isTesting) {
+    if (!isTesting()) {
         return;
     }
 
@@ -244,6 +276,10 @@ handlers.setSaveData = function(args) {
 
 /// convenience function that turns some raw data into a json string to send back to client
 function ReturnDataToClient(rawData) {
+    if (!isTesting()) {
+        return;    
+    }
+
     var dataToString = JSON.stringify(rawData);
     log.info("Returning test data to client: " + dataToString);
 
@@ -490,6 +526,11 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
     return playerCurrencies;
 }
 
+function GetNumberFromArgs(args, id) {
+    var number = parseInt(args.data[id], 10);
+    return number;
+}
+
 /////////////////////////////////////////////////
 /// ~Misc
 /////////////////////////////////////////////////
@@ -526,6 +567,14 @@ function GetNumberFromProgress(key, progressData) {
     var num = parseInt(progressData[key], 10);
 
     return num;
+}
+
+/// saves the progress data in player data
+function SaveProgressData(className, readOnlyData, progressData, targetID) {
+    var progressKey = GetProgressKey(className);
+    readOnlyData[targetID] = progressData;
+
+    SetReadOnlyData(progressKey, readOnlyData);
 }
 
 /////////////////////////////////////////////////
@@ -664,7 +713,7 @@ function GetUnitProgressSpeed(unitSaveData) {
 
 handlers.initiateChangeInTraining = function (args) {
     var targetUnitID = args.data[TARGET_ID];
-    var changeInTrainingLevel = parseInt(args.data[CHANGE], 10);
+    var changeInTrainingLevel = GetNumberFromArgs(args, CHANGE);
 
     log.info(targetUnitID);
     log.info("initiateChangeInTraining for " + targetUnitID + " by " + changeInTrainingLevel);
@@ -829,7 +878,7 @@ handlers.initiateUpgrade = function (args) {
     if ( CanUpgrade(upgradeData, progressData, playerInventory) ) {
         PayForUpgrade(upgradeData, progressData, playerInventory);
 
-        Upgrade(readOnlyData, className, progressData, targetID);
+        UpgradeAndSave(readOnlyData, className, progressData, targetID);
     } else {
         return { outOfSync : true };
     }
@@ -854,7 +903,7 @@ function CanUpgrade(upgradeData, progressData, playerInventory) {
 
 /// checks to see if an upgrade is at max level
 function IsAtMaxLevel(upgradeData, progressData) {
-    return progressData[UPGRADE_LEVEL] >= upgradeData["MaxLevel"];
+    return progressData[UPGRADE_LEVEL] >= upgradeData[MAX_LEVEL];
 }
 
 /// checks to see if the player can afford an upgrade
@@ -885,16 +934,19 @@ function PayForUpgrade(upgradeData, progressData, playerInventory) {
 }
 
 /// actually upgrades a target and saves it to the player's save data
-function Upgrade(readOnlyData, className, progressData, targetID) {
-    var progressKey = GetProgressKey(className);
+function UpgradeAndSave(readOnlyData, className, progressData, targetID) {
+    Upgrade(readOnlyData, className, progressData, targetID);
+
+    SaveProgressData(className, readOnlyData, progressData, targetID);
+}
+
+/// increases the upgrade level of the incoming progress data
+function Upgrade(readOnlyData, className, progressData, targetID) {    
     progressData[UPGRADE_LEVEL] += 1;
-    readOnlyData[targetID] = progressData;    
 
     if (className == CLASS_UNIT) {
         ResetUnitCount(progressData);        
     }
-
-    SetReadOnlyData(progressKey, readOnlyData);
 }
 
 /// given the resources to upgrade a target, a given resource, and the progress data for the target,
@@ -907,63 +959,96 @@ function GetUpgradeCost(resourcesToUpgrade, resource, progressData) {
     return cost;
 }
 
-public int Points {
-get { return mModel.GetPropertyValue<int>( POINTS ); }
-set {
-    if ( value < 0 ) {
-        value = 0;
-        Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " points below 0.", "Upgradeable" );
+/////////////////////////////////////////////////
+/// ~Upgradeables
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// PointsUpgradeables
+/////////////////////////////////////////////////
+
+/// client method for adding points to an upgradeable
+handlers.addPointsToUpgrade = function (args) {
+    var className = args.data[CLASS];
+    var targetID = args.data[TARGET_ID];
+    var upgradeID = args.data[UPGRADE_ID];
+    var pointsToAdd = GetNumberFromArgs(args, UPGRADE_POINTS);
+
+    log.info("Adding " + pointsToAdd + " to " + targetID);
+
+    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
+    var allProgressDataForClass = GetProgressData(className);
+    var progressDataForTarget = GetProgressForTarget(allProgressDataForClass, targetID);
+
+    AddPointsToUpgrade(progressDataForTarget, pointsToAdd, upgradeData, allProgressDataForClass, args);
+}
+
+/// adds the incoming points to this upgradeable
+function AddPointsToUpgrade(progressDataForTarget, pointsToAdd, upgradeData, allProgressDataForClass, args) {
+    var points = GetNumberFromProgress(UPGRADE_POINTS, progressDataForTarget);
+    points += pointsToAdd;
+    log.info("Adding " + pointsToAdd + " points.");
+
+    SetPoints(progressDataForTarget, points, upgradeData, allProgressDataForClass, args);        
+}
+
+/// sets the points for this upgradeable to the incoming value
+function SetPoints(progressDataForTarget, points, upgradeData, allProgressDataForClass, args) {
+    progressDataForTarget[UPGRADE_POINTS] = points;
+    log.info("Setting points to " + points);
+
+    CheckForUpgrade(progressDataForTarget, points, upgradeData, allProgressDataForClass, args);
+}
+
+/// checks to see if this upgradeable should be upgraded based on its current xp
+function CheckForUpgrade(progressDataForTarget, points, upgradeData, allProgressDataForClass, args) {
+    log.info("Checking for upgrade for " + args.data[TARGET_ID]);
+    var pointsToLevel = GetTotalPointsForNextLevel(progressDataForTarget, upgradeData);
+    var currentPoints = GetNumberFromProgress(UPGRADE_POINTS, progressDataForTarget);
+
+    if ( currentPoints >= pointsToLevel ) {
+        log.info("Upgrade!");
+        Upgrade(allProgressDataForClas, args.data[CLASS], progressDataForTarget, args.data[TARGET_ID]);
+        currentPoints = currentPoints - pointsToLevel;
+        SetPoints(progressDataForTarget, currentPoints, upgradeData, allProgressForClass, args);
+    } else {
+        log.info("No upgrade -- saving data");
+        SaveProgressData(args.data[CLASS], allProgressDataForClass, progressDataForTarget, args.data[TARGET_ID])
     }
-
-    UpdatePointsProperty( value );
-    UpdateProgressValue();
-    CheckForUpgrade();                
-}
 }
 
-public float Progress {
-get { return mModel.GetPropertyValue<float>( PROGRESS ); }
-set {
-    value = Math.Max( 0, value );
-    value = Math.Min( 1, value );
-    mModel.SetProperty( PROGRESS, value );
-}
+/// returns the total points required to advance this upgradeable to the next level
+function GetTotalPointsForNextLevel(progressDataForTarget, upgradeData) {
+    var currentLevel = GetNumberFromProgress(UPGRADE_LEVEL, progressDataForTarget);
+    var baseXpToLevel = GetBaseXpToLevel(upgradeData);
+    var totalPoints = baseXpToLevel * currentLevel;
+    log.info("Total points to next level: " + totalPoints)
+
+    return totalPoints;
 }
 
-public void AddProgress( float i_progress ) {
-do {
-    float progressToAdd = Math.Min( i_progress, 1 - Progress );
-    progressToAdd = Math.Max( 0, progressToAdd );
-    int xpToAdd = (int)( progressToAdd * GetTotalPointsForNextLevel() );
-    Points += xpToAdd;
-    i_progress -= progressToAdd;
-} while ( i_progress > 0 );
-}
+//public void AddProgress( float i_progress ) {
+//do {
+ //   float progressToAdd = Math.Min( i_progress, 1 - Progress );
+  //  progressToAdd = Math.Max( 0, progressToAdd );
+  //  int xpToAdd = (int)( progressToAdd * GetTotalPointsForNextLevel() );
+   // Points += xpToAdd;
+   // i_progress -= progressToAdd;
+//} while ( i_progress > 0 );
+//}
 
-private void UpdatePointsProperty( int i_value ) {
-mModel.SetProperty( POINTS, i_value );
-}
+/////////////////////////////////////////////////
+/// ~PointsUpgradeables
+/////////////////////////////////////////////////
 
-private void UpdateProgressValue() {
-int pointsToLevel = GetTotalPointsForNextLevel();
-float progress = Points / pointsToLevel;
+/////////////////////////////////////////////////
+/// UpgradeData
+/////////////////////////////////////////////////
 
-Progress = progress;
-}
-
-private int GetTotalPointsForNextLevel() {
-return UpgradeData.BaseXpToLevel * Value;
-}
-
-private void CheckForUpgrade() {
-int pointsToLevel = GetTotalPointsForNextLevel();
-if ( Points >= pointsToLevel ) {
-    Upgrade();
-    Points = Points - pointsToLevel;
-    CheckForUpgrade();
-}
+function GetBaseXpToLevel(upgradeData) {
+    return parseInt(upgradeData[BASE_XP_TO_LEVEL], 10);
 }
 
 /////////////////////////////////////////////////
-/// ~Upgradeables
+/// ~UpgradeData
 /////////////////////////////////////////////////

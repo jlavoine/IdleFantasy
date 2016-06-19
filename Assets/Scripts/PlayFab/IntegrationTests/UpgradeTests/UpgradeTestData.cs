@@ -9,5 +9,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         public int MaxLevel = 50;
         public int Cost = 1000;
+
+        // points upgrades only...TODO, make a child class?
+        public int Points;      
     }
 }

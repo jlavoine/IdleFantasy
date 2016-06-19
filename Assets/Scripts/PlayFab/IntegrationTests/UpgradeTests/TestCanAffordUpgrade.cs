@@ -2,7 +2,7 @@
 using System.Collections;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestCanAffordUpgrade : TestUpgrades {
+    public class TestCanAffordUpgrade : TestStandardUpgrades {
         protected override IEnumerator RunTest() {
             IntegrationTestUtils.SetReadOnlyData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
             IntegrationTestUtils.SetPlayerCurrency( mCurrentTestData.Cost );

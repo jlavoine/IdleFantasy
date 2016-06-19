@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestCannotAffordUpgrade : TestUpgrades {
+    public class TestCannotAffordUpgrade : TestStandardUpgrades {
         protected override IEnumerator RunTest() {
             IntegrationTestUtils.SetReadOnlyData( mCurrentTestData.SaveKey, DrsStringUtils.Replace( mCurrentTestData.SaveValue, "NUM", 1 ) );
             IntegrationTestUtils.SetPlayerCurrency( 0 );
