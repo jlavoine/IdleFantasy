@@ -13,7 +13,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void SetGuildTestData() {
             UpgradeTestData testData = new UpgradeTestData();
             testData.SaveKey = "GuildsProgress";
-            testData.SaveValue = "{\"GUILD_1\":{\"Level\":1,\"Points\":0}}";
+            testData.SaveValue = "{\"GUILD_1\":{\"Level\":$LEVEL$,\"Points\":0}}";
             testData.TestID = "GUILD_1";
             testData.TestClass = "Guilds";
             testData.TestUpgradeID = "GuildLevel";
@@ -24,6 +24,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         protected IEnumerator MakeAddPointsCall( int i_points ) {
             mBackend.MakeAddPointsToUpgradeCall( mCurrentTestData.TestClass, mCurrentTestData.TestID, mCurrentTestData.TestUpgradeID, i_points );
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
+        protected IEnumerator SetStartingSaveLevelAndData( int i_level ) {
+            mCurrentTestData.SaveValue = DrsStringUtils.Replace( mCurrentTestData.SaveValue, "LEVEL", i_level );
+
+            IntegrationTestUtils.SetReadOnlyData( mCurrentTestData.SaveKey, mCurrentTestData.SaveValue );
+
             yield return mBackend.WaitUntilNotBusy();
         }
 

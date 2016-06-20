@@ -15,6 +15,10 @@ namespace IdleFantasy {
                     Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " points below 0.", "Upgradeable" );
                 }
 
+                if ( IsAtMaxLevel() ) {
+                    value = 0;
+                }
+
                 UpdatePointsProperty( value );
                 UpdateProgressValue();
                 CheckForUpgrade();

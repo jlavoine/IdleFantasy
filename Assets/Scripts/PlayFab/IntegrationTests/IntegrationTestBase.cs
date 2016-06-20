@@ -56,12 +56,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             } );
         }
 
-        protected void FailTestIfNotProgressLevel<T>( string i_class, string i_targetID, int i_level ) where T : ProgressBase {
+        protected IEnumerator FailTestIfNotProgressLevel<T>( string i_class, string i_targetID, int i_level ) where T : ProgressBase {
             GetProgressData<T>( i_class, i_targetID, ( result ) => {
                 if ( result.Level != i_level ) {
                     IntegrationTest.Fail( "Level did not match: " + i_level );
                 }
             } );
+
+            yield return mBackend.WaitUntilNotBusy();
         }
 
         protected IEnumerator GetNumberFromCloudCall( string i_cloudMethod, Dictionary<string,string> i_params, Callback<double> i_callback) {

@@ -26,6 +26,26 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             mUpgradeable.Value = 1;
         }
 
+        [Test]
+        public void CannotAddPoints_AtMaxLevel() {
+            mUpgradeable.Value = mUpgradeable.UpgradeData.MaxLevel;
+
+            mUpgradeable.Points += 100;
+
+            Assert.AreEqual( 0, mUpgradeable.Points );
+        }
+
+        [Test]
+        public void AddingPointsBeyondMaxLevel_LeadsToZeroPoints() {
+            mUpgradeable.Value = 1;
+            mUpgradeable.Points = 0;
+
+            mUpgradeable.Points += int.MaxValue;
+
+            Assert.AreEqual( 0, mUpgradeable.Points );
+            Assert.AreEqual( mUpgradeable.UpgradeData.MaxLevel, mUpgradeable.Value );
+        }
+
         static object[] ProgressForLevel = {
             new object[] { 1, .5f, 1 },
             new object[] { 1, 1f, 2 },

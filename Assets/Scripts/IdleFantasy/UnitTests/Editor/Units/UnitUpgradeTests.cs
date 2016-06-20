@@ -15,7 +15,7 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
 
             UnitData data = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
-            mUnit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
+            mUnit = new Unit( data,
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
 
