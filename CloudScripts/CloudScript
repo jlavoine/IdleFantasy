@@ -33,6 +33,7 @@ const CURRENCY_GOLD = "G1";
 const UPGRADE_ID = "UpgradeID";                 // key used from client as to what upgradeable on the target is involed in the call
 const UPGRADE_RESOURCES = "ResourcesToUpgrade"; // key for finding list of resources that an upgrade requires
 const UPGRADE_POINTS = "Points";                // key for a progress data's xp
+const UPGRADE_PROGRESS = "Progress";            // key for upgrading an upgradeable by a progress %
 
 // trainer related
 const TRAINER_SAVE_DATA = "TrainerSaveData";    // key for player's trainer save data
@@ -547,6 +548,11 @@ function GetNumberFromArgs(args, id) {
     return number;
 }
 
+function GetFloatFromArgs(args, id) {
+    var float = parseFloat(args.data[id]);
+    return float;
+}
+
 /////////////////////////////////////////////////
 /// ~Misc
 /////////////////////////////////////////////////
@@ -1049,15 +1055,39 @@ function GetTotalPointsForNextLevel(progressDataForTarget, upgradeData) {
     return totalPoints;
 }
 
-//public void AddProgress( float i_progress ) {
-//do {
- //   float progressToAdd = Math.Min( i_progress, 1 - Progress );
-  //  progressToAdd = Math.Max( 0, progressToAdd );
-  //  int xpToAdd = (int)( progressToAdd * GetTotalPointsForNextLevel() );
-   // Points += xpToAdd;
-   // i_progress -= progressToAdd;
-//} while ( i_progress > 0 );
-//}
+/// adds progress (i.e. 100%, 50%, etc) worth of xp to an upgrade
+handlers.addProgressToUpgrade = function(args) {
+    var className = args.data[CLASS];
+    var targetID = args.data[TARGET_ID];
+    var upgradeID = args.data[UPGRADE_ID];
+    var totalProgressToAdd = GetFloatFromArgs(args, UPGRADE_PROGRESS);
+
+    var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
+    var allProgressDataForClass = GetProgressData(className);
+    var progressDataForTarget = GetProgressForTarget(allProgressDataForClass, targetID);
+
+    log.info("Adding " + totalProgressToAdd + " progress to " + targetID);
+
+    do {
+        var currentProgress = GetCurrentProgress(progressDataForTarget, upgradeData);
+        var progressToAdd = Math.min(totalProgressToAdd, 1 - currentProgress);
+        var pointsToAdd = progressToAdd * GetTotalPointsForNextLevel(progressDataForTarget, upgradeData);
+
+        log.info("About to add " + pointsToAdd + "(" + progressToAdd + ")");
+        AddPointsToUpgrade(progressDataForTarget, pointsToAdd, upgradeData, allProgressDataForClass, args);
+        totalProgressToAdd -= progressToAdd;
+    } while (totalProgressToAdd > 0);
+}
+
+/// return the current progress % as a float
+function GetCurrentProgress(progressDataForTarget, upgradeData) {
+    var currentPoints = GetNumberFromProgress(UPGRADE_POINTS, progressDataForTarget);
+    var totalPointsToNextLevel = GetTotalPointsForNextLevel(progressDataForTarget, upgradeData);
+    var currentProgress = currentPoints / totalPointsToNextLevel;
+
+    log.info("Current progress: " + currentProgress);
+    return currentProgress;
+}
 
 /////////////////////////////////////////////////
 /// ~PointsUpgradeables

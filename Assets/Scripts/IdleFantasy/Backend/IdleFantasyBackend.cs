@@ -9,6 +9,7 @@ namespace IdleFantasy {
         public const string INIT_TRAINER_PURCHASE = "initiateTrainerPurchase";
         public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
         public const string ADD_POINTS_TO_UPGRADE = "addPointsToUpgrade";
+        public const string ADD_PROGRESS_TO_UPGRADE = "addProgressToUpgrade";
 
         public const string TEST_SET_DATA = "setSaveData";
         public const string TEST_SET_CURRENCY = "setPlayerCurrency";
@@ -41,6 +42,16 @@ namespace IdleFantasy {
             upgradeParams.Add( "Points", i_points.ToString() );
 
             MakeCloudCall( ADD_POINTS_TO_UPGRADE, upgradeParams, null );
+        }
+
+        public void MakeAddProgressToUpgradeCall( string i_className, string i_targetID, string i_upgradeID, float i_progress ) {
+            Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
+            upgradeParams.Add( "Class", i_className );
+            upgradeParams.Add( "TargetID", i_targetID );
+            upgradeParams.Add( "UpgradeID", i_upgradeID );
+            upgradeParams.Add( "Progress", i_progress.ToString() );
+
+            MakeCloudCall( ADD_PROGRESS_TO_UPGRADE, upgradeParams, null );
         }
 
         public void MakeTrainerPurchase() {

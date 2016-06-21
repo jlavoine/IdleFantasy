@@ -27,6 +27,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return mBackend.WaitUntilNotBusy();
         }
 
+        protected IEnumerator MakeAddProgressCall( float i_progress ) {
+            mBackend.MakeAddProgressToUpgradeCall( mCurrentTestData.TestClass, mCurrentTestData.TestID, mCurrentTestData.TestUpgradeID, i_progress );
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
         protected IEnumerator SetStartingSaveLevelAndData( int i_level ) {
             mCurrentTestData.SaveValue = DrsStringUtils.Replace( mCurrentTestData.SaveValue, "LEVEL", i_level );
 
