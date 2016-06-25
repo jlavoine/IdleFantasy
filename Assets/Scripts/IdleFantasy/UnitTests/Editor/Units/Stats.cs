@@ -49,7 +49,7 @@ namespace IdleFantasy.UnitTests.Units {
         [TestCaseSource("RoundedStatTestSource")]
         public void GetRoundedStatValue_ReturnsExpected( string i_stat, int i_unitLevel, int i_expected ) {
             mUnit.Level.Value = i_unitLevel;
-            int statValue = mUnit.GetRoundedStat( i_stat );
+            int statValue = mUnit.GetBaseStat( i_stat );
 
             Assert.AreEqual( i_expected, statValue );
         }
