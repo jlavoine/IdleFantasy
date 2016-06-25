@@ -21,10 +21,8 @@ namespace MyLibrary {
         private static Hashtable mConstants = new Hashtable();
         private static IMessageService mMessenger;
 
-        public static void Init( IBasicBackend i_backend, IMessageService i_messenger ) {
-            mMessenger = i_messenger;
-
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing constants", "" );
+        public static void Init( IBasicBackend i_backend ) {
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing constants", "" );
 
             i_backend.GetTitleData( TITLE_DATA_KEY, CreateConstantsFromJSON );
         }

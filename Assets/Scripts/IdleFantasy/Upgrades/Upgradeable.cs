@@ -25,11 +25,11 @@ namespace IdleFantasy {
             set {
                 if ( value > mData.MaxLevel ) {
                     value = mData.MaxLevel;
-                    Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " above max level.", "Upgradeable" );
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " above max level.", "Upgradeable" );
                 }
                 else if ( value < 1 ) {
                     value = 1;
-                    Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " below min level.", "Upgradeable" );
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " below min level.", "Upgradeable" );
                 }
 
                 mModel.SetProperty( mData.PropertyName, value );

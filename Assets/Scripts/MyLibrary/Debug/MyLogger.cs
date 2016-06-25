@@ -3,16 +3,12 @@ namespace MyLibrary {
     public class MyLogger {
         public const string LOG_EVENT = "Log";
 
-        private IMessageService mMessenger;
-
-        public MyLogger( IMessageService i_messenger ) {
-            mMessenger = i_messenger;
-
-            mMessenger.AddListener<LogTypes, string, string>( LOG_EVENT, LogWithCategory );
+        public MyLogger() {
+            MyMessenger.AddListener<LogTypes, string, string>( LOG_EVENT, LogWithCategory );
         }
 
         public void Dispose() {
-            mMessenger.RemoveListener<LogTypes, string, string>( LOG_EVENT, LogWithCategory );
+            MyMessenger.RemoveListener<LogTypes, string, string>( LOG_EVENT, LogWithCategory );
         }
 
         public void LogWithCategory( LogTypes i_type, string i_message, string i_category ) {

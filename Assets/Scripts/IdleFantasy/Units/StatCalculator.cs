@@ -26,7 +26,7 @@ namespace IdleFantasy {
                     bonus = GetGuildBonus( i_unit, i_stat );
                     break;
                 default:
-                    Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No stat calculation for source: " + i_source.ToString(), "UnitModification" );
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No stat calculation for source: " + i_source.ToString(), "UnitModification" );
                     break;
             }
 

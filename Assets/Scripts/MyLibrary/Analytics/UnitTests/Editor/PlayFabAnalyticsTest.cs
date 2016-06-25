@@ -9,12 +9,11 @@ namespace MyLibrary.UnitTests {
 
         [Test]
         public void TimerAnalyticIsCalled_OnMessage() {
-            IMessageService messenger = new MyMessenger();
-            PlayFabAnalytics analytics = new PlayFabAnalytics( messenger );
+            PlayFabAnalytics analytics = new PlayFabAnalytics();
             string testName = "Test";
             long testTime = 0;
 
-            messenger.Send<string, long>( AnalyticsTimer.TIMER_EVENT, testName, testTime );
+            MyMessenger.Send<string, long>( AnalyticsTimer.TIMER_EVENT, testName, testTime );
 
             Received.InOrder( () => {
                 analytics.OnTimerAnalytic( testName, testTime );

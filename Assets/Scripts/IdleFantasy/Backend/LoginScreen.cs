@@ -10,28 +10,26 @@ namespace IdleFantasy {
         public GameObject LoginFailurePopup;
 
         private IdleFantasyBackend mBackend;
-        private IMessageService mMessenger;
 
         private bool mBackendFailure = false;
 
         private Login mLogin;   // is this the best way...?
 
-        void Start() {
-            mMessenger = new MyMessenger();            
-            mBackend = new IdleFantasyBackend( mMessenger );
+        void Start() {        
+            mBackend = new IdleFantasyBackend();
             BackendManager.Init( mBackend );
 
-            mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
-            mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
+            MyMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
+            MyMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
-            mLogin = new Login( mMessenger, mBackend );
+            mLogin = new Login( mBackend );
             mLogin.Start();
         }
 
         void OnDestroy() {
             mLogin.OnDestroy();
-            mMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
-            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
+            MyMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
+            MyMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
         }
 
         private void OnBackendFailure( IBackendFailure i_failure ) {            
@@ -46,9 +44,9 @@ namespace IdleFantasy {
         }
 
         private IEnumerator LoadDataFromBackend() {
-            StringTableManager.Init( "English", mBackend, mMessenger );
-            Constants.Init( mBackend, mMessenger );
-            GenericDataLoader.Init( mBackend, mMessenger );
+            StringTableManager.Init( "English", mBackend );
+            Constants.Init( mBackend );
+            GenericDataLoader.Init( mBackend );
             GenericDataLoader.LoadDataOfClass<BuildingData>( GenericDataLoader.BUILDINGS );
             GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );
             GenericDataLoader.LoadDataOfClass<GuildData>( GenericDataLoader.GUILDS );

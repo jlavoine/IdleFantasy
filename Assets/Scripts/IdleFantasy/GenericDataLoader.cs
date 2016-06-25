@@ -16,18 +16,16 @@ namespace IdleFantasy {
         public const string TEST_UNIT_2 = "BASE_MELEE_2";
 
         private static IBasicBackend mBackend;
-        private static IMessageService mMessenger;
 
         private static Dictionary<string, Hashtable> mData = new Dictionary<string, Hashtable>();
 
-        public static void Init( IBasicBackend i_backend, IMessageService i_messenger ) {
+        public static void Init( IBasicBackend i_backend ) {
             mBackend = i_backend;
-            mMessenger = i_messenger;
         }
 
         public static T GetData<T>( string i_type, string i_key ) where T : GenericData {
             if ( !mData.ContainsKey( i_type ) ) {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Trying to get data of unloaded type " + i_type, "" );
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Trying to get data of unloaded type " + i_type, "" );
                 return default ( T );
             }
 
@@ -37,7 +35,7 @@ namespace IdleFantasy {
                 return (T)dataOfType[i_key];
             }
             else {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data for " + i_type, "" );
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data for " + i_type, "" );
                 return default( T );
             }
         }
@@ -64,7 +62,7 @@ namespace IdleFantasy {
             }
 
             mBackend.GetAllTitleDataForClass( i_className, ( data ) => {
-                mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Got title data for " + i_className, "" );
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Got title data for " + i_className, "" );
 
                 Dictionary<string, T> dataAsDictionary = DeserializeData<T>( data, i_className );
                 StoreDictionaryDataAsHash<T>( dataAsDictionary, i_className );

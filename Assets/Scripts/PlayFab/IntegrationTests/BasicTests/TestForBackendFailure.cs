@@ -15,12 +15,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IBasicBackend mBackend;
 
         void Start() {
-            mMessenger = new MyMessenger();
-            mMessenger.AddListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
+            MyMessenger.AddListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
         }
 
         void OnDestroy() {
-            mMessenger.RemoveListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
+            MyMessenger.RemoveListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
         }    
 
         private void LogInComplete( IBasicBackend i_backend ) {

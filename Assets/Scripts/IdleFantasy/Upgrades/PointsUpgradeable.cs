@@ -12,7 +12,7 @@ namespace IdleFantasy {
             set {
                 if ( value < 0 ) {
                     value = 0;
-                    Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " points below 0.", "Upgradeable" );
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " points below 0.", "Upgradeable" );
                 }
 
                 if ( IsAtMaxLevel() ) {

@@ -8,8 +8,7 @@ namespace MyLibrary {
         void Awake() {
             DontDestroyOnLoad( this );
 
-            IMessageService messenger = new MyMessenger();
-            IntegrationTestLogger logger = new IntegrationTestLogger( messenger );            
+            IntegrationTestLogger logger = new IntegrationTestLogger();            
         }
     }
 }

@@ -3,20 +3,18 @@ using MyLibrary;
 
 namespace IdleFantasy.IntegrationTests {
     public class TestLogin : MonoBehaviour {
-        private IMessageService mMessenger;
 
-        void Start() {
-            mMessenger = new MyMessenger();                       
-            IBackend playFabBackend = new IdleFantasyBackend( mMessenger );
+        void Start() {                      
+            IBackend playFabBackend = new IdleFantasyBackend();
 
-            mMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
+            MyMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
 
-            Login login = new Login( mMessenger, playFabBackend );
+            Login login = new Login( playFabBackend );
             login.Start();
         }
 
         void OnDestroy() {
-            mMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
+            MyMessenger.RemoveListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
         }
 
         private void OnLogin() {

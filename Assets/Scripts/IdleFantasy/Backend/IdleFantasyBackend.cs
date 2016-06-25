@@ -21,8 +21,7 @@ namespace IdleFantasy {
         public const string TEST_GET_TOTAL_POINTS_UPGRADE = "getTotalPointsToUpgrade";
         public const string TEST_GET_UPGRADE_MAX_LEVEL = "getMaxLevelForUpgrade";
 
-        public IdleFantasyBackend( IMessageService i_messenger ) : base(i_messenger) {
-            mMessenger = i_messenger;
+        public IdleFantasyBackend() : base() {
         }
 
         public void MakeUpgradeCall( string i_className, string i_targetID, string i_upgradeID ) {

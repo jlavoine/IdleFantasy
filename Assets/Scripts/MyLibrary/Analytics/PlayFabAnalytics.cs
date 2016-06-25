@@ -5,16 +5,12 @@ using System.Collections.Generic;
 namespace MyLibrary{
     public class PlayFabAnalytics {
 
-        private IMessageService mMessenger;
-
-       public PlayFabAnalytics( IMessageService i_messenger ) {
-            mMessenger = i_messenger;
-
-            mMessenger.AddListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
+       public PlayFabAnalytics() {
+            MyMessenger.AddListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
         }
 
         public void Dispose() {
-            mMessenger.RemoveListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
+            MyMessenger.RemoveListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
         }
 
         // currently don't have access to send custom analytics with playfab...

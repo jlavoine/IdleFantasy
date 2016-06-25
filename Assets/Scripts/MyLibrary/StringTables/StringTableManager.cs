@@ -5,19 +5,15 @@ namespace MyLibrary {
     public static class StringTableManager {
         private static StringTable mStringTable;
 
-        private static IMessageService mMessenger;
-
-        public static void Init( string i_langauge, IBasicBackend i_backend, IMessageService i_messenger ) {
-            mMessenger = i_messenger;
-
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing string table for " + i_langauge, "" );
+        public static void Init( string i_langauge, IBasicBackend i_backend ) {
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Initing string table for " + i_langauge, "" );
 
             string tableKey = "StringTable_" + i_langauge;
             i_backend.GetTitleData( tableKey, CreateTableFromJSON );
         }
 
         private static void CreateTableFromJSON( string i_tableJSON ) {
-            mStringTable = new StringTable( i_tableJSON, mMessenger );
+            mStringTable = new StringTable( i_tableJSON );
         }
 
         public static string Get( string i_key ) {

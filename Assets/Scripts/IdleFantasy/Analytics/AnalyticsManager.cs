@@ -9,8 +9,7 @@ namespace IdleFantasy {
         void Awake() {
             DontDestroyOnLoad( this );
 
-            IMessageService messenger = new MyMessenger();
-            PlayFabAnalytics playFab = new PlayFabAnalytics( messenger );
+            PlayFabAnalytics playFab = new PlayFabAnalytics();
         }
     }
 }

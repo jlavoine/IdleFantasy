@@ -17,7 +17,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator InitConstants() {
-            Constants.Init( mBackend, new MyMessenger() );
+            Constants.Init( mBackend );
             yield return mBackend.WaitUntilNotBusy();
         }
 

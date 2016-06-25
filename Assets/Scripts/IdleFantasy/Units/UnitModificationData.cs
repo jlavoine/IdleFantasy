@@ -47,7 +47,7 @@ namespace IdleFantasy {
                     bonus = baseStatValue * totalModifier;
                     break;
                 default:
-                    Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No unit modification handle for " + ModifierType, "UnitModification" );
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No unit modification handle for " + ModifierType, "UnitModification" );
                     break;
             }
 

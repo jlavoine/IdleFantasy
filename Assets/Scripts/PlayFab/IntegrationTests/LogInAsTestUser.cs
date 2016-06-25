@@ -7,29 +7,27 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         public string ID;
 
-        private IMessageService mMessenger;
         private IdleFantasyBackend mBackend;
 
         public void Start() {
-            mMessenger = new MyMessenger();
-            mBackend = new IdleFantasyBackend( mMessenger );
+            mBackend = new IdleFantasyBackend();
             BackendManager.Init( mBackend );
 
-            mMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
+            MyMessenger.AddListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
+            MyMessenger.AddListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
+            MyMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
             mBackend.Authenticate( ID );
         }
 
         void OnDestroy() {
-            mMessenger.RemoveListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
-            mMessenger.RemoveListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
-            mMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
+            MyMessenger.RemoveListener<IAuthenticationSuccess>( BackendMessages.AUTH_SUCCESS, OnAuthenticationSucess );
+            MyMessenger.RemoveListener( BackendMessages.CLOUD_SETUP_SUCCESS, OnCloudSetupSuccess );
+            MyMessenger.RemoveListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
         }
 
         private void OnAuthenticationSucess( IAuthenticationSuccess i_success ) {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate success", "" );
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate success", "" );
             mBackend.SetUpCloudServices( false );
         }
 
@@ -38,8 +36,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private void OnCloudSetupSuccess() {
-            mMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
-            mMessenger.Send<IBasicBackend>( LOG_IN_DONE, mBackend );
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
+            MyMessenger.Send<IBasicBackend>( LOG_IN_DONE, mBackend );
         }
     }
 }
