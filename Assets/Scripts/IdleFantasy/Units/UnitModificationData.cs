@@ -13,7 +13,7 @@ namespace IdleFantasy {
 
         public float GetBonus( IUnit i_unit, string i_stat, int i_modLevel ) {
             float bonus = 0f;
-            if ( AffectsUnit( i_unit.GetID() ) ) {
+            if ( ModifiesStat( i_stat ) && AffectsUnit( i_unit.GetID() ) ) {
                 bonus = CalculateBonusValue( i_unit, i_stat, i_modLevel );
             }
 
@@ -22,6 +22,10 @@ namespace IdleFantasy {
 
         public bool AffectsUnit( string i_unitID ) {
             return UnitsModified.Contains( i_unitID ) || UnitsModified.Contains( ALL_KEY );
+        }
+
+        public bool ModifiesStat( string i_stat ) {
+            return StatModified == i_stat;
         }
 
         public float GetTotalModifier( int i_level ) {

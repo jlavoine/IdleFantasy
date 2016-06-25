@@ -25,6 +25,15 @@ namespace IdleFantasy.UnitTests.Units {
             mModData.StatModified = TestUnitStats.TEST_STAT_1;
         }
 
+        [Test]
+        public void TestModificationData_DoesNotModifyWrongStat() {
+            float bonus = mModData.GetBonus( mUnit, TestUnitStats.TEST_STAT_NONE, 1 );
+            bool modifiesStat = mModData.ModifiesStat( TestUnitStats.TEST_STAT_NONE );
+
+            Assert.AreEqual( 0, bonus );
+            Assert.IsFalse( modifiesStat );
+        }
+
         static object[] AffectsCorrectUnitsTest = {
             new object[] { GenericDataLoader.TEST_UNIT, true },
             new object[] { "Fake Unit", false },
@@ -66,7 +75,7 @@ namespace IdleFantasy.UnitTests.Units {
             new object[] { TestUnitStats.TEST_STAT_1 , -1, 0 },
             new object[] { TestUnitStats.TEST_STAT_1, 1, DEFAULT_BASE_MODIFIER },
             new object[] { TestUnitStats.TEST_STAT_1, 2, 2 * DEFAULT_BASE_MODIFIER },
-            new object[] { TestUnitStats.TEST_STAT_NONE, 1, DEFAULT_BASE_MODIFIER }
+            new object[] { TestUnitStats.TEST_STAT_NONE, 1, 0 }
         };
 
         [Test, TestCaseSource( "FlatBonusTest" )]
