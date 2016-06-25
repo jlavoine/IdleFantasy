@@ -28,7 +28,7 @@ namespace IdleFantasy {
 
         public float GetUnitStatBonus( IUnit i_unit, string i_stat ) {
             float bonus = 0f;
-            foreach ( UnitModificationData mod in Data.Modifications ) {
+            foreach ( UnitModificationData mod in Data.UnitModifications ) {
                 bonus += mod.GetBonus( i_unit, i_stat, Level.Value );
             }
 
