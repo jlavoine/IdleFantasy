@@ -48,7 +48,7 @@ const MODULE_BASE = "Base";    // the base game!
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
 const CLASS_UNIT = "Units";             // units that are apart of buildings
-const CLASS_GUILD = "Guilds";     // guilds that augment units
+const CLASS_GUILD = "Guilds";           // guilds that augment units and other things
 
 // data in an upgrade
 const MAX_LEVEL = "MaxLevel";               // highest level upgrade can be set to

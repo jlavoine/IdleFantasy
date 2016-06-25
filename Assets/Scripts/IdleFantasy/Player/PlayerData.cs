@@ -7,12 +7,14 @@ namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
         public const string BUILDING_PROGRESS = "BuildingsProgress";
         public const string UNIT_PROGRESS = "UnitsProgress";
+        public const string GUILD_PROGRESS = "GuildsProgress";
         public const string TRAINER_SAVE_DATA = "TrainerSaveData";
-
-        public Dictionary<string, UnitProgress> UnitProgress;
+        
         public Dictionary<string, int> UnitTrainingLevels;
 
+        public Dictionary<string, UnitProgress> UnitProgress;
         public Dictionary<string, BuildingProgress> BuildingProgress;
+        public Dictionary<string, GuildProgress> GuildProgress;
 
         private TrainerSaveData mTrainerSaveData;
         public ITrainerManager TrainerManager;
@@ -27,12 +29,16 @@ namespace IdleFantasy {
             mBackend = i_backend;
             mModel = new ViewModel();
 
-            mBackend.GetPlayerData( BUILDING_PROGRESS, (jsonData) => {
+            mBackend.GetPlayerData( BUILDING_PROGRESS, ( jsonData ) => {
                 BuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
             } );
 
             mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
                 UnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
+            } );
+
+            mBackend.GetPlayerData( GUILD_PROGRESS, ( jsonData ) => {
+                GuildProgress = JsonConvert.DeserializeObject<Dictionary<string, GuildProgress>>( jsonData );
             } );
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
