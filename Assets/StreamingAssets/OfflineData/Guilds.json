@@ -1,0 +1,12 @@
+{
+  "GUILD_1" : {
+    "ID" : "GUILD_1",
+    "GuildLevel" : "{ \"PropertyName\": \"GuildLevel\", \"MaxLevel\": 50, \"BaseXpToLevel\":1000 }",
+    "UnitModifications" : "[{\"UnitsModified\":[\"BASE_MELEE_1\"],\"StatModified\":\"TEST_STAT_1\",\"ModifierType\":0,\"BaseModifier\":1.0}]"
+  },
+  "GUILD_2" : {
+    "ID" : "GUILD_2",
+    "GuildLevel" : "{ \"PropertyName\": \"GuildLevel\", \"MaxLevel\": 50, \"BaseXpToLevel\":1500 }",
+    "UnitModifications" : "[{\"UnitsModified\":[\"All\"],\"StatModified\":\"TEST_STAT_1\",\"ModifierType\":1,\"BaseModifier\":0.5}]"
+  }
+}

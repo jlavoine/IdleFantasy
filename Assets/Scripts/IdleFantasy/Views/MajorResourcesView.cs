@@ -4,7 +4,7 @@ namespace IdleFantasy {
     public class MajorResourcesView : GroupView {
        
         void Start() {
-            PlayerData player = PlayerManager.Data;
+            PlayerData player = (PlayerData)PlayerManager.Data;
             SetModel( player.GetViewModel() );
         }
     }

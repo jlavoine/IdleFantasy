@@ -12,14 +12,20 @@ namespace IdleFantasy {
         
         public Dictionary<string, int> UnitTrainingLevels;
 
-        public Dictionary<string, UnitProgress> UnitProgress;
-        public Dictionary<string, BuildingProgress> BuildingProgress;
+        private Dictionary<string, UnitProgress> mUnitProgress;
+        public Dictionary<string, UnitProgress> UnitProgress { get { return mUnitProgress; } }
+
+        private Dictionary<string, BuildingProgress> mBuildingProgress;
+        public Dictionary<string, BuildingProgress> BuildingProgress { get { return mBuildingProgress; } }
+
         public Dictionary<string, GuildProgress> GuildProgress;
 
-        public List<Guild> Guilds = new List<Guild>();
+        private List<Guild> mGuilds = new List<Guild>();
+        public List<Guild> Guilds { get { return mGuilds; } }
 
         private TrainerSaveData mTrainerSaveData;
-        public ITrainerManager TrainerManager;
+        private ITrainerManager mTrainerManager;
+        public ITrainerManager TrainerManager { get { return mTrainerManager; } }
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
@@ -32,11 +38,11 @@ namespace IdleFantasy {
             mModel = new ViewModel();
 
             mBackend.GetPlayerData( BUILDING_PROGRESS, ( jsonData ) => {
-                BuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
+                mBuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
             } );
 
             mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
-                UnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
+                mUnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
             } );
 
             mBackend.GetPlayerData( GUILD_PROGRESS, ( jsonData ) => {
@@ -57,15 +63,17 @@ namespace IdleFantasy {
         }
 
         public void CreateManagers() {
-            TrainerManager = new TrainerManager( mModel, mTrainerSaveData, UnitProgress );
+            mTrainerManager = new TrainerManager( mModel, mTrainerSaveData, mUnitProgress );
         }
 
         public object GetData( string i_key ) {
             switch ( i_key ) {
                 case BUILDING_PROGRESS:
-                    return BuildingProgress;
+                    return mBuildingProgress;
                 case UNIT_PROGRESS:
-                    return UnitProgress;
+                    return mUnitProgress;
+                case GUILD_PROGRESS:
+                    return GuildProgress;
                 default:
                     return null;
             }

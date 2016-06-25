@@ -2,9 +2,9 @@
 namespace IdleFantasy {
     public static class PlayerManager {
 
-        public static PlayerData Data;
+        public static IPlayerData Data;
 
-        public static void Init( PlayerData i_data ) {
+        public static void Init( IPlayerData i_data ) {
             Data = i_data;
         }
     }

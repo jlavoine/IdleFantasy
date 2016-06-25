@@ -1,4 +1,5 @@
 ﻿using MyLibrary;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public interface IPlayerData {
@@ -8,13 +9,11 @@ namespace IdleFantasy {
             get;
             set;
         }
-
-        //BuildingProgress GetBuildingProgress( string i_ID );
-
         object GetData( string i_key );
 
-        /*ITrainerData TrainerData {
-            get;
-        }*/
+        List<Guild> Guilds { get; }
+        ITrainerManager TrainerManager { get; }
+        Dictionary<string, UnitProgress> UnitProgress { get; }
+        Dictionary<string, BuildingProgress> BuildingProgress { get; }
     }
 }

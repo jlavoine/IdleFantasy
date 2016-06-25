@@ -34,6 +34,30 @@ namespace IdleFantasy {
             get { return mTrainerData; }
         }
 
+        public List<Guild> Guilds {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public ITrainerManager TrainerManager {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public Dictionary<string, UnitProgress> UnitProgress {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public Dictionary<string, BuildingProgress> BuildingProgress {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public ViewModel GetViewModel() {
             return mModel;
         }
