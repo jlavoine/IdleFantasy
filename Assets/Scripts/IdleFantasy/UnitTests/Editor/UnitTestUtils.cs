@@ -21,6 +21,7 @@ namespace IdleFantasy.UnitTests {
             GenericDataLoader.Init( mOfflineBackend, mOfflineMessenger );
             GenericDataLoader.LoadDataOfClass<BuildingData>( GenericDataLoader.BUILDINGS );
             GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );
+            GenericDataLoader.LoadDataOfClass<GuildData>( GenericDataLoader.GUILDS );
         }
     }
 }
