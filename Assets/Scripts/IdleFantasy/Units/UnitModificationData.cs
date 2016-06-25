@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MyLibrary;
 
 namespace IdleFantasy {
     public class UnitModificationData  {
-        public const string ALL_STATS_KEY = "All";
+        public const string ALL_KEY = "All";
 
         public List<string> UnitsModified;
         public string StatModified;
@@ -12,18 +13,20 @@ namespace IdleFantasy {
 
         public float GetBonus( IUnit i_unit, string i_stat, int i_modLevel ) {
             float bonus = 0f;
-            if ( AffectsUnit( i_unit ) ) {
+            if ( AffectsUnit( i_unit.GetID() ) ) {
                 bonus = CalculateBonusValue( i_unit, i_stat, i_modLevel );
             }
 
             return bonus;
         }
 
-        private bool AffectsUnit( IUnit i_unit ) {
-            return UnitsModified.Contains( i_unit.GetID() ) || UnitsModified.Contains( ALL_STATS_KEY );
+        public bool AffectsUnit( string i_unitID ) {
+            return UnitsModified.Contains( i_unitID ) || UnitsModified.Contains( ALL_KEY );
         }
 
-        private float GetTotalModifier( int i_level ) {
+        public float GetTotalModifier( int i_level ) {
+            i_level = Math.Max( i_level, 0 );
+
             return BaseModifier * i_level;
         }
 
@@ -34,10 +37,10 @@ namespace IdleFantasy {
 
             switch ( ModifierType ) {
                 case ModifierTypes.Flat:
-                    bonus = baseStatValue * totalModifier;
+                    bonus = totalModifier;
                     break;
                 case ModifierTypes.Percent:
-                    bonus = baseStatValue + totalModifier;
+                    bonus = baseStatValue * totalModifier;
                     break;
                 default:
                     Messenger.Broadcast<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No unit modification handle for " + ModifierType, "UnitModification" );
