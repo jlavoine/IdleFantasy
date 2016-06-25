@@ -4,6 +4,6 @@ namespace IdleFantasy {
     public class GuildData : GenericData {
         public UpgradeData GuildLevel;
 
-        public List<UnitModification> Modifications;
+        public List<UnitModificationData> Modifications;
     }
 }
