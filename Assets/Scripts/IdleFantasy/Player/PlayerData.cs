@@ -16,6 +16,8 @@ namespace IdleFantasy {
         public Dictionary<string, BuildingProgress> BuildingProgress;
         public Dictionary<string, GuildProgress> GuildProgress;
 
+        public List<Guild> Guilds = new List<Guild>();
+
         private TrainerSaveData mTrainerSaveData;
         public ITrainerManager TrainerManager;
 
@@ -39,6 +41,10 @@ namespace IdleFantasy {
 
             mBackend.GetPlayerData( GUILD_PROGRESS, ( jsonData ) => {
                 GuildProgress = JsonConvert.DeserializeObject<Dictionary<string, GuildProgress>>( jsonData );
+                foreach ( KeyValuePair<string, GuildProgress> kvp in GuildProgress ) {
+                    kvp.Value.ID = kvp.Key;
+                    Guilds.Add( new Guild( kvp.Value ) );
+                }
             } );
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
