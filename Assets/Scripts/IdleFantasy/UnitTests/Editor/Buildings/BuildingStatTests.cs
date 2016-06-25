@@ -18,9 +18,9 @@ namespace IdleFantasy.UnitTests.Buildings {
         }
 
         static object[] StatsList = {
-            new object[] { Stats.TEST_STAT_1 },
-            new object[] { Stats.TEST_STAT_2 },
-            new object[] { Stats.TEST_STAT_NONE }
+            new object[] { TestUnitStats.TEST_STAT_1 },
+            new object[] { TestUnitStats.TEST_STAT_2 },
+            new object[] { TestUnitStats.TEST_STAT_NONE }
         };
 
         [Test]
@@ -37,22 +37,22 @@ namespace IdleFantasy.UnitTests.Buildings {
         public void UnknownStat_ReturnsNoValue() {
             mBuilding.NumUnits = 100;
 
-            long totalStat = mBuilding.GetStatTotal( Stats.TEST_STAT_NONE );
+            long totalStat = mBuilding.GetStatTotal( TestUnitStats.TEST_STAT_NONE );
 
             Assert.AreEqual( 0, totalStat );
         }
 
         static object[] Normal_ExpectedValueTest = {
-            new object[] { 1, 1, Stats.TEST_STAT_1, 2 },
-            new object[] { 1, 2, Stats.TEST_STAT_1, 3 },
-            new object[] { 10, 1, Stats.TEST_STAT_1, 20 },
-            new object[] { 100, 1, Stats.TEST_STAT_1, 200 },
-            new object[] { 100, 2, Stats.TEST_STAT_1, 300 },
-            new object[] { 3129, 1, Stats.TEST_STAT_1, 6258 },
-            new object[] { 1, 1, Stats.TEST_STAT_2, 3 },
-            new object[] { 7, 1, Stats.TEST_STAT_2, 21 },
-            new object[] { 7, 3, Stats.TEST_STAT_2, 56 },
-            new object[] { 1173, 1, Stats.TEST_STAT_2, 3519 },            
+            new object[] { 1, 1, TestUnitStats.TEST_STAT_1, 2 },
+            new object[] { 1, 2, TestUnitStats.TEST_STAT_1, 3 },
+            new object[] { 10, 1, TestUnitStats.TEST_STAT_1, 20 },
+            new object[] { 100, 1, TestUnitStats.TEST_STAT_1, 200 },
+            new object[] { 100, 2, TestUnitStats.TEST_STAT_1, 300 },
+            new object[] { 3129, 1, TestUnitStats.TEST_STAT_1, 6258 },
+            new object[] { 1, 1, TestUnitStats.TEST_STAT_2, 3 },
+            new object[] { 7, 1, TestUnitStats.TEST_STAT_2, 21 },
+            new object[] { 7, 3, TestUnitStats.TEST_STAT_2, 56 },
+            new object[] { 1173, 1, TestUnitStats.TEST_STAT_2, 3519 },            
         };
 
         [Test]
