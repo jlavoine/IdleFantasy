@@ -38,7 +38,7 @@ namespace IdleFantasy {
             return true;
         }
 
-        public int GetRoundedStat( string i_stat ) {
+        public int GetBaseStat( string i_stat ) {
             return TrainingLevel;
         }
 

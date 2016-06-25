@@ -121,7 +121,7 @@ namespace IdleFantasy {
 
         #region Unit Power
         public long GetStatTotal( string i_stat ) {
-            int statPerUnit = Unit.GetRoundedStat( i_stat );
+            int statPerUnit = Unit.GetBaseStat( i_stat );
             int total = NumUnits * statPerUnit;
 
             return total;

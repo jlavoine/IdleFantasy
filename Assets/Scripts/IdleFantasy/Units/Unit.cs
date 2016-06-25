@@ -74,7 +74,7 @@ namespace IdleFantasy {
             return mData.Stats.ContainsKey( i_stat );
         }
 
-        public int GetRoundedStat( string i_stat ) {
+        public int GetBaseStat( string i_stat ) {
             float totalValue = 0f;
             StatInfo stat;
             if ( mData.Stats.TryGetValue( i_stat, out stat ) ) {
