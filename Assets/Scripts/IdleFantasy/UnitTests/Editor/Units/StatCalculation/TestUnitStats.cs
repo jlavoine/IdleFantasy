@@ -1,12 +1,11 @@
 ﻿using NUnit.Framework;
 using MyLibrary;
-using System.Collections.Generic;
 
 #pragma warning disable 0414
 
 namespace IdleFantasy.UnitTests.Units {
     [TestFixture]
-    public class Stats {
+    public class TestUnitStats {
         private Unit mUnit;
 
         public const string TEST_STAT_1 = "TEST_STAT_1";
