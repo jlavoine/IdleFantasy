@@ -14,7 +14,7 @@ namespace IdleFantasy {
         }
 
         private void PopulateMenu() {
-            Dictionary<string, BuildingProgress> buildingProgress = (Dictionary<string, BuildingProgress>) PlayerManager.Data.GetData( PlayerData.BUILDING_PROGRESS );
+            Dictionary<string, BuildingProgress> buildingProgress = PlayerManager.Data.BuildingProgress;
 
             foreach ( KeyValuePair<string, BuildingProgress> pair in buildingProgress ) {                
                 Building building = CreateBuilding( pair.Key, pair.Value );

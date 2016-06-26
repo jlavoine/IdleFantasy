@@ -9,7 +9,7 @@ namespace IdleFantasy {
             get;
             set;
         }
-        object GetData( string i_key );
+        //object GetData( string i_key );
 
         List<Guild> Guilds { get; }
         ITrainerManager TrainerManager { get; }

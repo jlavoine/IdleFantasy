@@ -1,27 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MyLibrary;
 using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
-        public const string BUILDING_PROGRESS = "BuildingsProgress";
-        public const string UNIT_PROGRESS = "UnitsProgress";
-        public const string GUILD_PROGRESS = "GuildsProgress";
+        public const string PROGRESS_KEY = "Progress";
         public const string TRAINER_SAVE_DATA = "TrainerSaveData";
         
         public Dictionary<string, int> UnitTrainingLevels;
 
-        private Dictionary<string, UnitProgress> mUnitProgress;
-        public Dictionary<string, UnitProgress> UnitProgress { get { return mUnitProgress; } }
-
-        private Dictionary<string, BuildingProgress> mBuildingProgress;
-        public Dictionary<string, BuildingProgress> BuildingProgress { get { return mBuildingProgress; } }
-
-        public Dictionary<string, GuildProgress> GuildProgress;
+        private Hashtable mPlayerProgress = new Hashtable();
+        public Dictionary<string, UnitProgress> UnitProgress { get { return ( Dictionary<string, UnitProgress>)mPlayerProgress[GenericDataLoader.UNITS]; } }
+        public Dictionary<string, BuildingProgress> BuildingProgress { get { return ( Dictionary<string, BuildingProgress>)mPlayerProgress[GenericDataLoader.BUILDINGS]; } }
+        public Dictionary<string, GuildProgress> GuildProgress { get { return (Dictionary<string, GuildProgress>) mPlayerProgress[GenericDataLoader.GUILDS]; } }
 
         private List<Guild> mGuilds = new List<Guild>();
-        public List<Guild> Guilds { get { return mGuilds; } }
+        public List<Guild> Guilds { get { return mGuilds; } }        
 
         private TrainerSaveData mTrainerSaveData;
         private ITrainerManager mTrainerManager;
@@ -37,21 +33,7 @@ namespace IdleFantasy {
             mBackend = i_backend;
             mModel = new ViewModel();
 
-            mBackend.GetPlayerData( BUILDING_PROGRESS, ( jsonData ) => {
-                mBuildingProgress = JsonConvert.DeserializeObject<Dictionary<string, BuildingProgress>>( jsonData );
-            } );
-
-            mBackend.GetPlayerData( UNIT_PROGRESS, ( jsonData ) => {
-                mUnitProgress = JsonConvert.DeserializeObject<Dictionary<string, UnitProgress>>( jsonData );
-            } );
-
-            mBackend.GetPlayerData( GUILD_PROGRESS, ( jsonData ) => {
-                GuildProgress = JsonConvert.DeserializeObject<Dictionary<string, GuildProgress>>( jsonData );
-                foreach ( KeyValuePair<string, GuildProgress> kvp in GuildProgress ) {
-                    kvp.Value.ID = kvp.Key;
-                    Guilds.Add( new Guild( kvp.Value ) );
-                }
-            } );
+            DownloadAllProgressData();
 
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
                 mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );                
@@ -62,21 +44,42 @@ namespace IdleFantasy {
             } );
         }
 
-        public void CreateManagers() {
-            mTrainerManager = new TrainerManager( mModel, mTrainerSaveData, mUnitProgress );
+        private void DownloadAllProgressData() {
+            DownloadProgressDataForKey<BuildingProgress>( GenericDataLoader.BUILDINGS );
+            DownloadProgressDataForKey<UnitProgress>( GenericDataLoader.UNITS );
+            DownloadProgressDataForKey<GuildProgress>( GenericDataLoader.GUILDS, AddGuilds );
         }
 
-        public object GetData( string i_key ) {
-            switch ( i_key ) {
-                case BUILDING_PROGRESS:
-                    return mBuildingProgress;
-                case UNIT_PROGRESS:
-                    return mUnitProgress;
-                case GUILD_PROGRESS:
-                    return GuildProgress;
-                default:
-                    return null;
+        private void AddGuilds() {
+            foreach ( KeyValuePair<string, GuildProgress> kvp in GuildProgress ) {
+                Guilds.Add( new Guild( kvp.Value ) );
             }
+        }
+
+        private void DownloadProgressDataForKey<T>( string i_key, Callback i_doneDownloadingCallback = null ) where T : ProgressBase {
+            string dataKey = i_key + PROGRESS_KEY;
+            mBackend.GetPlayerData( dataKey, ( jsonData ) => {
+                Dictionary<string, T> allProgressData = JsonConvert.DeserializeObject<Dictionary<string, T>>( jsonData );
+
+                SetIDsOnProgressData( allProgressData );
+
+                mPlayerProgress[i_key] = allProgressData;
+
+                if ( i_doneDownloadingCallback != null ) {
+                    i_doneDownloadingCallback();
+                }
+            } );
+        }
+
+        // This method exists to set IDs on all progress data, because the ID isn't inside the JSON itself
+        private void SetIDsOnProgressData<T>( Dictionary<string, T> i_progressData ) where T : ProgressBase {
+            foreach ( KeyValuePair<string, T> kvp in i_progressData ) {
+                kvp.Value.ID = kvp.Key;
+            }
+        }
+
+        public void CreateManagers() {
+            mTrainerManager = new TrainerManager( mModel, mTrainerSaveData, UnitProgress );
         }
 
         public int Gold {

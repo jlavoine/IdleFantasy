@@ -50,8 +50,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private void TestPlayerDataCalls() {
-            mBackend.GetPlayerData( PlayerData.BUILDING_PROGRESS, ( result ) => { } );
-            mBackend.GetPlayerData( PlayerData.UNIT_PROGRESS, ( result ) => { } );
+            mBackend.GetPlayerData( GenericDataLoader.BUILDINGS + PlayerData.PROGRESS_KEY, ( result ) => { } );
+            mBackend.GetPlayerData( GenericDataLoader.UNITS + PlayerData.PROGRESS_KEY, ( result ) => { } );
+            mBackend.GetPlayerData( GenericDataLoader.GUILDS + PlayerData.PROGRESS_KEY, ( result ) => { } );
         }
 
         private void TestTitleDataCalls() {
