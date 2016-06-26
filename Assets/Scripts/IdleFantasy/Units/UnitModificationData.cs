@@ -25,7 +25,7 @@ namespace IdleFantasy {
         }
 
         public bool ModifiesStat( string i_stat ) {
-            return StatModified == i_stat;
+            return StatModified == i_stat || StatModified == ALL_KEY;
         }
 
         public float GetTotalModifier( int i_level ) {

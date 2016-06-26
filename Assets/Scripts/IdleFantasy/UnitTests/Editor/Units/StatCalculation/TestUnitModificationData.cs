@@ -26,6 +26,15 @@ namespace IdleFantasy.UnitTests.Units {
         }
 
         [Test]
+        public void TestModificationData_WithAllStatsModifiesEverything() {
+            mModData.StatModified = UnitModificationData.ALL_KEY;
+            mModData.ModifierType = ModifierTypes.Flat;
+            float bonus = mModData.GetBonus( mUnit, TestUnitStats.TEST_STAT_NONE, 1 );
+
+            Assert.AreEqual( DEFAULT_BASE_MODIFIER, bonus );
+        }
+
+        [Test]
         public void TestModificationData_DoesNotModifyWrongStat() {
             float bonus = mModData.GetBonus( mUnit, TestUnitStats.TEST_STAT_NONE, 1 );
             bool modifiesStat = mModData.ModifiesStat( TestUnitStats.TEST_STAT_NONE );
