@@ -51,6 +51,10 @@ namespace IdleFantasy {
             GenericDataLoader.LoadDataOfClass<UnitData>( GenericDataLoader.UNITS );
             GenericDataLoader.LoadDataOfClass<GuildData>( GenericDataLoader.GUILDS );
 
+            while ( mBackend.IsBusy() ) {
+                yield return 0;
+            }
+
             PlayerData playerData = new PlayerData();
             playerData.Init( mBackend );
             PlayerManager.Init( playerData );
