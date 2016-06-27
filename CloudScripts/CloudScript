@@ -79,9 +79,13 @@ const VALUE = "Value";                      // API key for accessing the actual 
 /// Checks to see if the account is marked for testing.
 function isTesting() {
     var internalData = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: ["Testing"] });    
-    var data = internalData[DATA];
-    var value = data["Testing"];
-    var isTesting = value[VALUE] == "true";
+    var data = internalData[DATA];    
+    var isTesting = false;
+
+    if (data.hasOwnProperty("Testing")) {
+        var value = data["Testing"];
+        isTesting = value[VALUE] == "true";
+    }
     
     log.info("Account Test Status: " + isTesting);
 
@@ -91,7 +95,7 @@ function isTesting() {
 /// Test for purposefully going over the cloudscript limit to see what happens
 handlers.overLimit = function (args) {
     if (!isTesting()) {
-        return;    
+         return { outOfSync : true };;    
     }
 
     var one = isTesting();
@@ -111,7 +115,7 @@ handlers.overLimit = function (args) {
 /// use this method to test if unit counts are updating properly
 handlers.testUpdateUnitCount = function (args) {
     if (!isTesting()) {
-        return;    
+         return returnOutOfSync();  
     }
 
     var time = GetNumberFromArgs(args, COUNT_TIME);
@@ -121,7 +125,7 @@ handlers.testUpdateUnitCount = function (args) {
 /// use this method if you want to upgrade an upgradeable, bypassing all other normal checks
 handlers.testUpgrade = function (args) {
     if (!isTesting()) {
-        return;    
+         return returnOutOfSync();    
     }
 
     var className = args.data[CLASS];
@@ -135,7 +139,7 @@ handlers.testUpgrade = function (args) {
 /// use this method if you want to train a unit, bypassing all other normal checks
 handlers.testChangeTraining = function (args) {
     if (!isTesting()) {
-        return;    
+         return returnOutOfSync();    
     }
 
     var className = args.data[CLASS];
@@ -150,7 +154,7 @@ handlers.testChangeTraining = function (args) {
 /// returns the capacity for a unit
 handlers.getCapacityForUnit = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var unitKey = args.data[TARGET_ID];
@@ -164,7 +168,7 @@ handlers.getCapacityForUnit = function(args) {
 /// returns max level for upgrade
 handlers.getMaxLevelForUpgrade = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }    
 
     var className = args.data[CLASS];
@@ -180,7 +184,7 @@ handlers.getMaxLevelForUpgrade = function(args) {
 /// returns the total amount of xp required to upgrade the target upgradeable
 handlers.getTotalPointsToUpgrade = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }    
 
     var className = args.data[CLASS];
@@ -198,7 +202,7 @@ handlers.getTotalPointsToUpgrade = function(args) {
 /// returns the elapsed time needed to train the unit to the desired number
 handlers.getTrainTimeForUnit = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var unitKey = args.data[TARGET_ID];
@@ -219,7 +223,7 @@ handlers.getTrainTimeForUnit = function(args) {
 /// returns the # of units the player currently has
 handlers.getUnitCount = function (args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var readOnlyData = GetProgressData(CLASS_UNIT);
@@ -234,7 +238,7 @@ handlers.getUnitCount = function (args) {
 /// Used to check that a very specific portion of data changed.
 handlers.getProgressData = function (args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var className = args.data[CLASS];
@@ -249,7 +253,7 @@ handlers.getProgressData = function (args) {
 /// returns the normal trainer count of the player
 handlers.getTrainerCount = function (args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var trainerSaveData = GetReadOnlySaveData(TRAINER_SAVE_DATA);
@@ -262,7 +266,7 @@ handlers.getTrainerCount = function (args) {
 /// for getting at internal data
 handlers.getInternalData = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var key = args.data[SAVE_KEY];
@@ -274,7 +278,7 @@ handlers.getInternalData = function(args) {
 /// returns the # of available trainers
 handlers.getAvailableTrainers = function(args) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var allProgressData = GetProgressData(CLASS_UNIT);
@@ -286,7 +290,7 @@ handlers.getAvailableTrainers = function(args) {
 /// sets player data of a key to a value
 handlers.setSaveData = function(args) {
     if (!isTesting()) {
-        return;
+        return returnOutOfSync();
     }
 
     var key = args.data["Key"];
@@ -299,7 +303,7 @@ handlers.setSaveData = function(args) {
 /// convenience function that turns some raw data into a json string to send back to client
 function ReturnDataToClient(rawData) {
     if (!isTesting()) {
-        return;    
+        return returnOutOfSync();    
     }
 
     var dataToString = JSON.stringify(rawData);
@@ -314,8 +318,8 @@ function ReturnDataToClient(rawData) {
 /// the incoming value depending on the player's current currency,
 /// because there is no API call to set a currency to a specific value.
 handlers.setPlayerCurrency = function(args) {
-    if (!isTesting) {
-        return;
+    if (!isTesting()) {
+        return returnOutOfSync();
     }
 
     var amountToSet = args.data["Amount"];
@@ -523,6 +527,10 @@ function GetBuildingStartingSize(buildingTitleData) {
 /// Misc methods that are used by many different
 /// server methods.
 /////////////////////////////////////////////////
+
+function returnOutOfSync() {
+    return { outOfSync : true };
+}
 
 function GetPlayerInventory() {
     var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
