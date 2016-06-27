@@ -19,6 +19,29 @@ namespace IdleFantasy.UnitTests.Units {
         public void BeforeTests() {
             UnitTestUtils.LoadOfflineData();
 
+            SetUpStatCalculator();
+        }
+
+        private void SetUpStatCalculator() {          
+            SetMockPlayerData();
+
+            mStatCalculator = new StatCalculator();
+        }
+
+        private void SetMockPlayerData() {
+            IPlayerData mockPlayerData = CreateMockPlayer();
+            PlayerManager.Init( mockPlayerData );
+        }
+
+        private IPlayerData CreateMockPlayer() {
+            IPlayerData mockPlayerData = NSubstitute.Substitute.For<IPlayerData>();
+            List<Guild> guilds = GetTestGuildList();
+            mockPlayerData.Guilds.Returns( guilds );
+
+            return mockPlayerData;
+        }
+
+        private List<Guild> GetTestGuildList() {
             GuildProgress guild_1 = new GuildProgress();
             guild_1.ID = "GUILD_1";
             guild_1.Level = 1;
@@ -31,12 +54,7 @@ namespace IdleFantasy.UnitTests.Units {
             guilds.Add( new Guild( guild_1 ) );
             guilds.Add( new Guild( guild_2 ) );
 
-            IPlayerData mockPlayerData = NSubstitute.Substitute.For<IPlayerData>();
-            mockPlayerData.Guilds.Returns( guilds );
-
-            PlayerManager.Init( mockPlayerData );
-
-            mStatCalculator = new StatCalculator();
+            return guilds;
         }
 
         static object[] CorrectTotalStatTest = {
