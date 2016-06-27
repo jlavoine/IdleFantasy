@@ -21,7 +21,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator SetElapsedTime() {
-            yield return GetNumberFromCloudCall( IdleFantasyBackend.TEST_GET_UNIT_TRAIN_TIME,
+            yield return GetNumberFromCloudCall( CloudTestMethods.getTrainTimeForUnit.ToString(),
                 new Dictionary<string, string>() { { IntegrationTestUtils.TARGET_ID, UNIT_BEING_COUNTED },
                                                    { IntegrationTestUtils.CHANGE, EXPECTED_COUNT.ToString() } },
                 ( result ) => {

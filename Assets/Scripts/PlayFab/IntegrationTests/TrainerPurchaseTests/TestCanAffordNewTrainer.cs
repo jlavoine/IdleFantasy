@@ -15,7 +15,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return MakePurchaseCall();
 
             FailTestIfCurrencyDoesNotEqual( 0 );
-            FailTestIfReturnedCallDoesNotEqual( GET_TRAINER_COUNT_CLOUD_METHOD, 2 );
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getTrainerCount.ToString(), 2 );
 
             yield return mBackend.WaitUntilNotBusy();
         }

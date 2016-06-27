@@ -15,7 +15,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             yield return MakeAssignmentChange( 1 );
 
-            FailTestIfReturnedCallDoesNotEqual( GET_AVAILABLE_TRAINERS_CLOUD_METHOD, 0 );
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getAvailableTrainers.ToString(), 0 );
             FailTestIfAssignedTrainersDoesNotEqual( 1 );
 
             yield return mBackend.WaitUntilNotBusy();

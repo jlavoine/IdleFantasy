@@ -27,7 +27,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected void FailTestIfClientInSync( string i_testName ) {
-            if ( !mBackend.ClientOutOfSync ) {
+            if ( !mBackend.IsClientOutOfSync() ) {
                 IntegrationTest.Fail( i_testName + ": Client should be out of sync, but it's not." );
             }
         }
@@ -45,7 +45,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             getParams.Add( "Class", i_class );
             getParams.Add( "TargetID", i_targetID );
 
-            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
+            mBackend.MakeCloudCall( CloudTestMethods.getProgressData.ToString(), getParams, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {
                     T progress = JsonConvert.DeserializeObject<T>( results["data"] );
                     i_resultsCallback( progress );

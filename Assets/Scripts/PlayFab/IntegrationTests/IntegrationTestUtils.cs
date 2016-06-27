@@ -19,7 +19,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testParams[TARGET_ID] = i_targetID;
             testParams[CLASS] = i_className;
 
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_UPGRADE, testParams, null );
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.testUpgrade.ToString(), testParams, null );
 
             yield return BackendManager.Backend.WaitUntilNotBusy();
         }
@@ -30,7 +30,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testParams[CLASS] = GenericDataLoader.UNITS;
             testParams[IdleFantasyBackend.CHANGE] = i_trainingLevelChange.ToString();
 
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_CHANGE_TRAINING, testParams, null );
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.testChangeTraining.ToString(), testParams, null );
 
             yield return BackendManager.Backend.WaitUntilNotBusy();
         }
@@ -48,14 +48,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             setDataParams["Key"] = i_key;
             setDataParams["Value"] = i_value;
             setDataParams[DATA_ACCESS] = i_access;
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_SET_DATA, setDataParams, null );
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.setSaveData.ToString(), setDataParams, null );
         }
 
         public static void SetPlayerCurrency( int i_amount ) {
             Dictionary<string, string> setCurrencyParams = new Dictionary<string, string>();
             setCurrencyParams["Type"] = VirtualCurrencies.GOLD;
             setCurrencyParams["Amount"] = i_amount.ToString();
-            BackendManager.Backend.MakeCloudCall( IdleFantasyBackend.TEST_SET_CURRENCY, setCurrencyParams, null );
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.setPlayerCurrency.ToString(), setCurrencyParams, null );
         }
     }
 }

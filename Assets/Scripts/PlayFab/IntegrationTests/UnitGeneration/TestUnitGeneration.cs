@@ -5,9 +5,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestUnitGeneration : IntegrationTestBase {
         private const string TIME_KEY = "Time";
 
-        protected const string LAST_UNIT_COUNT_TIME = "LastCountTime";
-
-        protected const string GET_UNIT_COUNT_METHOD = "getUnitCount";
+        protected const string LAST_UNIT_COUNT_TIME = "LastCountTime";        
 
         protected const string SAVE_KEY_UNITS = "UnitsProgress";
         protected const string SAVE_KEY_BUILDINGS = "BuildingsProgress";
@@ -26,7 +24,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
             testParams[TIME_KEY] = i_elapsedTime.ToString();
 
-            mBackend.MakeCloudCall( IdleFantasyBackend.TEST_UPDATE_UNIT_COUNT, testParams, null );
+            mBackend.MakeCloudCall( CloudTestMethods.testUpdateUnitCount.ToString(), testParams, null );
             yield return mBackend.WaitUntilNotBusy();
         }
 
@@ -34,7 +32,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
             testParams[IntegrationTestUtils.TARGET_ID] = UNIT_BEING_COUNTED;
 
-            FailTestIfReturnedCallDoesNotEqual( GET_UNIT_COUNT_METHOD, i_count, testParams );
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getUnitCount.ToString(), i_count, testParams );
 
             yield return mBackend.WaitUntilNotBusy();
         }

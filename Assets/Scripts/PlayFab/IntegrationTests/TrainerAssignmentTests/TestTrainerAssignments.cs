@@ -8,16 +8,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected const string TRAINER_DATA = "{\"TrainerCounts\":{\"Normal\":$NUM$}}";
         protected const string PROGRESS_KEY = "UnitsProgress";
         protected const string PROGRESS_DATA = "{\"BASE_MELEE_1\":{\"Level\":$LEVEL$,\"Trainers\":$TRAINERS$}}";
-        protected const string UNIT_ID = "BASE_MELEE_1";
-
-        protected const string GET_AVAILABLE_TRAINERS_CLOUD_METHOD = "getAvailableTrainers";
+        protected const string UNIT_ID = "BASE_MELEE_1";        
 
         protected void FailTestIfAssignedTrainersDoesNotEqual( int i_trainers ) {
             Dictionary<string, string> getParams = new Dictionary<string, string>();
             getParams.Add( "Class", "Units" );
             getParams.Add( "TargetID", UNIT_ID );
 
-            mBackend.MakeCloudCall( "getProgressData", getParams, ( results ) => {
+            mBackend.MakeCloudCall( CloudTestMethods.getProgressData.ToString(), getParams, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {
                     UnitProgress progress = JsonConvert.DeserializeObject<UnitProgress>( results["data"] );
                     if ( progress.Trainers != i_trainers ) {

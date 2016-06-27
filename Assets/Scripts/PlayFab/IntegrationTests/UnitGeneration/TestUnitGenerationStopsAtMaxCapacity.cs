@@ -21,7 +21,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator SetMaxCapacity() {
-            yield return GetNumberFromCloudCall( IdleFantasyBackend.TEST_GET_UNIT_CAPACITY,
+            yield return GetNumberFromCloudCall( CloudTestMethods.getCapacityForUnit.ToString(),
                 new Dictionary<string, string>() { { IntegrationTestUtils.TARGET_ID, UNIT_BEING_COUNTED } },
                 (result) => {
                     mMaxCapacity = result;

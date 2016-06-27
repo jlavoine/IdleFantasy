@@ -11,16 +11,6 @@ namespace IdleFantasy {
         public const string ADD_POINTS_TO_UPGRADE = "addPointsToUpgrade";
         public const string ADD_PROGRESS_TO_UPGRADE = "addProgressToUpgrade";
 
-        public const string TEST_SET_DATA = "setSaveData";
-        public const string TEST_SET_CURRENCY = "setPlayerCurrency";
-        public const string TEST_UPDATE_UNIT_COUNT = "testUpdateUnitCount";
-        public const string TEST_UPGRADE = "testUpgrade";
-        public const string TEST_CHANGE_TRAINING = "testChangeTraining";
-        public const string TEST_GET_UNIT_CAPACITY = "getCapacityForUnit";
-        public const string TEST_GET_UNIT_TRAIN_TIME = "getTrainTimeForUnit";
-        public const string TEST_GET_TOTAL_POINTS_UPGRADE = "getTotalPointsToUpgrade";
-        public const string TEST_GET_UPGRADE_MAX_LEVEL = "getMaxLevelForUpgrade";
-
         public IdleFantasyBackend() : base() {
         }
 

@@ -88,7 +88,12 @@ function isTesting() {
     return isTesting;
 }
 
+/// Test for purposefully going over the cloudscript limit to see what happens
 handlers.overLimit = function (args) {
+    if (!isTesting()) {
+        return;    
+    }
+
     var one = isTesting();
     var two = isTesting();
     var three = isTesting();
