@@ -66,7 +66,7 @@ namespace IdleFantasy.UnitTests.Units {
 
         [Test, TestCaseSource("CorrectTotalStatTest")]
         public void TestStatCalculator_CorrectTotalStatReturned( string i_unitID, string i_stat, int i_expectedValue ) {
-            Unit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, i_unitID ),
+            Unit unit = new Unit( GenericDataLoader.GetData<UnitData>( i_unitID ),
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
 
@@ -84,7 +84,7 @@ namespace IdleFantasy.UnitTests.Units {
 
         [Test, TestCaseSource("CorrectGuildBonusTest")]
         public void TestStatCalculator_GuildBonusIsCorrect( string i_unitID, string i_stat, int i_expectedValue ) {
-            Unit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, i_unitID ),
+            Unit unit = new Unit( GenericDataLoader.GetData<UnitData>( i_unitID ),
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );
 

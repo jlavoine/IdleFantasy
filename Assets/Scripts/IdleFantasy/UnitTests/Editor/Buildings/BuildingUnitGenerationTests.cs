@@ -58,7 +58,7 @@ namespace IdleFantasy.UnitTests {
         [Test]
         public void UpgradingUnitResetsCount() {
             Building testBuilding = BuildingUpgradeTests.GetTestBuilding();
-            IUnit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT ),
+            IUnit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.TEST_UNIT ),
                 new UnitProgress() { Level = 1, Trainers = 1 },
                 new ViewModel() );  // using a real Unit here is not great...should really use NSubstitute or something? But this was complex
             testBuilding.Unit = unit;

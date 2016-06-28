@@ -23,7 +23,7 @@ namespace IdleFantasy.UnitTests {
         }
 
         public static Building GetTestBuilding() {
-            BuildingData data = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
+            BuildingData data = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.TEST_BUILDING );
             return new Building( data, new BuildingProgress() { Level = 1 }, new UnitProgress() { Level = 1, Trainers = 1 } );
         }
     }

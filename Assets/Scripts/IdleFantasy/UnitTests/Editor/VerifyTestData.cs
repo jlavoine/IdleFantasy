@@ -15,7 +15,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void VerifyTestBuilding() {
-            BuildingData testBuildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.BUILDINGS, GenericDataLoader.TEST_BUILDING );
+            BuildingData testBuildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.TEST_BUILDING );
 
             Assert.AreEqual( testBuildingData.ID, "BASE_BUILDING_1" );            
             Assert.AreEqual( testBuildingData.StartingSize, 10 );            
@@ -28,7 +28,7 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void VerifyTestUnit() {
-            UnitData testUnitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.UNITS, GenericDataLoader.TEST_UNIT );
+            UnitData testUnitData = GenericDataLoader.GetData<UnitData>( GenericDataLoader.TEST_UNIT );
 
             Assert.AreEqual( "BASE_MELEE_1", testUnitData.ID );
             Assert.AreEqual( 1f, testUnitData.BaseProgressPerSecond );

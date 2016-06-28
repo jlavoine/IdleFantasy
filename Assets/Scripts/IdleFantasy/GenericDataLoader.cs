@@ -25,21 +25,19 @@ namespace IdleFantasy {
 
         public static T GetData<T>( string i_key ) where T : GenericData {
             string dataType = GetDataType<T>();
-            return GetData<T>( dataType, i_key );
-        }
-        public static T GetData<T>( string i_type, string i_key ) where T : GenericData {
-            if ( !mData.ContainsKey( i_type ) ) {
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Trying to get data of unloaded type " + i_type, "" );
+
+            if ( !mData.ContainsKey( dataType ) ) {
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Trying to get data of unloaded type " + dataType, "" );
                 return default ( T );
             }
 
-            Hashtable dataOfType = mData[i_type]; 
+            Hashtable dataOfType = mData[dataType]; 
 
             if ( dataOfType.ContainsKey( i_key ) ) {
                 return (T)dataOfType[i_key];
             }
             else {
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data for " + i_type, "" );
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + dataType + " but there was no data!", "" );
                 return default( T );
             }
         }
