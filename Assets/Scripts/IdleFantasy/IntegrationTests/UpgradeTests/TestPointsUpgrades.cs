@@ -16,7 +16,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testData.SaveValue = "{\"GUILD_1\":{\"Level\":$LEVEL$,\"Points\":0}}";
             testData.TestID = "GUILD_1";
             testData.TestClass = "Guilds";
-            testData.TestUpgradeID = "GuildLevel";
+            testData.TestUpgradeID = "Level";
             testData.MaxLevel = 50;
             testData.Points = 0;
             mUpgradeTests.Add( testData );
