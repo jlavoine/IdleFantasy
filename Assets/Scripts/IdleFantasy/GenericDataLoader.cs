@@ -23,6 +23,10 @@ namespace IdleFantasy {
             mBackend = i_backend;
         }
 
+        public static T GetData<T>( string i_key ) where T : GenericData {
+            string dataType = GetDataType<T>();
+            return GetData<T>( dataType, i_key );
+        }
         public static T GetData<T>( string i_type, string i_key ) where T : GenericData {
             if ( !mData.ContainsKey( i_type ) ) {
                 MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Trying to get data of unloaded type " + i_type, "" );
@@ -37,6 +41,18 @@ namespace IdleFantasy {
             else {
                 MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Fatal, "Tried to load " + i_key + " from " + i_type + " but no data for " + i_type, "" );
                 return default( T );
+            }
+        }
+
+        private static string GetDataType<T>() {
+            if ( typeof( T ) == typeof( GuildData ) ) {
+                return GUILDS;
+            } else if ( typeof( T ) == typeof( BuildingData ) ) {
+                return BUILDINGS;
+            } else if ( typeof( T ) == typeof( UnitData ) ) {
+                return UNITS;
+            } else {
+                return "Illegal data type";
             }
         }
 
