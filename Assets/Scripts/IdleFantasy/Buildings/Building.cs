@@ -51,10 +51,10 @@ namespace IdleFantasy {
             get { return mLevel; }
         }
 
-        public Building( BuildingData i_data, BuildingProgress i_buildingProgress, UnitProgress i_unitProgress ) {
+        public Building( BuildingProgress i_buildingProgress, UnitProgress i_unitProgress ) {
             mModel = new ViewModel();
-            mData = i_data;
-            Name = i_data.GetName();
+            mData = GenericDataLoader.GetData<BuildingData>( i_buildingProgress.ID );
+            Name = mData.GetName();
             NumUnits = (int)Math.Floor( i_unitProgress.Count ); 
             NextUnitProgress = i_unitProgress.Count - NumUnits;
 

@@ -63,6 +63,7 @@ namespace IdleFantasy {
                 yield return 0;
             }
 
+            playerData.AddDataStructures();
             playerData.CreateManagers();
 
             DoneLoadingData();

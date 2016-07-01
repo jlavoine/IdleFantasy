@@ -17,7 +17,10 @@ namespace IdleFantasy {
         public Dictionary<string, GuildProgress> GuildProgress { get { return (Dictionary<string, GuildProgress>) mPlayerProgress[GenericDataLoader.GUILDS]; } }
 
         private List<Guild> mGuilds = new List<Guild>();
-        public List<Guild> Guilds { get { return mGuilds; } }        
+        public List<Guild> Guilds { get { return mGuilds; } }
+
+        private List<Building> mBuildings = new List<Building>();
+        public List<Building> Buildings { get { return mBuildings; } }       
 
         private TrainerSaveData mTrainerSaveData;
         private ITrainerManager mTrainerManager;
@@ -44,15 +47,27 @@ namespace IdleFantasy {
             } );
         }
 
-        private void DownloadAllProgressData() {
-            DownloadProgressDataForKey<BuildingProgress>( GenericDataLoader.BUILDINGS );
+        private void DownloadAllProgressData() {            
             DownloadProgressDataForKey<UnitProgress>( GenericDataLoader.UNITS );
+            DownloadProgressDataForKey<BuildingProgress>( GenericDataLoader.BUILDINGS );
             DownloadProgressDataForKey<GuildProgress>( GenericDataLoader.GUILDS, AddGuilds );
+        }
+
+        public void AddDataStructures() {
+            AddBuildings();
         }
 
         private void AddGuilds() {
             foreach ( KeyValuePair<string, GuildProgress> kvp in GuildProgress ) {
                 Guilds.Add( new Guild( kvp.Value ) );
+            }
+        }
+
+        private void AddBuildings() {
+            foreach ( KeyValuePair<string, BuildingProgress> kvp in BuildingProgress ) {
+                BuildingData buildingData = GenericDataLoader.GetData<BuildingData>( kvp.Value.ID );
+                UnitProgress unitProgressForBuilding = UnitProgress[buildingData.Unit];
+                Buildings.Add( new Building( kvp.Value, unitProgressForBuilding ) );
             }
         }
 

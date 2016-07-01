@@ -12,8 +12,7 @@ namespace IdleFantasy {
         //object GetData( string i_key );
 
         List<Guild> Guilds { get; }
+        List<Building> Buildings { get; }
         ITrainerManager TrainerManager { get; }
-        Dictionary<string, UnitProgress> UnitProgress { get; }
-        Dictionary<string, BuildingProgress> BuildingProgress { get; }
     }
 }

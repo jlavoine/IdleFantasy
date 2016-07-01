@@ -58,6 +58,12 @@ namespace IdleFantasy {
             }
         }
 
+        public List<Building> Buildings {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public ViewModel GetViewModel() {
             return mModel;
         }
