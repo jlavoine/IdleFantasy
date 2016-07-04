@@ -5,5 +5,7 @@ namespace IdleFantasy {
 
         public const string TASK_STAT = "StatName";
         public const string TASK_POWER = "PowerNeeded";
+
+        public const string UNIT_FOR_TASK = "UnitForTask";
     }
 }

@@ -4,6 +4,16 @@ using MyLibrary;
 
 namespace IdleFantasy {
     public class StatCalculator {
+        private static StatCalculator mInstance;        
+        public static StatCalculator Instance {
+            get {
+                if ( mInstance == null ) {
+                    mInstance = new StatCalculator();
+                }
+
+                return mInstance;
+            }
+        }     
 
         public StatCalculator() {                    
         }
