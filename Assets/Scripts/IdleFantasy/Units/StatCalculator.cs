@@ -8,6 +8,18 @@ namespace IdleFantasy {
         public StatCalculator() {                    
         }
 
+        public List<IUnit> GetUnitsWithStat( string i_stat ) {
+            List<IUnit> unitsWithStat = new List<IUnit>();
+
+            foreach ( Building building in PlayerManager.Data.Buildings ) {
+                if ( building.Unit.HasStat( i_stat ) ) {
+                    unitsWithStat.Add( building.Unit );
+                }
+            }
+
+            return unitsWithStat;
+        }
+
         public int GetTotalStatFromUnit( IUnit i_unit, string i_stat ) {
             int totalStat = i_unit.GetBaseStat( i_stat );
 

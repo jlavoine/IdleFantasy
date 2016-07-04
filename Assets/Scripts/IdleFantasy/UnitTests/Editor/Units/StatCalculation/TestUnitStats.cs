@@ -10,6 +10,7 @@ namespace IdleFantasy.UnitTests.Units {
 
         public const string TEST_STAT_1 = "TEST_STAT_1";
         public const string TEST_STAT_2 = "TEST_STAT_2";
+        public const string TEST_STAT_3 = "TEST_STAT_3";
         public const string TEST_STAT_NONE = "TEST_STAT_NONE";
 
         static object[] HasStatSource = {

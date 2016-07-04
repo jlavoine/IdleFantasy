@@ -12,6 +12,7 @@ namespace IdleFantasy.UnitTests.Units {
     public class TestStatCalculator {
         private const string UNIT_WITH_GUILD = GenericDataLoader.TEST_UNIT;
         private const string UNIT_WITHOUT_GUILD = GenericDataLoader.TEST_UNIT_2;
+        private const string MAGIC_UNIT_NO_GUILD = GenericDataLoader.TEST_UNIT_3;
 
         private StatCalculator mStatCalculator;
 
@@ -35,10 +36,30 @@ namespace IdleFantasy.UnitTests.Units {
 
         private IPlayerData CreateMockPlayer() {
             IPlayerData mockPlayerData = NSubstitute.Substitute.For<IPlayerData>();
-            List<Guild> guilds = GetTestGuildList();
-            mockPlayerData.Guilds.Returns( guilds );
 
+            SetPlayerGuilds( mockPlayerData );
+            SetPlayerBuildings( mockPlayerData );
+            
             return mockPlayerData;
+        }
+
+        private void SetPlayerBuildings( IPlayerData i_mockPlayerData ) {
+            List<Building> buildings = GetTestBuildingList();
+            i_mockPlayerData.Buildings.Returns( buildings );
+        }
+
+        private List<Building> GetTestBuildingList() {
+            List<Building> buildings = new List<Building>();
+
+            buildings.Add( new Building( new BuildingProgress() { ID = GenericDataLoader.TEST_BUILDING, Level = 1 }, new UnitProgress() { ID = GenericDataLoader.TEST_UNIT, Level = 1, Trainers = 1 } ) );
+            buildings.Add( new Building( new BuildingProgress() { ID = GenericDataLoader.TEST_BUILDING_2, Level = 1 }, new UnitProgress() { ID = GenericDataLoader.TEST_UNIT_3, Level = 1, Trainers = 1 } ) );
+
+            return buildings;
+        }
+
+        private void SetPlayerGuilds( IPlayerData i_mockPlayerData ) {
+            List<Guild> guilds = GetTestGuildList();
+            i_mockPlayerData.Guilds.Returns( guilds );
         }
 
         private List<Guild> GetTestGuildList() {
@@ -61,7 +82,8 @@ namespace IdleFantasy.UnitTests.Units {
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_1, 4 },
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_2, 3 },
             new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_1, 3 },
-            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 3 }
+            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 3 },
+            new object[] { MAGIC_UNIT_NO_GUILD, TestUnitStats.TEST_STAT_3, 2 }
         };
 
         [Test, TestCaseSource("CorrectTotalStatTest")]
@@ -91,6 +113,22 @@ namespace IdleFantasy.UnitTests.Units {
             int totalStat = mStatCalculator.GetStatBonusFromSource( unit, i_stat, StatBonusSources.Guilds );
 
             Assert.AreEqual( i_expectedValue, totalStat );
+        }
+
+        static object[] HasStatTest = {
+            new object[] { TestUnitStats.TEST_STAT_1 },
+            new object[] { TestUnitStats.TEST_STAT_3 }
+        };
+
+        [Test, TestCaseSource( "HasStatTest" )]
+        public void TestGetUnitsWithStat( string i_stat ) {
+            List<IUnit> unitsWithStat = mStatCalculator.GetUnitsWithStat( i_stat );
+
+            Assert.GreaterOrEqual( unitsWithStat.Count, 1 );
+
+            foreach ( IUnit unit in unitsWithStat ) {
+                Assert.True( unit.HasStat( i_stat ) );
+            }
         }
     }        
 }
