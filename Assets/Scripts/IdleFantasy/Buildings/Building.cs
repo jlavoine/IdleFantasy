@@ -63,7 +63,7 @@ namespace IdleFantasy {
             mLevel.UpgradeCompleteEvent += OnUpgraded;
             Level.Value = i_buildingProgress.Level;
 
-            UnitData unitData = GenericDataLoader.GetData<UnitData>( Data.Unit );
+            UnitData unitData = GenericDataLoader.GetData<UnitData>( i_unitProgress.ID );
             Unit = new Unit( unitData, i_unitProgress, mModel );
 
             UpdateCapacity();
