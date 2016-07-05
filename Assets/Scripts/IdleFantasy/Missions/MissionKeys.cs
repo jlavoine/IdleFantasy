@@ -7,5 +7,6 @@ namespace IdleFantasy {
         public const string TASK_POWER = "PowerNeeded";
 
         public const string UNIT_FOR_TASK = "UnitForTask";
+        public const string NUM_UNITS_FOR_TASK = "UnitsRequired";
     }
 }

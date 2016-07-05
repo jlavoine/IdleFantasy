@@ -130,5 +130,24 @@ namespace IdleFantasy.UnitTests.Units {
                 Assert.True( unit.HasStat( i_stat ) );
             }
         }
+
+        static object[] NumUnitsRequiredTest = {
+            new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_1, 100, 25 },
+            new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_2, 35, 12 },
+            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_1, 9, 3 },
+            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 13, 5 },
+            new object[] { MAGIC_UNIT_NO_GUILD, TestUnitStats.TEST_STAT_3, 67, 34 }
+        };
+
+        [Test, TestCaseSource( "NumUnitsRequiredTest" )]
+        public void TestGetNumUnitsRequired_ReturnsCorrectValue( string i_unitID, string i_stat, int i_powerRequired, int i_expectedNumUnitsRequired ) {
+            Unit unit = new Unit( GenericDataLoader.GetData<UnitData>( i_unitID ),
+                new UnitProgress() { Level = 1, Trainers = 1 },
+                new ViewModel() );
+
+            int numUnitsRequired = mStatCalculator.GetNumUnitsForRequirement( unit, i_stat, i_powerRequired );
+
+            Assert.AreEqual( i_expectedNumUnitsRequired, numUnitsRequired );
+        }
     }        
 }

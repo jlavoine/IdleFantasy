@@ -31,7 +31,7 @@ namespace IdleFantasy {
         private void AddUnitsEligibleForTask() {
             List<IUnit> unitsEligible = StatCalculator.Instance.GetUnitsWithStat( Data.StatRequirement );
             foreach ( IUnit unit in unitsEligible ) {
-                TaskUnitSelection selection = new TaskUnitSelection( unit, Data.StatRequirement );
+                TaskUnitSelection selection = new TaskUnitSelection( unit, Data.StatRequirement, Data.PowerRequirement );
                 mUnitsEligibleForTask.Add( selection );
             }
         }

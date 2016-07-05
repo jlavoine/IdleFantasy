@@ -30,6 +30,20 @@ namespace IdleFantasy {
             return unitsWithStat;
         }
 
+        public int GetNumUnitsForRequirement( IUnit i_unit, string i_stat, int i_powerRequirement ) {
+            int totalUnitsRequired = 0;
+
+            int unitPower = GetTotalStatFromUnit( i_unit, i_stat );
+            if ( unitPower > 0 ) {
+                totalUnitsRequired = (int) Math.Ceiling( (float)i_powerRequirement / unitPower );
+            } else {
+                totalUnitsRequired = int.MaxValue;
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Attempting to get units required for " + i_unit.GetID() + " for stat " + i_stat + " but that unit's power is 0!", "StatCalculation" );
+            }
+
+            return totalUnitsRequired;
+        }
+
         public int GetTotalStatFromUnit( IUnit i_unit, string i_stat ) {
             int totalStat = i_unit.GetBaseStat( i_stat );
 
