@@ -18,7 +18,7 @@ namespace IdleFantasy {
 
             MissionTaskData taskA = new MissionTaskData();
             taskA.DescriptionKey = "Task 1";
-            taskA.PowerRequirement = 100;
+            taskA.PowerRequirement = 1000;
             taskA.StatRequirement = "TEST_STAT_1";
 
             MissionTaskData taskB = new MissionTaskData();
