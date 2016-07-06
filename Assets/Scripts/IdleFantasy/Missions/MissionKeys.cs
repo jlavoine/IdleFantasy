@@ -9,5 +9,6 @@ namespace IdleFantasy {
         public const string UNIT_FOR_TASK = "UnitForTask";
         public const string NUM_UNITS_FOR_TASK = "UnitsRequired";
         public const string NUM_UNITS_FOR_TASK_COLOR = "UnitsRequiredColor";
+        public const string IS_UNIT_SELECTABLE = "IsUnitSelectable";
     }
 }
