@@ -3,6 +3,8 @@
 namespace MyLibrary {
     public class GroupView : MonoBehaviour {
 
+        protected virtual void OnDestroy() { }
+
         public void SetModel( ViewModel i_model ) {
             SetModelForAllChildrenViews( i_model );
         }

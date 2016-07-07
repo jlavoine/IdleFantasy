@@ -13,10 +13,12 @@ namespace IdleFantasy {
         }
 
         private void CreateAndInitMissionTasks( Mission i_mission ) {
+            int missionTaskIndex = 0;
             foreach ( MissionTask task in i_mission.Tasks ) {
                 GameObject taskObject = gameObject.InstantiateUI( MissionTaskPrefab, MissionTaskContent );
                 MissionTaskView taskView = taskObject.GetComponent<MissionTaskView>();
-                taskView.Init( task );
+                taskView.Init( task, missionTaskIndex );
+                missionTaskIndex++;
             }
         }
     }

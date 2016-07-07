@@ -6,45 +6,49 @@ namespace IdleFantasy {
         private ViewModel mModel;
         public ViewModel ViewModel { get { return mModel; } }
 
+        private IUnit mUnit;
+        public IUnit Unit { get { return mUnit; } }
+
         public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement ) {
+            mUnit = i_unit;
             mModel = new ViewModel();
 
-            SetUpModel( i_unit, i_stat, i_powerRequirement );
+            SetUpModel( i_stat, i_powerRequirement );
         }
 
-        private void SetUpModel( IUnit i_unit, string i_stat, int i_powerRequirement ) {
-            SetUnitRequiredProperty( i_unit );
-            SetNumUnitsRequiredProperty( i_unit, i_stat, i_powerRequirement );
-            SetNumUnitsRequiredColorProperty( i_unit );
-            SetInteractableProperty( i_unit ); 
+        private void SetUpModel( string i_stat, int i_powerRequirement ) {
+            SetUnitRequiredProperty();
+            SetNumUnitsRequiredProperty( i_stat, i_powerRequirement );
+            SetNumUnitsRequiredColorProperty();
+            SetInteractableProperty(); 
         }
 
-        private void SetUnitRequiredProperty( IUnit i_unit ) {
-            mModel.SetProperty( MissionKeys.UNIT_FOR_TASK, i_unit.GetID() );
+        private void SetUnitRequiredProperty() {
+            mModel.SetProperty( MissionKeys.UNIT_FOR_TASK, Unit.GetID() );
         }
 
-        private void SetNumUnitsRequiredProperty( IUnit i_unit, string i_stat, int i_powerRequirement ) {
-            int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( i_unit, i_stat, i_powerRequirement );
+        private void SetNumUnitsRequiredProperty(string i_stat, int i_powerRequirement ) {
+            int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( Unit, i_stat, i_powerRequirement );
             mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK, unitsRequired );
         }
 
-        private void SetNumUnitsRequiredColorProperty( IUnit i_unit ) {
-            bool hasEnoughUnits = HasEnoughUnits( i_unit );
+        private void SetNumUnitsRequiredColorProperty() {
+            bool hasEnoughUnits = HasEnoughUnits();
             string colorConstantKey = hasEnoughUnits ? ConstantKeys.ENOUGH_UNITS_COLOR : ConstantKeys.NOT_ENOUGH_UNITS_COLOR;
             Color unitTextColor = Constants.GetConstant<Color>( colorConstantKey );
 
             mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK_COLOR, unitTextColor );
         }
 
-        private void SetInteractableProperty( IUnit i_unit ) {
-            bool hasEnoughUnits = HasEnoughUnits( i_unit );
+        private void SetInteractableProperty() {
+            bool hasEnoughUnits = HasEnoughUnits();
 
             mModel.SetProperty( MissionKeys.IS_UNIT_SELECTABLE, hasEnoughUnits );
         }
 
-        private bool HasEnoughUnits( IUnit i_unit ) {
+        private bool HasEnoughUnits() {
             int unitsRequired = mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK );
-            int numUnitsOwned = BuildingUtils.GetNumUnits( i_unit );
+            int numUnitsOwned = BuildingUtils.GetNumUnits( Unit );
             bool hasEnoughUnits = numUnitsOwned >= unitsRequired;
 
             return hasEnoughUnits;
