@@ -11,6 +11,10 @@ public static class GameObjectHelper
 		        select x.gameObject).FirstOrDefault();
 	}
 
+    public static GameObject InstantiateUI( this GameObject go, string i_goPrefabName, GameObject i_goParent = null ) {
+        GameObject prefab = Resources.Load<GameObject>( i_goPrefabName );
+        return go.InstantiateUI( prefab, i_goParent );
+    }
     public static GameObject InstantiateUI( this GameObject go, GameObject i_goPrefab, GameObject i_goParent = null ) {
         GameObject goNew = GameObject.Instantiate<GameObject>( i_goPrefab );
         if ( i_goParent == null )
