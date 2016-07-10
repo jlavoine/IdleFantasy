@@ -20,7 +20,8 @@ namespace IdleFantasy {
 
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
 
-        public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement ) {
+        public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement, Dictionary<string,int> i_promisedUnits ) {
+            mPromisedUnits = i_promisedUnits;
             mUnit = i_unit;
             mStat = i_stat;
             mPowerRequirement = i_powerRequirement;
@@ -29,8 +30,7 @@ namespace IdleFantasy {
             SetUpModel();
         }
 
-        public void RecalculateProperties( Dictionary<string, int> i_promisedUnits ) {
-            mPromisedUnits = i_promisedUnits;
+        public void RecalculateProperties() {
             SetUpModel();
         }
 
@@ -71,6 +71,20 @@ namespace IdleFantasy {
             bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;
 
             return hasEnoughUnits;
+        }
+
+        public void SelectUnit( bool i_selected ) {
+            int promisedUnits = 0;
+            string unitID = Unit.GetID();
+            mPromisedUnits.TryGetValue( unitID, out promisedUnits );
+
+            if ( i_selected ) {
+                promisedUnits += NumUnitsRequired;
+            } else {
+                promisedUnits -= NumUnitsRequired;
+            }
+
+            mPromisedUnits[unitID] = promisedUnits;
         }
     }
 }

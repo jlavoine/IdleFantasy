@@ -27,13 +27,14 @@ namespace IdleFantasy {
 
         private void CreateMissionTasks() {
             mTasks = new List<MissionTask>();
+            Dictionary<string, int> promisedUnitsForMission = new Dictionary<string, int>();
             foreach ( MissionTaskData taskData in Data.Tasks ) {
-                AddMissionTask( taskData );
+                AddMissionTask( taskData, promisedUnitsForMission );
             }
         }
 
-        private void AddMissionTask( MissionTaskData i_data ) {
-            mTasks.Add( new MissionTask( i_data ) );
+        private void AddMissionTask( MissionTaskData i_data, Dictionary<string,int> i_promisedUnitsForMission ) {
+            mTasks.Add( new MissionTask( i_data, i_promisedUnitsForMission ) );
         }
     }
 }

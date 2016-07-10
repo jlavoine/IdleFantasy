@@ -29,15 +29,8 @@ namespace IdleFantasy {
 
         public void OnUnitSelected( bool i_selected ) {
             if ( UnitSelectedEvent != null ) {
+                mTaskUnitSelection.SelectUnit( i_selected );
                 UnitSelectedEvent( mTaskUnitSelection );
-            }
-        }
-
-        public int GetPromisedUnits() {
-            if ( Toggle.isOn ) {
-                return NumUnitsRequired;
-            } else {
-                return 0;
             }
         }
     }

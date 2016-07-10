@@ -50,25 +50,9 @@ namespace IdleFantasy {
         private void ToggleUnitSelectionOn() {
             EligibleUnitContent.SetActive( true );
 
-            Dictionary<string,int> promisedUnits = GetPromisedUnits();
             foreach ( TaskUnitSelection unitSelection in mMissionTask.UnitsEligibleForTask ) {
-                unitSelection.RecalculateProperties( promisedUnits );
+                unitSelection.RecalculateProperties();
             }
-        }
-
-        private Dictionary<string, int> GetPromisedUnits() {
-            Dictionary<string, int> promisedUnits = new Dictionary<string, int>();
-
-            TaskUnitSelectView[] unitSelectViews = GameObject.FindObjectsOfType<TaskUnitSelectView>();
-            foreach ( TaskUnitSelectView unitView in unitSelectViews ) {
-                int numUnitsPromised = unitView.GetPromisedUnits();
-                if ( numUnitsPromised > 0 ) {
-                    string unitID = unitView.Unit.GetID();
-                    promisedUnits[unitID] = numUnitsPromised;
-                }
-            }
-
-            return promisedUnits;
         }
 
         private void OnUnitSelectedForThisTask( TaskUnitSelection i_selection ) {
