@@ -18,17 +18,17 @@ namespace IdleFantasy {
 
             MissionTaskData taskA = new MissionTaskData();
             taskA.DescriptionKey = "Task 1";
-            taskA.PowerRequirement = 1000;
+            taskA.PowerRequirement = 5000;
             taskA.StatRequirement = "TEST_STAT_1";
 
             MissionTaskData taskB = new MissionTaskData();
             taskB.DescriptionKey = "Task 2";
-            taskB.PowerRequirement = 50;
+            taskB.PowerRequirement = 2000;
             taskB.StatRequirement = "TEST_STAT_2";
 
             MissionTaskData taskC = new MissionTaskData();
             taskC.DescriptionKey = "Task 3";
-            taskC.PowerRequirement = 50;
+            taskC.PowerRequirement = 2000;
             taskC.StatRequirement = "TEST_STAT_2";
 
             testMissionData.Tasks = new List<MissionTaskData>() { taskA, taskB, taskC };
