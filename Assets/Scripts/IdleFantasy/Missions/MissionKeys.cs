@@ -12,5 +12,7 @@ namespace IdleFantasy {
         public const string IS_UNIT_SELECTABLE = "IsUnitSelectable";
 
         public const string UNIT_SELECTED_EVENT = "UnitSelectedForTask";
+
+        public const string MISSION_READY = "IsMissionReady";
     }
 }

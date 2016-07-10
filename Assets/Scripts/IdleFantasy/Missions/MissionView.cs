@@ -6,10 +6,20 @@ namespace IdleFantasy {
         public GameObject MissionTaskPrefab;
         public GameObject MissionTaskContent;
 
-        public void Init( Mission i_mission ) {
-            SetModel( i_mission.ViewModel );
+        private ViewModel mViewModel;
 
-            CreateAndInitMissionTasks( i_mission  );
+        private Mission mMission;
+
+        public void Init( Mission i_mission ) {
+            mViewModel = i_mission.ViewModel;
+            mMission = i_mission;
+            UpdateMissionReadiness( -1 );
+
+            SetModel( mViewModel );
+
+            SubscribeToMessages();
+
+            CreateAndInitMissionTasks( i_mission );
         }
 
         private void CreateAndInitMissionTasks( Mission i_mission ) {
@@ -20,6 +30,29 @@ namespace IdleFantasy {
                 taskView.Init( task, missionTaskIndex );
                 missionTaskIndex++;
             }
+        }
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+
+            UnsubscribeFromMessages();
+        }
+
+        private void OnUnitSelected( int i_taskIndex ) {
+            UpdateMissionReadiness( i_taskIndex );
+        }
+
+        private void UpdateMissionReadiness( int i_taskSelectedIndex ) {
+            bool isReady = i_taskSelectedIndex + 1 == mMission.Tasks.Count;
+            mViewModel.SetProperty( MissionKeys.MISSION_READY, isReady );
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener<int>( MissionKeys.UNIT_SELECTED_EVENT, OnUnitSelected );
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener<int>( MissionKeys.UNIT_SELECTED_EVENT, OnUnitSelected );
         }
     }
 }
