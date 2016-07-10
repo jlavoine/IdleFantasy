@@ -8,8 +8,7 @@ namespace IdleFantasy {
 
         private Mission mTestMission;
 
-        void Start() {
-            CreateTestMission();
+        void Start() {            
         }
 
         private void CreateTestMission() {
@@ -43,6 +42,7 @@ namespace IdleFantasy {
         }
 
         private void CreateMissionUI() {
+            CreateTestMission();
             GameObject missionUI = gameObject.InstantiateUI( MissionViewPrefab, MainCanvas );
             MissionView view = missionUI.GetComponent<MissionView>();
             view.Init( mTestMission );

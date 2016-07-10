@@ -47,6 +47,10 @@ namespace IdleFantasy {
             mViewModel.SetProperty( MissionKeys.MISSION_READY, isReady );
         }
 
+        public void CompleteMission() {
+            mMission.CompleteMission();
+        }
+
         private void SubscribeToMessages() {
             MyMessenger.AddListener<int>( MissionKeys.UNIT_SELECTED_EVENT, OnUnitSelected );
         }

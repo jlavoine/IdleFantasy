@@ -16,11 +16,11 @@ namespace IdleFantasy {
         private int mPowerRequirement;
         public int PowerRequirement { get { return mPowerRequirement; } }
 
-        private Dictionary<string, int> mPromisedUnits = new Dictionary<string, int>();
+        private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
 
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
 
-        public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement, Dictionary<string,int> i_promisedUnits ) {
+        public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement, Dictionary<IUnit,int> i_promisedUnits ) {
             mPromisedUnits = i_promisedUnits;
             mUnit = i_unit;
             mStat = i_stat;
@@ -66,17 +66,18 @@ namespace IdleFantasy {
 
         private bool HasEnoughUnits() {;
             int numUnitsOwned = BuildingUtils.GetNumUnits( Unit );
-            int numUnitsPromised = mPromisedUnits.ContainsKey( Unit.GetID() ) ? mPromisedUnits[Unit.GetID()] : 0;
+            int numUnitsPromised = mPromisedUnits.ContainsKey( Unit ) ? mPromisedUnits[Unit] : 0;
             int numUnitsAvailable = numUnitsOwned - numUnitsPromised;
             bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;
+
+            UnityEngine.Debug.Log( "Checking " + Unit.GetID() + " for " + NumUnitsRequired + " from " + numUnitsOwned + " with promised " + numUnitsPromised );
 
             return hasEnoughUnits;
         }
 
         public void SelectUnit( bool i_selected ) {
             int promisedUnits = 0;
-            string unitID = Unit.GetID();
-            mPromisedUnits.TryGetValue( unitID, out promisedUnits );
+            mPromisedUnits.TryGetValue( Unit, out promisedUnits );
 
             if ( i_selected ) {
                 promisedUnits += NumUnitsRequired;
@@ -84,7 +85,7 @@ namespace IdleFantasy {
                 promisedUnits -= NumUnitsRequired;
             }
 
-            mPromisedUnits[unitID] = promisedUnits;
+            mPromisedUnits[Unit] = promisedUnits;
         }
     }
 }

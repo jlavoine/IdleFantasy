@@ -11,5 +11,13 @@ namespace IdleFantasy {
 
             return 0;
         }
+
+        public static void AlterUnitCount( IUnit i_unit, int i_amount ) {
+            foreach ( Building building in PlayerManager.Data.Buildings ) {
+                if ( building.Unit == i_unit ) {
+                    building.NumUnits += i_amount;
+                }
+            }
+        }
     }
 }
