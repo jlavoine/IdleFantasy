@@ -61,6 +61,7 @@ namespace IdleFantasy {
         private void SetInteractableProperty() {
             bool hasEnoughUnits = HasEnoughUnits();
 
+            UnityEngine.Debug.LogError( "Setting " + Unit.GetID() + " to " + hasEnoughUnits );
             mModel.SetProperty( MissionKeys.IS_UNIT_SELECTABLE, hasEnoughUnits );
         }
 
@@ -68,9 +69,7 @@ namespace IdleFantasy {
             int numUnitsOwned = BuildingUtils.GetNumUnits( Unit );
             int numUnitsPromised = mPromisedUnits.ContainsKey( Unit ) ? mPromisedUnits[Unit] : 0;
             int numUnitsAvailable = numUnitsOwned - numUnitsPromised;
-            bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;
-
-            UnityEngine.Debug.Log( "Checking " + Unit.GetID() + " for " + NumUnitsRequired + " from " + numUnitsOwned + " with promised " + numUnitsPromised );
+            bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;            
 
             return hasEnoughUnits;
         }

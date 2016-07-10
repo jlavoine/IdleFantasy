@@ -2,11 +2,11 @@
 
 namespace MyLibrary {
     public class SetInteractableView : PropertyView {
-        private Button mInteractable;
-        public Button Interactable {
+        private Selectable mInteractable;
+        public Selectable Interactable {
             get {
                 if ( mInteractable == null ) {
-                    mInteractable = GetComponent<Button>();
+                    mInteractable = GetComponent<Selectable>();
                 }
 
                 return mInteractable;

@@ -30,6 +30,7 @@ namespace IdleFantasy {
             taskC.PowerRequirement = 2000;
             taskC.StatRequirement = "TEST_STAT_2";
 
+            //testMissionData.Tasks = new List<MissionTaskData>() { taskA };
             testMissionData.Tasks = new List<MissionTaskData>() { taskA, taskB, taskC };
 
             mTestMission = new Mission( testMissionData );
