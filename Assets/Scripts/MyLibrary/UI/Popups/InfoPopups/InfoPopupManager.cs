@@ -6,8 +6,10 @@ namespace MyLibrary {
         private const string POPUP_PANEL = "InfoPopupPanel";
 
         private List<QueuedInfoPopupData> mListPopups = new List<QueuedInfoPopupData>();
+        public List<QueuedInfoPopupData> PendingPopups { get { return mListPopups; } }
 
         private bool mShowingPopup = false;
+        public bool ShowingPopup { get { return mShowingPopup; } }
 
         public GameObject PopupPanel { get { return GameObject.Find( POPUP_PANEL ); } }
 
@@ -42,24 +44,28 @@ namespace MyLibrary {
         }
 
         public void ShowNextPopup() {
-            if ( PopupPanel != null ) {
-                QueuedInfoPopupData nextQueuedPopupData = GetNextPopupData();
-                GameObject popupObject = CreatePopup( nextQueuedPopupData );
-                InitPopup( popupObject, nextQueuedPopupData );
-                RemovedPopupDataFromList( nextQueuedPopupData );
-            } else {
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "InfoPopupManager trying to show a popup, but the parent panel does not exist.", "InfoPopup" );
-            }
+            QueuedInfoPopupData nextQueuedPopupData = GetNextPopupData();
+            CreatePopup( nextQueuedPopupData );
+            RemovedPopupDataFromList( nextQueuedPopupData );
+            mShowingPopup = true;            
         }
 
         private QueuedInfoPopupData GetNextPopupData() {
             return mListPopups[0];
         }
 
-        private GameObject CreatePopup( QueuedInfoPopupData i_popupToShow ) {
-            string nextPopupPrefabName = mListPopups[0].PrefabName;
-            GameObject popup = PopupPanel.InstantiateUI( nextPopupPrefabName );
-            mShowingPopup = true;
+        public virtual void CreatePopup( QueuedInfoPopupData i_popupData ) {
+            if ( PopupPanel != null ) {
+                GameObject popupObject = InstantiatePopup( i_popupData );
+                InitPopup( popupObject, i_popupData );
+            } else {
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "InfoPopupManager trying to show a popup, but the parent panel does not exist.", "InfoPopup" );
+            }
+        }
+
+        private GameObject InstantiatePopup( QueuedInfoPopupData i_popupToShow ) {
+            string nextPopupPrefabName = i_popupToShow.PrefabName;
+            GameObject popup = PopupPanel.InstantiateUI( nextPopupPrefabName );            
 
             return popup;
         }

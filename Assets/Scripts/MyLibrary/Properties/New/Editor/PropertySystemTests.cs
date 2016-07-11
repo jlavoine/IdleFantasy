@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
 
 #pragma warning disable 0414
 
