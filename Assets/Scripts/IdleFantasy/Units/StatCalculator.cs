@@ -3,15 +3,18 @@ using System;
 using MyLibrary;
 
 namespace IdleFantasy {
-    public class StatCalculator {
-        private static StatCalculator mInstance;        
-        public static StatCalculator Instance {
+    public class StatCalculator : IStatCalculator {
+        private static IStatCalculator mInstance;        
+        public static IStatCalculator Instance {
             get {
                 if ( mInstance == null ) {
                     mInstance = new StatCalculator();
                 }
 
                 return mInstance;
+            }
+            set {
+                mInstance = value;
             }
         }     
 
