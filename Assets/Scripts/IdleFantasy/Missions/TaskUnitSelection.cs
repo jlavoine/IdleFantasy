@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class TaskUnitSelection {
+        #region Variables
         private ViewModel mModel;
         public ViewModel ViewModel { get { return mModel; } }
 
@@ -17,8 +18,11 @@ namespace IdleFantasy {
         public int PowerRequirement { get { return mPowerRequirement; } }
 
         private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
+        #endregion
 
+        #region Public Properties
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
+        #endregion
 
         public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement, Dictionary<IUnit,int> i_promisedUnits ) {
             mPromisedUnits = i_promisedUnits;
@@ -30,6 +34,7 @@ namespace IdleFantasy {
             SetUpModel();
         }
 
+        #region Setting Properties
         public void RecalculateProperties() {
             SetUpModel();
         }
@@ -61,12 +66,12 @@ namespace IdleFantasy {
         private void SetInteractableProperty() {
             bool hasEnoughUnits = HasEnoughUnits();
 
-            UnityEngine.Debug.LogError( "Setting " + Unit.GetID() + " to " + hasEnoughUnits );
             mModel.SetProperty( MissionKeys.IS_UNIT_SELECTABLE, hasEnoughUnits );
         }
+        #endregion
 
-        private bool HasEnoughUnits() {;
-            int numUnitsOwned = BuildingUtils.GetNumUnits( Unit );
+        public bool HasEnoughUnits() {
+            int numUnitsOwned = BuildingUtilsManager.Utils.GetNumUnits( Unit );
             int numUnitsPromised = mPromisedUnits.ContainsKey( Unit ) ? mPromisedUnits[Unit] : 0;
             int numUnitsAvailable = numUnitsOwned - numUnitsPromised;
             bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;            
@@ -74,7 +79,17 @@ namespace IdleFantasy {
             return hasEnoughUnits;
         }
 
-        public void SelectUnit( bool i_selected ) {
+        public void UnitSelected( bool i_selected ) {
+            if ( !HasEnoughUnits() ) {
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Unit selected, but not enough units: " + mUnit.GetID(), "TaskUnitSelection" );
+                return;
+            }
+
+            if ( !i_selected && mPromisedUnits.ContainsKey( Unit ) && mPromisedUnits[Unit] == 0 ) {
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Unit unselected, but it was never selected properly: " + mUnit.GetID(), "TaskUnitSelection" );
+                return;
+            }
+
             int promisedUnits = 0;
             mPromisedUnits.TryGetValue( Unit, out promisedUnits );
 

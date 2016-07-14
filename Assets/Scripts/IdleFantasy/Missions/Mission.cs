@@ -41,7 +41,7 @@ namespace IdleFantasy {
 
         public void CompleteMission() {
             foreach ( KeyValuePair<IUnit,int> promisedUnitPair in PromisedUnits ) {
-                BuildingUtils.AlterUnitCount( promisedUnitPair.Key, -promisedUnitPair.Value );
+                BuildingUtilsManager.Utils.AlterUnitCount( promisedUnitPair.Key, -promisedUnitPair.Value );
             }
         }
     }

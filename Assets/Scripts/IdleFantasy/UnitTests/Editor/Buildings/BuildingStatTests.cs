@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using MyLibrary;
 using IdleFantasy.UnitTests.Units;
 
 #pragma warning disable 0414

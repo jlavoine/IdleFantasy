@@ -1,8 +1,8 @@
 ﻿
 namespace IdleFantasy {
-    public static class BuildingUtils {
+    public class BuildingUtils : IBuildingUtils {
 
-        public static int GetNumUnits( IUnit i_unit ) {
+        public int GetNumUnits( IUnit i_unit ) {
             foreach ( Building building in PlayerManager.Data.Buildings ) {
                 if ( building.Unit == i_unit ) {
                     return building.NumUnits;
@@ -12,7 +12,7 @@ namespace IdleFantasy {
             return 0;
         }
 
-        public static void AlterUnitCount( IUnit i_unit, int i_amount ) {
+        public void AlterUnitCount( IUnit i_unit, int i_amount ) {
             foreach ( Building building in PlayerManager.Data.Buildings ) {
                 if ( building.Unit == i_unit ) {
                     building.NumUnits += i_amount;

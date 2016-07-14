@@ -29,7 +29,7 @@ namespace IdleFantasy {
 
         public void OnUnitSelected( bool i_selected ) {
             if ( UnitSelectedEvent != null ) {
-                mTaskUnitSelection.SelectUnit( i_selected );
+                mTaskUnitSelection.UnitSelected( i_selected );
                 UnitSelectedEvent( mTaskUnitSelection );
             }
         }
