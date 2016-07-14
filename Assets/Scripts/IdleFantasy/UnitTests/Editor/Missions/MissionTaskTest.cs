@@ -1,7 +1,5 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEngine;
-using MyLibrary;
 using IdleFantasy.UnitTests.Units;
 using NSubstitute;
 

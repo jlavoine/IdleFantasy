@@ -9,11 +9,11 @@ namespace IdleFantasy {
         private MissionData mData;
         public MissionData Data { get { return mData; } }
 
-        private List<MissionTask> mTasks;
+        private List<MissionTask> mTasks = new List<MissionTask>();
         public List<MissionTask> Tasks { get { return mTasks; } }
 
         private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
-        public Dictionary<IUnit,int> PromisedUnits { get { return mPromisedUnits; } }
+        public Dictionary<IUnit,int> PromisedUnits { get { return mPromisedUnits; } set { mPromisedUnits = value; /* For testing */ } }
 
         public Mission( MissionData i_data ) {         
             mModel = new ViewModel();
@@ -29,7 +29,6 @@ namespace IdleFantasy {
         }
 
         private void CreateMissionTasks() {
-            mTasks = new List<MissionTask>();
             foreach ( MissionTaskData taskData in Data.Tasks ) {
                 AddMissionTask( taskData, PromisedUnits );
             }
