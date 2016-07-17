@@ -48,7 +48,7 @@ namespace IdleFantasy.UnitTests {
             data.PowerRequirement = REQUIRED_POWER;
             data.StatRequirement = TEST_STAT;
 
-            mMissionTask = new MissionTask( data, new Dictionary<IUnit, int>() );
+            mMissionTask = new MissionTask( data, new Dictionary<IUnit, int>(), new Dictionary<int, MissionTaskProposal>() );
         }
 
         [Test]

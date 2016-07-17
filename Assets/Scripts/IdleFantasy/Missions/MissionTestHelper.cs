@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class MissionTestHelper : MonoBehaviour {
@@ -11,9 +12,10 @@ namespace IdleFantasy {
         void Start() {            
         }
 
-        private void CreateTestMission() {
+        private void CreateTestMission_Offline() {
             MissionData testMissionData = new MissionData();
             testMissionData.DescriptionKey = "TEST_MISSION_DESC";
+            testMissionData.Index = 0;
 
             MissionTaskData taskA = new MissionTaskData();
             taskA.DescriptionKey = "Task 1";
@@ -34,6 +36,15 @@ namespace IdleFantasy {
             testMissionData.Tasks = new List<MissionTaskData>() { taskA, taskB, taskC };
 
             mTestMission = new Mission( testMissionData );
+
+            GameObject missionUI = gameObject.InstantiateUI( MissionViewPrefab, MainCanvas );
+            MissionView view = missionUI.GetComponent<MissionView>();
+            view.Init( mTestMission );
+
+            //List<MissionData> listMissions = new List<MissionData>();
+            //listMissions.Add( testMissionData );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+            //string missionAsJSON = JsonConvert.SerializeObject( listMissions );
+            //UnityEngine.Debug.LogError( missionAsJSON );
         }
 
         void Update() {
@@ -43,7 +54,15 @@ namespace IdleFantasy {
         }
 
         private void CreateMissionUI() {
-            CreateTestMission();
+            CreateTestMission_FromBackend();
+        }
+
+        private void CreateTestMission_FromBackend() {
+            BackendManager.Backend.GetMission( "Test", OnGotMission );
+        }
+
+        private void OnGotMission( MissionData i_data ) {
+            mTestMission = new Mission( i_data );
             GameObject missionUI = gameObject.InstantiateUI( MissionViewPrefab, MainCanvas );
             MissionView view = missionUI.GetComponent<MissionView>();
             view.Init( mTestMission );

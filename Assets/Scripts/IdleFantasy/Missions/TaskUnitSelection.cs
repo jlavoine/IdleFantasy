@@ -11,27 +11,38 @@ namespace IdleFantasy {
         private IUnit mUnit;
         public IUnit Unit { get { return mUnit; } }
 
+        private int mTaskIndex;
+        public int TaskIndex { get { return mTaskIndex; } }
+
         private string mStat;
         public string Stat { get { return mStat; } }
 
         private int mPowerRequirement;
         public int PowerRequirement { get { return mPowerRequirement; } }
 
+        private MissionTaskProposal mTaskProposal;
+        public MissionTaskProposal TaskProposal { get { return mTaskProposal; } }
+
         private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
+        private Dictionary<int, MissionTaskProposal> mTaskProposals = new Dictionary<int, MissionTaskProposal>();
         #endregion
 
         #region Public Properties
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
         #endregion
 
-        public TaskUnitSelection( IUnit i_unit, string i_stat, int i_powerRequirement, Dictionary<IUnit,int> i_promisedUnits ) {
+        public TaskUnitSelection( IUnit i_unit, MissionTaskData i_taskData, Dictionary<IUnit,int> i_promisedUnits, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
             mPromisedUnits = i_promisedUnits;
+            mTaskProposals = i_taskProposals;
             mUnit = i_unit;
-            mStat = i_stat;
-            mPowerRequirement = i_powerRequirement;
+            mTaskIndex = i_taskData.Index;
+            mStat = i_taskData.StatRequirement;
+            mPowerRequirement = i_taskData.PowerRequirement;            
             mModel = new ViewModel();
 
             SetUpModel();
+
+            mTaskProposal = new MissionTaskProposal( mTaskIndex, mUnit.GetID(), NumUnitsRequired );
         }
 
         #region Setting Properties
@@ -90,16 +101,30 @@ namespace IdleFantasy {
                 return;
             }
 
+            ChangePromisedUnits( i_selected );
+            ChangeTaskProposal( i_selected );
+        }
+
+        private void ChangePromisedUnits( bool i_selected ) {
             int promisedUnits = 0;
             mPromisedUnits.TryGetValue( Unit, out promisedUnits );
 
             if ( i_selected ) {
                 promisedUnits += NumUnitsRequired;
-            } else {
+            }
+            else {
                 promisedUnits -= NumUnitsRequired;
             }
 
             mPromisedUnits[Unit] = promisedUnits;
+        }
+
+        private void ChangeTaskProposal( bool i_selected ) {
+            if ( i_selected ) {
+                mTaskProposals[TaskIndex] = mTaskProposal;
+            } else {
+                mTaskProposals[TaskIndex] = null;
+            }
         }
     }
 }

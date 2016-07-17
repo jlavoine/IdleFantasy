@@ -1,5 +1,6 @@
 ﻿using MyLibrary;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IBackend {
@@ -10,6 +11,12 @@ namespace IdleFantasy {
         public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
         public const string ADD_POINTS_TO_UPGRADE = "addPointsToUpgrade";
         public const string ADD_PROGRESS_TO_UPGRADE = "addProgressToUpgrade";
+        public const string GET_MISSIONS = "getTestMissions";
+        public const string COMPLETE_MISSION = "initiateCompleteMission";
+
+        public const string MISSION_TYPE_PARAM = "MissionCategory";
+        public const string MISSION_INDEX_PARAM = "Index";
+        public const string MISSOIN_PROPOSALS_PARAM = "TaskProposals";
 
         public IdleFantasyBackend() : base() {
         }
@@ -21,6 +28,28 @@ namespace IdleFantasy {
             upgradeParams.Add( "UpgradeID", i_upgradeID );
 
             MakeCloudCall( INIT_UPGRADE, upgradeParams, null );
+        }
+
+        // right now this is just for testing
+        public void GetMission(string i_missionType, Callback<MissionData> i_callback ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( MISSION_TYPE_PARAM, i_missionType );
+
+            MakeCloudCall( GET_MISSIONS, cloudParams, ( results ) => {
+                if ( results.ContainsKey( "data" ) ) {
+                    List<MissionData> listMissions = JsonConvert.DeserializeObject<List<MissionData>>( results["data"] );
+                    i_callback( listMissions[0] );
+                }
+            } );
+        }
+
+        public void CompleteMission(string i_missionType, int i_missionIndex, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( MISSION_TYPE_PARAM, i_missionType );
+            cloudParams.Add( MISSION_INDEX_PARAM, i_missionIndex.ToString() );
+            cloudParams.Add( MISSOIN_PROPOSALS_PARAM, JsonConvert.SerializeObject( i_taskProposals ) );
+
+            MakeCloudCall( COMPLETE_MISSION, cloudParams, null );
         }
 
         public void MakeAddPointsToUpgradeCall( string i_className, string i_targetID, string i_upgradeID, int i_points ) {

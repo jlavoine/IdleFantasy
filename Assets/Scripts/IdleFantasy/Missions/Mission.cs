@@ -15,6 +15,9 @@ namespace IdleFantasy {
         private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
         public Dictionary<IUnit,int> PromisedUnits { get { return mPromisedUnits; } set { mPromisedUnits = value; /* For testing */ } }
 
+        private Dictionary<int, MissionTaskProposal> mTaskProposals = new Dictionary<int, MissionTaskProposal>();
+        public Dictionary<int, MissionTaskProposal> TaskProposals { get { return mTaskProposals; } set { mTaskProposals = value; } }
+
         public Mission( MissionData i_data ) {         
             mModel = new ViewModel();
             mData = i_data;
@@ -30,18 +33,28 @@ namespace IdleFantasy {
 
         private void CreateMissionTasks() {
             foreach ( MissionTaskData taskData in Data.Tasks ) {
-                AddMissionTask( taskData, PromisedUnits );
+                AddMissionTask( taskData );
             }
         }
 
-        private void AddMissionTask( MissionTaskData i_data, Dictionary<IUnit,int> i_promisedUnitsForMission ) {
-            mTasks.Add( new MissionTask( i_data, i_promisedUnitsForMission ) );
+        private void AddMissionTask( MissionTaskData i_data ) {
+            mTasks.Add( new MissionTask( i_data, PromisedUnits, TaskProposals ) );
         }
 
         public void CompleteMission() {
-            foreach ( KeyValuePair<IUnit,int> promisedUnitPair in PromisedUnits ) {
+            AlterLocalUnits();
+
+            SendCompletionToServer();            
+        }
+
+        private void AlterLocalUnits() {
+            foreach ( KeyValuePair<IUnit, int> promisedUnitPair in PromisedUnits ) {
                 BuildingUtilsManager.Utils.AlterUnitCount( promisedUnitPair.Key, -promisedUnitPair.Value );
             }
+        }
+
+        private void SendCompletionToServer() {
+            BackendManager.Backend.CompleteMission( mData.MissionCategory, mData.Index, mTaskProposals );
         }
     }
 }

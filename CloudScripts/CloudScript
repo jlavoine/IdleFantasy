@@ -22,6 +22,13 @@ const UNIT_COUNT = "Count";                         // key in unit's save data f
 const UNIT_BASE_PROGRESS = "BaseProgressPerSecond"; // key in unit's title data for base progress per second
 const COUNT_TIME = "Time";                           // for testing unit counting; time to pretend it is
 
+// unit title data
+const UNIT_ID = "ID";                               // ID of the unit
+const UNIT_STATS = "Stats";                         // stats object on the unit
+
+// unit stats
+const STAT_BASE = "Base";                           // key for the base stat on a unit
+
 // buildings
 const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
 const BUILDING_UNIT = "Unit";                       // key for building title data: the building's unit
@@ -44,6 +51,29 @@ const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
 
 /// game modules
 const MODULE_BASE = "Base";    // the base game!
+
+/// modifiers
+const UNIT_MODIFICATIONS = "UnitModifications"; // key to get at unit modification data in a unit modifier
+const MODIFIER_UNITS = "UnitsModified";      // key on a modifier containing the list of units modified
+const MODIFIER_STAT = "StatModified";           // key on a modifier containing the stat it modifies
+const MODIFIER_TYPE = "ModifierType";           // key on a modifier containing the type of modification (percent, flat, etc)
+const MODIFIER_BASE = "BaseModifier";           // key on modifier holding the base amount it modifies by
+const MODIFIER_ALL = "All";                     // value meaning all things are modified (stats, or units)
+
+/// modifier enums
+const MODIFIER_FLAT = 0;        // flat bonus
+const MODIFIER_PERCENT = 1;     // percentage bonus
+
+/// missions
+const MISSION_TYPE_KEY = "MissionCategory";     // the key holding the mission type of the mission or complete call
+const MISSION_SAVE_KEY = "Missions_";           // the save key that all missions are saved with in internal data, i.e. Key_(type)
+const MISSION_INDEX_KEY = "Index";              // used when specifying a particular mission within a type
+const MISSION_PROPOSALS_KEY = "TaskProposals"; // key for the client to send task proposals for a mission
+const MISSION_TASKS_KEY = "Tasks";              // in mission data; object that holds the tasks for the mission
+const MISSION_PROPOSAL_UNIT = "UnitID";         // key in task proposal holding the unit id
+const MISSION_PROPOSAL_COUNT = "UnitCount";     // key in task proposal holding # of units proposed
+const MISSION_REQUIRED_STAT = "StatRequirement";    // key in a mission task holding the required stat
+const MISSION_REQUIRED_POWER = "PowerRequirement";  // key in a mission task holing the required power
 
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
@@ -110,6 +140,15 @@ handlers.overLimit = function (args) {
     var ten = isTesting();
     var eleven = isTesting();
     var twelve = isTesting();
+}
+
+/// Gets the test missions, used when I was creating the mission format
+handlers.getTestMissions = function (args) {
+   var missionType = args.data[MISSION_TYPE_KEY];
+
+   var missions = GetMissionsOfType(missionType);
+
+   return ReturnDataToClient(missions);
 }
 
 /// use this method to test if unit counts are updating properly
@@ -343,6 +382,314 @@ handlers.setPlayerCurrency = function(args) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Missions
+/////////////////////////////////////////////////
+
+handlers.initiateCompleteMission = function (args) {    
+    var missionType = args.data[MISSION_TYPE_KEY];
+    var missionIndex = GetNumberFromArgs(args, MISSION_INDEX_KEY);    
+    var taskProposalsJSON = args.data[MISSION_PROPOSALS_KEY];
+
+    var allUnitData = GetTitleDataForClass(CLASS_UNIT);
+    var allUnitProgress = GetProgressData(CLASS_UNIT);
+
+    log.info("Trying to complete mission # " + missionIndex + " for type " + missionType);
+    log.info("Trying to complete the mission with proposal: " + taskProposalsJSON);
+
+    var mission = GetMission(missionType, missionIndex);
+    var tasks = GetMissionTasks(mission);
+    var taskProposals = JSON.parse(taskProposalsJSON);
+
+    if (AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress)) {
+        CompleteMission(mission, taskProposals, allUnitProgress);
+    } else {
+        return { outOfSync : true };
+    }
+}
+
+function CompleteMission(mission, taskProposals, allUnitProgress) {
+    log.info("Successfully completed mission: " + GetMissionType(mission) + " #" + GetMissionIndex(mission) );
+
+    PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
+}
+
+function PayUnitsFromTaskProposals(taskProposals, allUnitProgress) {
+    log.info("Paying units from task proposals");
+
+    UpdateAllUnitCounts(Date.now());
+
+    for(var index in taskProposals) {
+        log.info("Processing proposal " + index);
+        var proposal = taskProposals[index];
+        var unitID = proposal[MISSION_PROPOSAL_UNIT];        
+        var unitSaveData = allUnitProgress[unitID];
+        var amount = GetNumberFromObject(proposal, MISSION_PROPOSAL_COUNT);
+
+        ChangeUnitCount(unitSaveData, -amount)
+    }
+
+    UpdateUnitSaveData(allUnitProgress);
+}
+
+function AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress) {
+    log.info("Attempting to verify task proposals");
+
+    if(!HasEnoughProposedUnits(taskProposals, allUnitProgress)) {
+        log.info("Proposal failed: not enough units");
+        return false;
+    }
+
+    var modifiers = GetAllUnitModifiers();
+
+    for(var index in tasks) {
+        var task = tasks[index];
+        var proposal = taskProposals[index];
+
+        log.info("Checking task index " + index);
+        log.info("Task: " + JSON.stringify(task));
+        log.info("Proposal: " + JSON.stringify(proposal));
+
+        var proposedUnit = proposal[MISSION_PROPOSAL_UNIT];
+        var proposedCount = proposal[MISSION_PROPOSAL_COUNT];
+        var unitDataForProposal = allUnitData[proposedUnit];
+        var unitProgressForProposal = allUnitProgress[proposedUnit];        
+
+         if(!ProposalMeetsPowerRequirement(unitDataForProposal, unitProgressForProposal, task, proposal, modifiers)) {
+            log.info("Proposal failed: not enough power");
+            return false;
+        }        
+    }
+
+    log.info("All proposals verified");
+    return true;
+}
+
+function HasEnoughProposedUnits(taskProposals, allUnitProgress) {
+    log.info("Checking to see if player has proposed units");
+
+    var unitsProposed = {};
+    for (index in taskProposals) {
+        var proposal = taskProposals[index];
+        var proposedUnit = proposal[MISSION_PROPOSAL_UNIT];
+        var proposedCount = proposal[MISSION_PROPOSAL_COUNT];
+
+        if (unitsProposed.hasOwnProperty(proposedUnit)) {
+            var currentCount = unitsProposed[proposedUnit];
+            unitsProposed[proposedUnit] = currentCount + proposedCount;
+        } else {
+            unitsProposed[proposedUnit] = proposedCount;
+        }
+    }
+
+    for (var proposedUnit in unitsProposed) {
+        var count = unitsProposed[proposedUnit];
+        log.info("About to ensure that player has " + count + " of " + proposedUnit);
+
+        var unitProgress = allUnitProgress[proposedUnit];
+        var hasEnough = HasEnoughUnits(unitProgress, count);
+    }
+
+    log.info("Proposed units pass count");
+    return true;
+}
+
+function ProposalMeetsPowerRequirement(unitDataForProposal, unitProgressForProposal, task, proposal, modifiers) {
+    var stat = task[MISSION_REQUIRED_STAT];
+    var powerRequirement = task[MISSION_REQUIRED_POWER];
+    var unitsRequired = GetNumUnitsForRequirement(unitDataForProposal, unitProgressForProposal, stat, powerRequirement, modifiers);
+    var proposedCount = proposal[MISSION_PROPOSAL_COUNT];
+
+    log.info("Checking proposal for stat " + stat + " -- expecting " + unitsRequired + " and proposed " + proposedCount);    
+
+    return proposedCount == unitsRequired;    
+}
+
+function GetMissionTasks(mission) {
+    log.info("Getting tasks for mission");
+
+    var tasks = mission[MISSION_TASKS_KEY];
+
+    log.info("Got tasks: " + JSON.stringify(tasks));
+    return tasks;
+}
+
+function GetMission(type, index) {
+    log.info("Getting mission " + index + " of type " + type);
+
+    var allMissionsOfType = GetMissionsOfType(type);
+    var mission = allMissionsOfType[index];
+
+    log.info("Got mission: " + JSON.stringify(mission));
+    return mission;
+}
+
+function GetMissionsOfType(type) {
+    log.info("Getting all missions with type: " + type);
+    var saveKey = MISSION_SAVE_KEY + type;
+
+    return GetInternalSaveData(saveKey);
+}
+
+function GetMissionType(mission) {
+    return mission[MISSION_TYPE_KEY];
+}
+
+function GetMissionIndex(mission) {
+    return mission[MISSION_INDEX_KEY];
+}
+
+/////////////////////////////////////////////////
+/// ~Missions
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// StatCalculator
+/// Used to calculate the stats of a unit.
+/////////////////////////////////////////////////
+
+function GetNumUnitsForRequirement(unitData, unitProgress, stat, powerRequirement, modifiers) {
+    log.info("Looking for total " + GetUnitID(unitData) + " required for " + stat + " " + powerRequirement);
+    var totalUnitsRequired = 0;
+
+    var unitPower = GetTotalStatFromUnit(unitData, unitProgress, stat, modifiers);
+    if (unitPower > 0) {
+        totalUnitsRequired = Math.ceil(powerRequirement / unitPower);
+    } else {
+        totalUnitsRequired  = Number.MAX_VALUE;
+        log.info("Likely error: " + GetUnitID(unitData) + " did not have " + stat);
+    }
+
+    log.info("Total units required: " + totalUnitsRequired);
+    return totalUnitsRequired;
+}
+
+function GetTotalStatFromUnit(unitData, unitProgress, stat, modifiers) {
+    log.info("Getting total " + stat + " for " + GetUnitID(unitData));
+
+    var totalStat = GetTotalBaseStat(unitData, unitProgress, stat);
+
+    for (var modifierType in modifiers) {
+        totalStat += GetStatBonusFromModifier(modifiers[modifierType], modifierType, unitData, unitProgress, stat);
+    }
+
+    log.info("The total stat of " + stat + " for " + GetUnitID(unitData) + " was " + totalStat);
+    return totalStat;
+}
+
+function GetStatBonusFromModifier(modifier, modifierType, unitData, unitProgress, stat) {
+    if (modifierType == CLASS_GUILD) {
+        return GetGuildBonus(modifier, unitData, unitProgress, stat);
+    } else {
+        log.info("Unhandled unit modifier type: " + modifierType);
+        return 0;
+    }
+}
+
+function GetGuildBonus(modifier, unitData, unitProgress, stat) {
+    log.info("Getting guild bonus for " + stat + " on " + GetUnitID(unitData));
+
+    var allGuildData = modifier.data;
+    var allGuildProgress = modifier.progress;
+
+    var bonus = 0;
+    for (var guildID in allGuildData) {
+        log.info("Getting bonus for guild " + guildID);
+
+        var guildData = allGuildData[guildID];
+        var guildProgress = allGuildProgress[guildID];
+        var unitModifications = JSON.parse(guildData[UNIT_MODIFICATIONS]);
+        var progressLevel = GetLevelFromProgress(guildProgress);
+
+        bonus += GetModificationBonusForUnit(unitModifications, unitData, unitProgress, stat, progressLevel);
+    }
+
+    return Math.ceil(bonus);
+}
+
+/////////////////////////////////////////////////
+/// ~StatCalculator
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// UnitModification
+/////////////////////////////////////////////////
+
+function GetAllUnitModifiers() {
+    var guildModifier = {data : GetTitleDataForClass(CLASS_GUILD), progress : GetProgressData(CLASS_GUILD)};
+
+    var modifiers = {};
+    modifiers[CLASS_GUILD] = guildModifier;
+
+    return modifiers;
+}
+
+function GetModificationBonusForUnit(unitModifications, unitData, unitProgress, stat, progressLevel) {
+    var bonus = 0;
+
+    for (var index in unitModifications) {
+        var modification = unitModifications[index];
+        log.info("Processing modification: " + JSON.stringify(modification));
+
+        bonus += GetBonusFromModification(modification, unitData, unitProgress, stat, progressLevel);
+    }
+
+    return bonus;
+}
+
+function GetBonusFromModification(modification, unitData, unitProgress, stat, modificationLevel) {
+    log.info("Getting bonus from modification for " + GetUnitID(unitData) + " of stat " + stat);
+    var bonus = 0;
+
+    if (ModifiesStat(modification, stat) && AffectsUnit(modification, unitData)) {
+        bonus = CalculateModificationBonus(modification, unitData, unitProgress, stat, modificationLevel);
+    }
+
+    return bonus;
+}
+
+function ModifiesStat(modification, stat) {    
+    var statModified = modification[MODIFIER_STAT];
+    var isModified = statModified == stat || statModified == MODIFIER_ALL;
+
+    log.info("Checking if " + stat + " is modified: " + isModified);
+    return isModified;
+}
+
+function AffectsUnit(modification, unitData) {
+    var unitsModified = modification[MODIFIER_UNITS];
+    var indexOfUnit = unitsModified.indexOf(GetUnitID(unitData));
+    var indexOfAll = unitsModified.indexOf(MODIFIER_ALL);
+    var affectsUnit = indexOfUnit >= 0 || indexOfAll >= 0;
+
+    log.info("Checking if affects " + GetUnitID(unitData) + ": " + affectsUnit);
+    return affectsUnit;
+}
+
+function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modificationLevel) {
+    log.info("Calculating modification bonus");
+
+    var bonus = 0;
+    var totalModifier = modifier[MODIFIER_BASE] * modificationLevel;
+    var baseStatValue = GetTotalBaseStat(unitData, unitProgress, stat);
+
+    var modifierType = modifier[MODIFIER_TYPE];
+    if (modifierType == MODIFIER_FLAT) {
+        bonus = totalModifier;
+    } else if (modifierType == MODIFIER_PERCENT) {
+        bonus = baseStatValue * totalModifier;
+    } else {
+        log.info("Unhandled modifier type: " + modifierType);
+    }
+
+    log.info("Total bonus is: " + bonus);
+    return bonus;
+}
+
+/////////////////////////////////////////////////
+/// ~UnitModification
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// Login
 /////////////////////////////////////////////////
 
@@ -566,6 +913,12 @@ function GetFloatFromArgs(args, id) {
     return float;
 }
 
+function GetNumberFromObject(object, key) {
+    var num = parseInt(object[key], 10);
+
+    return num;
+}
+
 /////////////////////////////////////////////////
 /// ~Misc
 /////////////////////////////////////////////////
@@ -612,6 +965,13 @@ function SaveProgressData(className, readOnlyData, progressData, targetID) {
     SetReadOnlyData(progressKey, readOnlyData);
 }
 
+function GetLevelFromProgress(progress) {
+    var currentLevel = GetNumberFromProgress(UPGRADE_LEVEL, progress);
+
+    log.info("Got current level: " + currentLevel);
+    return currentLevel;
+}
+
 /////////////////////////////////////////////////
 /// ~ProgressData
 /////////////////////////////////////////////////
@@ -624,6 +984,49 @@ function SaveProgressData(className, readOnlyData, progressData, targetID) {
 /// Also contains helper functions for accessing
 /// elements of a unit from save data.
 /////////////////////////////////////////////////
+
+function GetTotalBaseStat(unitData, unitProgress, stat) {
+    log.info("Getting total base stat " + stat + " for " + GetUnitID(unitData) + ".");    
+
+    var unitLevel = GetLevelFromProgress(unitProgress);    
+    var baseValue = GetUnitBaseStat(unitData, stat);
+    var totalValue = baseValue * unitLevel;
+    
+    log.info("Total base stat value is: " + totalValue + " rounded to " + Math.ceil(totalValue));
+    return Math.ceil(totalValue);
+}
+
+function GetUnitID(unitData) {
+    return unitData[UNIT_ID];
+}
+
+function GetUnitBaseStat(unitData, stat) {
+    log.info("Getting base stat value of " + stat + " for " + GetUnitID(unitData));
+
+    var baseValue = 0;
+    var stats = GetUnitStats(unitData);
+    if (stats.hasOwnProperty(stat)) {
+        var statData = GetStatData(stats, stat);
+        baseValue = parseFloat(statData[STAT_BASE]);
+    }
+
+    log.info("Base stat: " + baseValue);
+    return baseValue;
+}
+
+function GetUnitStats(unitData) {
+    var stats = unitData[UNIT_STATS];
+
+    log.info("Got stats: " + stats);
+    return JSON.parse(stats);
+}
+
+function GetStatData(stats, statName) {
+    var statData = stats[statName];
+
+    log.info("Got " + JSON.stringify(statData));
+    return statData;
+}
 
 /////////////////////////////////////////////////
 /// ~Unit
@@ -676,6 +1079,15 @@ function ResetUnitCount(unitSaveData) {
     UpdateUnitCount(unitSaveData, 0, Date.now());
 }
 
+/// NOTE: This method assumes you're doing something legal (changed count > 0, < max)
+function ChangeUnitCount(unitSaveData, amount) {
+    var currentCount = GetUnitCount(unitSaveData);
+    var newCount = currentCount + amount;
+
+    log.info("Changing count from " + currentCount + " to " + newCount + "(" + amount +")");
+    UpdateUnitCount(unitSaveData, newCount, Date.now());
+}
+
 function SetUnitCount(unitSaveData, count) {
     unitSaveData[UNIT_COUNT] = count;
 }
@@ -693,6 +1105,11 @@ function GetUnitCount(unitSaveData) {
 
     log.info("Returning unit count: " + count);
     return count;
+}
+
+function HasEnoughUnits(unitSaveData, count) {
+    var currentCount = GetUnitCount(unitSaveData);
+    return currentCount >= count;
 }
 
 function GetUnitLastCountTime(unitSaveData) {

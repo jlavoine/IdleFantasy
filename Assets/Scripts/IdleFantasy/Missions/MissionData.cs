@@ -2,7 +2,8 @@
 
 namespace IdleFantasy {
     public class MissionData {
-        public string ID;
+        public string MissionCategory;
+        public int Index;
         public string DescriptionKey;
         public string RewardKey;
 

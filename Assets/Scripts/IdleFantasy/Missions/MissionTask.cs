@@ -14,12 +14,12 @@ namespace IdleFantasy {
         private List<TaskUnitSelection> mUnitsEligibleForTask = new List<TaskUnitSelection>();
         public List<TaskUnitSelection> UnitsEligibleForTask { get { return mUnitsEligibleForTask; } }
 
-        public MissionTask( MissionTaskData i_data, Dictionary<IUnit,int> i_promisedUnitsForMission ) {
+        public MissionTask( MissionTaskData i_data, Dictionary<IUnit,int> i_promisedUnitsForMission, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
             mModel = new ViewModel();
             mData = i_data;
 
             SetUpModel();
-            AddUnitsEligibleForTask( i_promisedUnitsForMission );
+            AddUnitsEligibleForTask( i_promisedUnitsForMission, i_taskProposals );
         }
 
         private void SetUpModel() {
@@ -28,10 +28,10 @@ namespace IdleFantasy {
             mModel.SetProperty( MissionKeys.TASK_POWER, Data.PowerRequirement );
         }
 
-        private void AddUnitsEligibleForTask( Dictionary<IUnit,int> i_promisedUnitsForMission ) {
+        private void AddUnitsEligibleForTask( Dictionary<IUnit,int> i_promisedUnitsForMission, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
             List<IUnit> unitsEligible = StatCalculator.Instance.GetUnitsWithStat( Data.StatRequirement );
             foreach ( IUnit unit in unitsEligible ) {
-                TaskUnitSelection selection = new TaskUnitSelection( unit, Data.StatRequirement, Data.PowerRequirement, i_promisedUnitsForMission );
+                TaskUnitSelection selection = new TaskUnitSelection( unit, Data, i_promisedUnitsForMission, i_taskProposals );
                 mUnitsEligibleForTask.Add( selection );
             }
         }

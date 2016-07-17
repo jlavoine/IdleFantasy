@@ -12,8 +12,10 @@ namespace IdleFantasy.UnitTests {
     public class TaskUnitSelectionTest {
 
         private Dictionary<IUnit, int> mPromisedUnits;
+        private Dictionary<int, MissionTaskProposal> mTaskProposals;
 
         private TaskUnitSelection mTestSelection;
+        private const int TEST_TASK_INDEX = 1;
         private const int POWER_REQUIREMENT = 100;
         private const string TEST_STAT = TestUnitStats.TEST_STAT_1;
         private IUnit mUnit;
@@ -26,8 +28,11 @@ namespace IdleFantasy.UnitTests {
             mPlayerData = UnitTestUtils.LoadMockPlayerData();
 
             mPromisedUnits = new Dictionary<IUnit, int>();
+            mTaskProposals = new Dictionary<int, MissionTaskProposal>();
             mUnit = new MockUnit( 100 );
-            mTestSelection = new TaskUnitSelection( mUnit, TEST_STAT, POWER_REQUIREMENT, mPromisedUnits );
+            mTestSelection = new TaskUnitSelection( mUnit, 
+                new MissionTaskData() { Index = TEST_TASK_INDEX, StatRequirement = TEST_STAT, PowerRequirement = POWER_REQUIREMENT }, 
+                mPromisedUnits, mTaskProposals );
 
             SetPlayerDataToNotEnoughUnits();
         }
