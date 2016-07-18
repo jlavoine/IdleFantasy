@@ -56,7 +56,10 @@ namespace IdleFantasy.UnitTests {
         [Test]
         public void CompletingMission_CallsAlterUnits() {
             IBuildingUtils utils = Substitute.For<IBuildingUtils>();
+            IIdleFantasyBackend backend = Substitute.For<IIdleFantasyBackend>();
             BuildingUtilsManager.Utils = utils;
+            BackendManager.Backend = backend;
+
             mMission.PromisedUnits = new Dictionary<IUnit, int>() { { new MockUnit( 100 ), 100 } };
             mMission.CompleteMission();
 

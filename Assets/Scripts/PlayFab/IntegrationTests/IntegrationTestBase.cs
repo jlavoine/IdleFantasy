@@ -7,7 +7,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class IntegrationTestBase : MonoBehaviour {        
         protected abstract IEnumerator RunAllTests();
 
-        protected IdleFantasyBackend mBackend;
+        protected IIdleFantasyBackend mBackend;
 
         void Start() {
             mBackend = BackendManager.Backend;

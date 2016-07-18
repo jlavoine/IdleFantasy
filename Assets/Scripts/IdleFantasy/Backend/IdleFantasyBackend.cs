@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace IdleFantasy {
-    public class IdleFantasyBackend : PlayFabBackend, IBackend {
+    public class IdleFantasyBackend : PlayFabBackend, IIdleFantasyBackend {
         public const string CHANGE = "Change";
 
         public const string INIT_UPGRADE = "initiateUpgrade";        
