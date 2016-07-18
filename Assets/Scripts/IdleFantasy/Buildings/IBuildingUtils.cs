@@ -2,6 +2,6 @@
 namespace IdleFantasy {
     public interface IBuildingUtils {
         int GetNumUnits( IUnit i_unit );
-        void AlterUnitCount( IUnit i_unit, int i_amount );
+        void AlterUnitCount( string i_unitID, int i_amount );
     }
 }

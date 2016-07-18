@@ -23,17 +23,15 @@ namespace IdleFantasy {
         private MissionTaskProposal mTaskProposal;
         public MissionTaskProposal TaskProposal { get { return mTaskProposal; } }
 
-        private Dictionary<IUnit, int> mPromisedUnits = new Dictionary<IUnit, int>();
-        private Dictionary<int, MissionTaskProposal> mTaskProposals = new Dictionary<int, MissionTaskProposal>();
+        private MissionProposal mMissionProposal = new MissionProposal();
         #endregion
 
         #region Public Properties
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
         #endregion
 
-        public TaskUnitSelection( IUnit i_unit, MissionTaskData i_taskData, Dictionary<IUnit,int> i_promisedUnits, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
-            mPromisedUnits = i_promisedUnits;
-            mTaskProposals = i_taskProposals;
+        public TaskUnitSelection( IUnit i_unit, MissionTaskData i_taskData, MissionProposal i_proposal ) {
+            mMissionProposal = i_proposal;
             mUnit = i_unit;
             mTaskIndex = i_taskData.Index;
             mStat = i_taskData.StatRequirement;
@@ -83,7 +81,7 @@ namespace IdleFantasy {
 
         public bool HasEnoughUnits() {
             int numUnitsOwned = BuildingUtilsManager.Utils.GetNumUnits( Unit );
-            int numUnitsPromised = mPromisedUnits.ContainsKey( Unit ) ? mPromisedUnits[Unit] : 0;
+            int numUnitsPromised = mMissionProposal.PromisedUnits.ContainsKey( Unit.GetID() ) ? mMissionProposal.PromisedUnits[Unit.GetID()] : 0;
             int numUnitsAvailable = numUnitsOwned - numUnitsPromised;
             bool hasEnoughUnits = numUnitsAvailable >= NumUnitsRequired;            
 
@@ -96,34 +94,15 @@ namespace IdleFantasy {
                 return;
             }
 
-            if ( !i_selected && mPromisedUnits.ContainsKey( Unit ) && mPromisedUnits[Unit] == 0 ) {
+            if ( !i_selected && mMissionProposal.PromisedUnits.ContainsKey( Unit.GetID() ) && mMissionProposal.PromisedUnits[Unit.GetID()] == 0 ) {
                 MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Unit unselected, but it was never selected properly: " + mUnit.GetID(), "TaskUnitSelection" );
                 return;
             }
 
-            ChangePromisedUnits( i_selected );
-            ChangeTaskProposal( i_selected );
-        }
-
-        private void ChangePromisedUnits( bool i_selected ) {
-            int promisedUnits = 0;
-            mPromisedUnits.TryGetValue( Unit, out promisedUnits );
-
             if ( i_selected ) {
-                promisedUnits += NumUnitsRequired;
-            }
-            else {
-                promisedUnits -= NumUnitsRequired;
-            }
-
-            mPromisedUnits[Unit] = promisedUnits;
-        }
-
-        private void ChangeTaskProposal( bool i_selected ) {
-            if ( i_selected ) {
-                mTaskProposals[TaskIndex] = mTaskProposal;
+                mMissionProposal.AddProposal( TaskIndex, mTaskProposal );
             } else {
-                mTaskProposals[TaskIndex] = null;
+                mMissionProposal.RemoveProposal( TaskIndex, mTaskProposal );
             }
         }
     }

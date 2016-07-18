@@ -60,10 +60,10 @@ namespace IdleFantasy.UnitTests {
             BuildingUtilsManager.Utils = utils;
             BackendManager.Backend = backend;
 
-            mMission.PromisedUnits = new Dictionary<IUnit, int>() { { new MockUnit( 100 ), 100 } };
+            mMission.MissionProposal = new MissionProposal( new Dictionary<string, int>() { { "", 100 } }, null );
             mMission.CompleteMission();
 
-            utils.Received().AlterUnitCount( Arg.Any<IUnit>(), Arg.Any<int>() );
+            utils.Received().AlterUnitCount( Arg.Any<string>(), Arg.Any<int>() );
 
         }
     }

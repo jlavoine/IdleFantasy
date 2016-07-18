@@ -16,7 +16,7 @@ namespace IdleFantasy {
 
         public const string MISSION_TYPE_PARAM = "MissionCategory";
         public const string MISSION_INDEX_PARAM = "Index";
-        public const string MISSOIN_PROPOSALS_PARAM = "TaskProposals";
+        public const string MISSION_PROPOSALS_PARAM = "TaskProposals";
 
         public IdleFantasyBackend() : base() {
         }
@@ -47,7 +47,7 @@ namespace IdleFantasy {
             Dictionary<string, string> cloudParams = new Dictionary<string, string>();
             cloudParams.Add( MISSION_TYPE_PARAM, i_missionType );
             cloudParams.Add( MISSION_INDEX_PARAM, i_missionIndex.ToString() );
-            cloudParams.Add( MISSOIN_PROPOSALS_PARAM, JsonConvert.SerializeObject( i_taskProposals ) );
+            cloudParams.Add( MISSION_PROPOSALS_PARAM, JsonConvert.SerializeObject( i_taskProposals ) );
 
             MakeCloudCall( COMPLETE_MISSION, cloudParams, null );
         }

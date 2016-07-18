@@ -11,7 +11,7 @@ namespace IdleFantasy.UnitTests {
     [TestFixture]
     public class TaskUnitSelectionTest {
 
-        private Dictionary<IUnit, int> mPromisedUnits;
+        private Dictionary<string, int> mPromisedUnits;
         private Dictionary<int, MissionTaskProposal> mTaskProposals;
 
         private TaskUnitSelection mTestSelection;
@@ -27,12 +27,12 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
             mPlayerData = UnitTestUtils.LoadMockPlayerData();
 
-            mPromisedUnits = new Dictionary<IUnit, int>();
-            mTaskProposals = new Dictionary<int, MissionTaskProposal>();
+            mPromisedUnits = new Dictionary<string, int>();
+            mTaskProposals = new Dictionary<int, MissionTaskProposal>();           
             mUnit = new MockUnit( 100 );
             mTestSelection = new TaskUnitSelection( mUnit, 
                 new MissionTaskData() { Index = TEST_TASK_INDEX, StatRequirement = TEST_STAT, PowerRequirement = POWER_REQUIREMENT }, 
-                mPromisedUnits, mTaskProposals );
+                new MissionProposal( mPromisedUnits, mTaskProposals ) );
 
             SetPlayerDataToNotEnoughUnits();
         }
@@ -93,17 +93,17 @@ namespace IdleFantasy.UnitTests {
             int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( mUnit, TEST_STAT, POWER_REQUIREMENT );
             mTestSelection.UnitSelected( true );
             
-            Assert.AreEqual( unitsRequired, mPromisedUnits[mUnit] );
+            Assert.AreEqual( unitsRequired, mPromisedUnits[mUnit.GetID()] );
         }
 
         [Test]
         public void PromisedUnitsChangesCorrectly_OnUnitSelectionFalse() {
             SetPlayerDataToEnoughUnits();
             int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( mUnit, TEST_STAT, POWER_REQUIREMENT );
-            mPromisedUnits[mUnit] = unitsRequired;
+            mPromisedUnits[mUnit.GetID()] = unitsRequired;
             mTestSelection.UnitSelected( false );
 
-            Assert.AreEqual( 0, mPromisedUnits[mUnit] );
+            Assert.AreEqual( 0, mPromisedUnits[mUnit.GetID()] );
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace IdleFantasy.UnitTests {
             SetPlayerDataToNotEnoughUnits();
             mTestSelection.UnitSelected( true );
 
-            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit ) );
+            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit.GetID() ) );
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace IdleFantasy.UnitTests {
             SetPlayerDataToNotEnoughUnits();
             mTestSelection.UnitSelected( false );
 
-            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit ) );
+            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit.GetID() ) );
         }
 
         private void SetPlayerDataToEnoughUnits() {
