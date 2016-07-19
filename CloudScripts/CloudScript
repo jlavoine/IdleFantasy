@@ -142,8 +142,40 @@ handlers.overLimit = function (args) {
     var twelve = isTesting();
 }
 
+/// Test adding points to an upgrade
+handlers.addPointsToUpgrade = function (args) {
+    if (!isTesting()) {
+         return returnOutOfSync();  
+    }
+
+    var className = args.data[CLASS];
+    var targetID = args.data[TARGET_ID];
+    var upgradeID = args.data[UPGRADE_ID];
+    var pointsToAdd = GetNumberFromArgs(args, UPGRADE_POINTS);
+
+    AddPointsToUpgradeParent(className, targetID, upgradeID, pointsToAdd, args);
+}
+
+/// Test adding progress to an update
+handlers.addProgressToUpgrade = function(args) {
+    if (!isTesting()) {
+         return returnOutOfSync();  
+    }
+
+    var className = args.data[CLASS];
+    var targetID = args.data[TARGET_ID];
+    var upgradeID = args.data[UPGRADE_ID];
+    var totalProgressToAdd = GetFloatFromArgs(args, UPGRADE_PROGRESS);
+
+    AddProgressToUpgrade(className, targetID, upgradeID, totalProgressToAdd, args);
+}
+
 /// Gets the test missions, used when I was creating the mission format
 handlers.getTestMissions = function (args) {
+    if (!isTesting()) {
+         return returnOutOfSync();  
+    }
+
    var missionType = args.data[MISSION_TYPE_KEY];
 
    var missions = GetMissionsOfType(missionType);
@@ -1419,13 +1451,8 @@ function GetUpgradeCost(resourcesToUpgrade, resource, progressData) {
 /// PointsUpgradeables
 /////////////////////////////////////////////////
 
-/// client method for adding points to an upgradeable
-handlers.addPointsToUpgrade = function (args) {
-    var className = args.data[CLASS];
-    var targetID = args.data[TARGET_ID];
-    var upgradeID = args.data[UPGRADE_ID];
-    var pointsToAdd = GetNumberFromArgs(args, UPGRADE_POINTS);
-
+/// server method for adding points to an upgradeable
+function AddPointsToUpgradeParent(className, targetID, upgradeID, pointsToAdd, args) {
     log.info("Adding " + pointsToAdd + " to " + targetID);
 
     var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
@@ -1485,13 +1512,8 @@ function GetTotalPointsForNextLevel(progressDataForTarget, upgradeData) {
     return totalPoints;
 }
 
-/// adds progress (i.e. 100%, 50%, etc) worth of xp to an upgrade
-handlers.addProgressToUpgrade = function(args) {
-    var className = args.data[CLASS];
-    var targetID = args.data[TARGET_ID];
-    var upgradeID = args.data[UPGRADE_ID];
-    var totalProgressToAdd = GetFloatFromArgs(args, UPGRADE_PROGRESS);
-
+/// server method that adds progress (i.e. 100%, 50%, etc) worth of xp to an upgrade
+function AddProgressToUpgrade(className, targetID, upgradeID, totalProgressToAdd, args) {
     var upgradeData = GetUpgradeDataForTarget(className, targetID, upgradeID);
     var allProgressDataForClass = GetProgressData(className);
     var progressDataForTarget = GetProgressForTarget(allProgressDataForClass, targetID);
