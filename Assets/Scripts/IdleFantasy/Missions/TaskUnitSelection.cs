@@ -24,6 +24,9 @@ namespace IdleFantasy {
         public MissionTaskProposal TaskProposal { get { return mTaskProposal; } }
 
         private MissionProposal mMissionProposal = new MissionProposal();
+
+        private bool mSelected = false;
+        public bool Selected { get { return mSelected; } set { mSelected = value; } }
         #endregion
 
         #region Public Properties
@@ -89,15 +92,7 @@ namespace IdleFantasy {
         }
 
         public void UnitSelected( bool i_selected ) {
-            if ( !HasEnoughUnits() ) {
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Unit selected, but not enough units: " + mUnit.GetID(), "TaskUnitSelection" );
-                return;
-            }
-
-            if ( !i_selected && mMissionProposal.PromisedUnits.ContainsKey( Unit.GetID() ) && mMissionProposal.PromisedUnits[Unit.GetID()] == 0 ) {
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Unit unselected, but it was never selected properly: " + mUnit.GetID(), "TaskUnitSelection" );
-                return;
-            }
+            mSelected = i_selected;
 
             if ( i_selected ) {
                 mMissionProposal.AddProposal( TaskIndex, mTaskProposal );

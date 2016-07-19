@@ -1,9 +1,13 @@
 ﻿using MyLibrary;
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace IdleFantasy {
     public class MissionTaskView : GroupView {
+        #region Inspector
+        public ToggleGroup ToggleGroup;
+        #endregion
+
         public GameObject EligibleUnitPrefab;
         public GameObject EligibleUnitContent;
 
@@ -36,23 +40,37 @@ namespace IdleFantasy {
         }
 
         private void ToggleUnitSelectionFromIndex( int i_missionTaskIndex ) {
-            if ( i_missionTaskIndex == mTaskIndex - 1 ) {
+            if ( PriorTaskWasSelected( i_missionTaskIndex ) ) {
                 ToggleUnitSelectionOn();
-            } else if ( i_missionTaskIndex < mTaskIndex ) {
+            } else if ( NonPriorPreviousTaskWasSelected( i_missionTaskIndex ) ) {
                 ToggleUnitSelectionOff();
             }
         }
 
+        private bool PriorTaskWasSelected( int i_missionTaskIndex ) {
+            return i_missionTaskIndex == mTaskIndex - 1;
+        }
+
+        private bool NonPriorPreviousTaskWasSelected( int i_missionTaskIndex ) {
+            return i_missionTaskIndex < mTaskIndex;
+        }
+
         private void ToggleUnitSelectionOff() {
             EligibleUnitContent.SetActive( false );
+            UnselectAnyToggledSelections();
         }
 
         private void ToggleUnitSelectionOn() {
             EligibleUnitContent.SetActive( true );
+            UnselectAnyToggledSelections();
 
             foreach ( TaskUnitSelection unitSelection in mMissionTask.UnitsEligibleForTask ) {
                 unitSelection.RecalculateProperties();
             }
+        }
+
+        private void UnselectAnyToggledSelections() {
+            ToggleGroup.SetAllTogglesOff();
         }
 
         private void OnUnitSelectedForThisTask( TaskUnitSelection i_selection ) {

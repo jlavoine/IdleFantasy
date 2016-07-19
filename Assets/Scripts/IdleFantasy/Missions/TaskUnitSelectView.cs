@@ -7,6 +7,8 @@ namespace IdleFantasy {
         public Toggle Toggle;
         #endregion
 
+        private bool mIsOn = false; // Need this because you can't tell if a toggle is on or not on selection...!
+
         public delegate void UnitSelectedHandler( TaskUnitSelection unitSelection );
         public event UnitSelectedHandler UnitSelectedEvent;
 
@@ -28,6 +30,12 @@ namespace IdleFantasy {
         }
 
         public void OnUnitSelected( bool i_selected ) {
+            // this effectively blocks selection of a unit that is already selected. Why Unity, WHY???
+            if ( mIsOn && i_selected ) {
+                return;
+            }
+            
+            mIsOn = i_selected;
             if ( UnitSelectedEvent != null ) {
                 mTaskUnitSelection.UnitSelected( i_selected );
                 UnitSelectedEvent( mTaskUnitSelection );
