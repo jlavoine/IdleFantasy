@@ -10,9 +10,7 @@ using NSubstitute;
 namespace IdleFantasy.UnitTests {
     [TestFixture]
     public class TaskUnitSelectionTest {
-
-        private Dictionary<string, int> mPromisedUnits;
-        private Dictionary<int, MissionTaskProposal> mTaskProposals;
+        private IMissionProposal mMissionProposal;
 
         private TaskUnitSelection mTestSelection;
         private const int TEST_TASK_INDEX = 1;
@@ -27,14 +25,21 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
             mPlayerData = UnitTestUtils.LoadMockPlayerData();
 
-            mPromisedUnits = new Dictionary<string, int>();
-            mTaskProposals = new Dictionary<int, MissionTaskProposal>();           
+            mMissionProposal = CreateMockMissionProposal();
             mUnit = new MockUnit( 100 );
             mTestSelection = new TaskUnitSelection( mUnit, 
                 new MissionTaskData() { Index = TEST_TASK_INDEX, StatRequirement = TEST_STAT, PowerRequirement = POWER_REQUIREMENT }, 
-                new MissionProposal( mPromisedUnits, mTaskProposals ) );
+                mMissionProposal );
 
             SetPlayerDataToNotEnoughUnits();
+        }
+
+        private IMissionProposal CreateMockMissionProposal() {
+            IMissionProposal mock = Substitute.For<IMissionProposal>();
+            mock.PromisedUnits.Returns( new Dictionary<string, int>() );
+            mock.TaskProposals.Returns( new Dictionary<int, MissionTaskProposal>() );
+
+            return mock;
         }
 
         [Test]
@@ -88,39 +93,18 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
-        public void PromisedUnitsChangesCorrectly_OnUnitSelectionTrue() {
-            SetPlayerDataToEnoughUnits();
-            int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( mUnit, TEST_STAT, POWER_REQUIREMENT );
-            mTestSelection.UnitSelected( true );
-            
-            Assert.AreEqual( unitsRequired, mPromisedUnits[mUnit.GetID()] );
-        }
-
-        [Test]
-        public void PromisedUnitsChangesCorrectly_OnUnitSelectionFalse() {
-            SetPlayerDataToEnoughUnits();
-            int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( mUnit, TEST_STAT, POWER_REQUIREMENT );
-            mPromisedUnits[mUnit.GetID()] = unitsRequired;
-            mTestSelection.UnitSelected( false );
-
-            Assert.AreEqual( 0, mPromisedUnits[mUnit.GetID()] );
-        }
-
-        [Test]
-        public void UnitSelectedWithNotEnoughUnits_PromisesNoUnits() {
-            SetPlayerDataToNotEnoughUnits();
+        public void OnSelection_AddsProposal() {
             mTestSelection.UnitSelected( true );
 
-            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit.GetID() ) );
+            mMissionProposal.Received().AddProposal( Arg.Any<int>(), Arg.Any<MissionTaskProposal>() );
         }
 
         [Test]
-        public void UnselectedUnitThatGetsUnselected_ReturnsNoUnits() {
-            SetPlayerDataToNotEnoughUnits();
+        public void OnUnselect_RemovesProposal() {
             mTestSelection.UnitSelected( false );
 
-            Assert.IsFalse( mPromisedUnits.ContainsKey( mUnit.GetID() ) );
-        }
+            mMissionProposal.Received().RemoveProposal( Arg.Any<int>(), Arg.Any<MissionTaskProposal>() );
+        }     
 
         private void SetPlayerDataToEnoughUnits() {
             IBuildingUtils utils = Substitute.For<IBuildingUtils>();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace IdleFantasy {
-    public class MissionProposal {
+    public class MissionProposal : IMissionProposal {
         private Dictionary<string, int> mPromisedUnits = new Dictionary<string, int>();
         public Dictionary<string, int> PromisedUnits { get { return mPromisedUnits; } }
 

@@ -23,7 +23,7 @@ namespace IdleFantasy {
         private MissionTaskProposal mTaskProposal;
         public MissionTaskProposal TaskProposal { get { return mTaskProposal; } }
 
-        private MissionProposal mMissionProposal = new MissionProposal();
+        private IMissionProposal mMissionProposal = new MissionProposal();
 
         private bool mSelected = false;
         public bool Selected { get { return mSelected; } set { mSelected = value; } }
@@ -33,7 +33,7 @@ namespace IdleFantasy {
         public int NumUnitsRequired { get { return mModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ); } }
         #endregion
 
-        public TaskUnitSelection( IUnit i_unit, MissionTaskData i_taskData, MissionProposal i_proposal ) {
+        public TaskUnitSelection( IUnit i_unit, MissionTaskData i_taskData, IMissionProposal i_proposal ) {
             mMissionProposal = i_proposal;
             mUnit = i_unit;
             mTaskIndex = i_taskData.Index;
