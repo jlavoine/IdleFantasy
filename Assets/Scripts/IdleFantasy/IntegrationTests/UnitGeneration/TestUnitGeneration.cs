@@ -30,7 +30,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         protected IEnumerator FailTestIfUnitCountDoesNotEqual( float i_count ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
-            testParams[IntegrationTestUtils.TARGET_ID] = UNIT_BEING_COUNTED;
+            testParams[BackendConstants.TARGET_ID] = UNIT_BEING_COUNTED;
 
             FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getUnitCount.ToString(), i_count, testParams );
 

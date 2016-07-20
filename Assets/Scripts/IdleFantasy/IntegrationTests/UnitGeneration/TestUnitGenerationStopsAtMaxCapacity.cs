@@ -22,7 +22,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator SetMaxCapacity() {
             yield return GetNumberFromCloudCall( CloudTestMethods.getCapacityForUnit.ToString(),
-                new Dictionary<string, string>() { { IntegrationTestUtils.TARGET_ID, UNIT_BEING_COUNTED } },
+                new Dictionary<string, string>() { { BackendConstants.TARGET_ID, UNIT_BEING_COUNTED } },
                 (result) => {
                     mMaxCapacity = result;
                 } );

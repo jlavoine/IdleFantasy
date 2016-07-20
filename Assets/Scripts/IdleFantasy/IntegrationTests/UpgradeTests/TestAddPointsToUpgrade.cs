@@ -16,9 +16,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator SetPointsToAdd() {
             yield return GetNumberFromCloudCall( CloudTestMethods.getTotalPointsToUpgrade.ToString(),
-                new Dictionary<string, string>() { { IntegrationTestUtils.TARGET_ID, mCurrentTestData.TestID },
-                    { IntegrationTestUtils.CLASS, mCurrentTestData.TestClass },
-                    { IntegrationTestUtils.UPGRADE_ID, mCurrentTestData.TestUpgradeID } },
+                new Dictionary<string, string>() { { BackendConstants.TARGET_ID, mCurrentTestData.TestID },
+                    { BackendConstants.CLASS, mCurrentTestData.TestClass },
+                    { BackendConstants.UPGRADE_ID, mCurrentTestData.TestUpgradeID } },
                 ( result ) => {                    
                     mPointsToAdd = (int)result / 2; // don't want all the points so the upgrade doesn't level up!
                 } );

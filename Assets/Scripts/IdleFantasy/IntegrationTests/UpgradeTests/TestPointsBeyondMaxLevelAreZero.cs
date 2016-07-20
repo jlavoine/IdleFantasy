@@ -17,9 +17,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator SetLevelToSet() {
             yield return GetNumberFromCloudCall( CloudTestMethods.getMaxLevelForUpgrade.ToString(),
-                new Dictionary<string, string>() { { IntegrationTestUtils.TARGET_ID, mCurrentTestData.TestID },
-                    { IntegrationTestUtils.CLASS, mCurrentTestData.TestClass },
-                    { IntegrationTestUtils.UPGRADE_ID, mCurrentTestData.TestUpgradeID } },
+                new Dictionary<string, string>() { { BackendConstants.TARGET_ID, mCurrentTestData.TestID },
+                    { BackendConstants.CLASS, mCurrentTestData.TestClass },
+                    { BackendConstants.UPGRADE_ID, mCurrentTestData.TestUpgradeID } },
                 ( result ) => {
                     mLevelToSet = (int) result - 1;
                 } );
