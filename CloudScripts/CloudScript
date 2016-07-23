@@ -499,6 +499,25 @@ function AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProg
 function HasEnoughProposedUnits(taskProposals, allUnitProgress) {
     log.info("Checking to see if player has proposed units");
 
+    var unitsProposed = GetTotalUnitsProposed(taskProposals);
+    for (var proposedUnit in unitsProposed) {
+        var count = unitsProposed[proposedUnit];
+        log.info("About to ensure that player has " + count + " of " + proposedUnit);
+
+        var unitProgress = allUnitProgress[proposedUnit];
+        var hasEnough = HasEnoughUnits(unitProgress, count);
+
+        if (!hasEnough) {
+            log.info("Proposed units fails count on " + proposedUnit);
+            return false;
+        }
+    }
+
+    log.info("Proposed units pass count");
+    return true;
+}
+
+function GetTotalUnitsProposed(taskProposals) {
     var unitsProposed = {};
     for (index in taskProposals) {
         var proposal = taskProposals[index];
@@ -513,16 +532,7 @@ function HasEnoughProposedUnits(taskProposals, allUnitProgress) {
         }
     }
 
-    for (var proposedUnit in unitsProposed) {
-        var count = unitsProposed[proposedUnit];
-        log.info("About to ensure that player has " + count + " of " + proposedUnit);
-
-        var unitProgress = allUnitProgress[proposedUnit];
-        var hasEnough = HasEnoughUnits(unitProgress, count);
-    }
-
-    log.info("Proposed units pass count");
-    return true;
+    return unitsProposed;
 }
 
 function ProposalMeetsPowerRequirement(unitDataForProposal, unitProgressForProposal, task, proposal, modifiers) {
@@ -624,7 +634,7 @@ function GetGuildBonus(modifier, unitData, unitProgress, stat) {
     var allGuildProgress = modifier.progress;
 
     var bonus = 0;
-    for (var guildID in allGuildData) {
+    for (var guildID in allGuildProgress) {
         log.info("Getting bonus for guild " + guildID);
 
         var guildData = allGuildData[guildID];

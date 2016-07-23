@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public static class IntegrationTestUtils {
+        public const string SAVE_KEY_UNITS = "UnitsProgress";
+        public const string SAVE_KEY_GUILDS = "GuildsProgress";
+
         public static IEnumerator UpgradeTarget_NoRules( string i_targetID, string i_className ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
             testParams[BackendConstants.TARGET_ID] = i_targetID;
@@ -28,8 +31,10 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             SetSaveData( i_key, i_value, BackendConstants.ACCESS_READ_ONLY );
         }
 
-        public static void SetInternalData( string i_key, string i_value ) {
+        public static IEnumerator SetInternalData( string i_key, string i_value ) {
             SetSaveData( i_key, i_value, BackendConstants.ACCESS_INTERNAL );
+
+            yield return BackendManager.Backend.WaitUntilNotBusy();
         }
 
         public static void SetSaveData( string i_key, string i_value, string i_access ) {
