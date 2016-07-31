@@ -19,27 +19,27 @@ namespace MyLibrary.UnitTests {
 
         [Test]
         public void ValueInBetweenMinAndMax_Passes() {
-            Assert.IsTrue( mRestrictionUnderTest.Passes( MID_VALUE ) );
+            Assert.IsTrue( mRestrictionUnderTest.DoesPass( MID_VALUE ) );
         }
 
         [Test]
         public void ValueLessThanMin_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.Passes( MIN_VALUE-1 ) );
+            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MIN_VALUE-1 ) );
         }
 
         [Test]
         public void ValueGreaterThanMax_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.Passes( MAX_VALUE + 1 ) );
+            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MAX_VALUE + 1 ) );
         }
 
         [Test]
         public void ValueEqualToMin_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.Passes( MIN_VALUE ) );
+            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MIN_VALUE ) );
         }
 
         [Test]
         public void ValueEqualToMax_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.Passes( MAX_VALUE ) );
+            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MAX_VALUE ) );
         }
     }
 }
