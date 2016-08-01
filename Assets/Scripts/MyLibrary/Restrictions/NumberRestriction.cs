@@ -6,7 +6,7 @@ namespace MyLibrary {
         public float Max;
 
         public bool DoesPass( float i_num ) {
-            return i_num > Min && i_num < Max;
+            return i_num >= Min && i_num <= Max;
         }
     }
 }

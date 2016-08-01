@@ -33,13 +33,13 @@ namespace MyLibrary.UnitTests {
         }
 
         [Test]
-        public void ValueEqualToMin_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MIN_VALUE ) );
+        public void ValueEqualToMin_Passes() {
+            Assert.IsTrue( mRestrictionUnderTest.DoesPass( MIN_VALUE ) );
         }
 
         [Test]
-        public void ValueEqualToMax_Fails() {
-            Assert.IsFalse( mRestrictionUnderTest.DoesPass( MAX_VALUE ) );
+        public void ValueEqualToMax_Passes() {
+            Assert.IsTrue( mRestrictionUnderTest.DoesPass( MAX_VALUE ) );
         }
     }
 }
