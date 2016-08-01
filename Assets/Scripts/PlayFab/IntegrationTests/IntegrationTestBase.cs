@@ -32,6 +32,12 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             }
         }
 
+        protected void FailTestIfClientOutOfSync( string i_testName ) {
+            if ( mBackend.IsClientOutOfSync() ) {
+                IntegrationTest.Fail( i_testName + ": Client should NOT be out of sync, but it is." );
+            }
+        }
+
         protected void FailTestIfCurrencyDoesNotEqual( int i_amount ) {
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 if ( numGold != i_amount ) {

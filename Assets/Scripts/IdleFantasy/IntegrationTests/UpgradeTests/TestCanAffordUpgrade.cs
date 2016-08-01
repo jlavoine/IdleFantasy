@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestCanAffordUpgrade : TestStandardUpgrades {

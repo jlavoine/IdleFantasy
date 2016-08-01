@@ -29,6 +29,24 @@ const UNIT_STATS = "Stats";                         // stats object on the unit
 // unit stats
 const STAT_BASE = "Base";                           // key for the base stat on a unit
 
+// misc
+const WEIGHT = "Weight";                            // weight of an object
+const LEVEL_RESTRICTION = "LevelRestriction";       // level restriction of an object
+const MIN = "Min";
+const MAX = "Max";
+
+// map related
+const MAP_TITLE_KEY = "Map_";                           // key used in map title data
+const MAP_WORLD = "World";                              // key in map data structure for the map's world
+const MAP_LEVEL = "MapLevel";                           // key in mapa data structure for the map's level
+
+// map piece related
+const MAP_PIECES_TITLE_KEY = "MapPieces_";
+const MAP_PREFIX = "Prefix";                            // keys for the 3 parts of a map name that determine its characteristics
+const MAP_TERRAIN = "Terrain";
+const MAP_SUFFIX = "Suffix";
+const MAP_PIECE_ID = "ID";                              // key in map piece data for the piece's ID
+
 // buildings
 const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
 const BUILDING_UNIT = "Unit";                       // key for building title data: the building's unit
@@ -92,6 +110,7 @@ const DATA_ACCESS = "DataAccess";       // for specifying internal, read only, e
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
 const DATA = "Data";                        // API key for accessing data after getting the save data
 const VALUE = "Value";                      // API key for accessing the actual data value after getting the save data
+
 
 /////////////////////////////////////////////////
 /// ~Constants
@@ -409,8 +428,122 @@ handlers.setPlayerCurrency = function(args) {
     }
 }
 
+handlers.testMapNames = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
+    var mapWorld = args.data[MAP_WORLD];
+
+    var map = CreateMapObject(mapLevel, mapWorld);
+    SetMapName(map);
+
+    return ReturnDataToClient(map);
+}
+
 /////////////////////////////////////////////////
 /// ~Testing
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Map Creation
+/////////////////////////////////////////////////
+
+/// Creates a map for the given level and world
+function CreateMap(mapLevel, worldKey) {    
+    var map = CreateMapObject(mapLevel, worldKey);
+
+    SetMapName(map);
+
+    return map;
+}
+
+function CreateMapObject(mapLevel, worldKey) {
+    log.info("Creating a map object with level " + mapLevel + " and world " + worldKey);
+
+    var map = {};
+    map[MAP_WORLD] = worldKey;
+    map[MAP_LEVEL] = mapLevel;
+
+    return map;
+}
+
+function SetMapName(map) {
+    log.info("Setting map name");
+
+    map[MAP_PREFIX] = GetMapPiece(map, MAP_PREFIX);
+    map[MAP_TERRAIN] = GetMapPiece(map, MAP_TERRAIN);
+    map[MAP_SUFFIX] = GetMapPiece(map, MAP_SUFFIX);
+}
+
+function GetMapPiece(map, pieceKey) {
+    var allPieces = GetTitleDataForMapPiece(pieceKey);    
+    var validPieces = [];
+    
+    for (var index in allPieces) {
+        var pieceData = allPieces[index];
+        log.info("Processing piece: " + JSON.stringify(pieceData));
+
+        var levelRestriction = GetMapPieceLevelRestriction(pieceData);
+        if (DoesPassNumberRestriction(levelRestriction, map[MAP_LEVEL])) {
+            var weight = GetMapPieceWeight(pieceData);
+            log.info(pieceData[MAP_PIECE_ID] + " is a valid piece, pushing it " + weight + " times");
+            for (i = 0; i < weight; i++) {
+                validPieces.push(pieceData);
+            }
+        }
+    }
+
+    var randomPiece = validPieces[Math.floor(Math.random() * validPieces.length)];
+    log.info("Chose map piece: " + randomPiece[MAP_PIECE_ID]);
+
+    return randomPiece;
+}
+
+function GetTitleDataForMapPiece(pieceKey) {
+    log.info("Getting map piece data for " + pieceKey);
+
+    var titleDataKey = MAP_PIECES_TITLE_KEY + pieceKey;
+    var titleData = server.GetTitleData({ Keys : titleDataKey });
+    var data = titleData[DATA];
+    var allPieceData = data[titleDataKey];
+
+    log.info("Getting piece data for " + pieceKey + ": " + allPieceData);
+
+    return JSON.parse(allPieceData);
+}
+
+function GetMapPieceWeight(pieceData) {
+    return pieceData[WEIGHT];
+}
+
+function GetMapPieceLevelRestriction(pieceData) {
+    return pieceData[LEVEL_RESTRICTION];
+}
+
+/////////////////////////////////////////////////
+/// ~Map Creation
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Number Restriction
+/////////////////////////////////////////////////
+
+function DoesPassNumberRestriction(restriction, value) {
+    var min = restriction[MIN];
+    var max = restriction[MAX];
+    log.info("Checking number restriction with min/max of " + min + "/" + max + " and value " + value);
+
+    var passes = value >= min && value <= max;
+
+    log.info("Passes: " + passes);
+    return passes;
+}
+
+
+/////////////////////////////////////////////////
+/// ~Number Restriction
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -920,6 +1053,26 @@ function GetBuildingStartingSize(buildingTitleData) {
 function returnOutOfSync() {
     return { outOfSync : true };
 }
+
+/// returns an array of JSON objects for the given data keys
+/// doesn't work right now because title data storage isn't consistent (some are an array of data, some are kvp)
+/*function GetTitleData(dataKeys) {
+    var titleData = server.GetTitleData({ Keys : dataKeys });
+    var allData = titleData[DATA];
+    var objectData = {};
+
+    for (var dataType in allData) {
+        var jsonData = JSON.parse(allData[dataType]);
+
+        for(var data in jsonData) {
+            objectData[data] = jsonData[data];
+        }
+    }
+
+    log.info("Getting title data for " + className + ": " + JSON.stringify(objectData));
+
+    return objectData;
+}*/
 
 function GetPlayerInventory() {
     var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
