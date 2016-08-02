@@ -20,6 +20,7 @@ namespace IdleFantasy {
         public const string MAP_LEVEL = "MapLevel";
         public const string MAP_WORLD = "World";
         public const string MAP_SIZE = "MapSize";
+        public const string MINIMUM = "Minimum";
         #endregion
 
         #region Cloud Methods
