@@ -90,7 +90,7 @@ namespace MyLibrary {
                     i_requestSuccessCallback( resultsDeserialized );
                 }
 
-                RequestComplete( "Cloud logs for " + i_methodName + " call " + ": " + result.ActionLog, LogTypes.Info );
+                RequestComplete( "Cloud logs for " + i_methodName + "(" + result.ExecutionTime + ") call " + ": " + result.ActionLog, LogTypes.Info );
             }, ( error ) => { HandleError( error, i_methodName ); } );
         }
 

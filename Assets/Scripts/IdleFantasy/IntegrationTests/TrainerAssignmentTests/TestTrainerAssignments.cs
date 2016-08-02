@@ -17,7 +17,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             mBackend.MakeCloudCall( CloudTestMethods.getProgressData.ToString(), getParams, ( results ) => {
                 if ( results.ContainsKey( "data" ) ) {
-                    UnitProgress progress = JsonConvert.DeserializeObject<UnitProgress>( results["data"] );
+                    UnitProgress progress = JsonConvert.DeserializeObject<UnitProgress>( results[BackendConstants.DATA] );
                     if ( progress.Trainers != i_trainers ) {
                         IntegrationTest.Fail( "Trainers did not match: " + i_trainers );
                     }

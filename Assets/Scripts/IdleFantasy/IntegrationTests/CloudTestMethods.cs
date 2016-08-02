@@ -22,6 +22,8 @@ namespace IdleFantasy {
         addPointsToUpgrade,
         addProgressToUpgrade,
         getTestMissions,
-        testMapNames
+        testMapNames,
+        testMapAreas,
+        getDefaultMapAreaWeights
     }
 }

@@ -19,6 +19,7 @@ namespace IdleFantasy {
         public const string MISSION_PROPOSALS = "TaskProposals";
         public const string MAP_LEVEL = "MapLevel";
         public const string MAP_WORLD = "World";
+        public const string MAP_SIZE = "MapSize";
         #endregion
 
         #region Cloud Methods

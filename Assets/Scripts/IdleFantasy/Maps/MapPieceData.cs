@@ -1,4 +1,5 @@
 ﻿using MyLibrary;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class MapPieceData {
@@ -6,6 +7,6 @@ namespace IdleFantasy {
         public MapPieceTypes PieceType;
         public int Weight;
         public NumberRestriction LevelRestriction;
-        public StringRestriction TestRestriction;
+        public List<MapModifier> Modifications;
     }
 }

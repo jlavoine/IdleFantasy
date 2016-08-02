@@ -7,12 +7,14 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         public const int NUM_TESTS = 10;
         public const int TEST_LEVEL = 1;
+        public const int TEST_SIZE = 36;
         public const string TEST_WORLD = "TestWorld";
 
         protected override IEnumerator RunAllTests() {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
             testParams[BackendConstants.MAP_LEVEL] = TEST_LEVEL.ToString();
             testParams[BackendConstants.MAP_WORLD] = TEST_WORLD;
+            testParams[BackendConstants.MAP_SIZE] = TEST_SIZE.ToString();
 
             for ( int i = 0; i < NUM_TESTS; ++i ) {
                 mBackend.MakeCloudCall( CloudTestMethods.testMapNames.ToString(), testParams, CheckMapNames );

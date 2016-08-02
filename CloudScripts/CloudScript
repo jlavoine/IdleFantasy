@@ -29,23 +29,45 @@ const UNIT_STATS = "Stats";                         // stats object on the unit
 // unit stats
 const STAT_BASE = "Base";                           // key for the base stat on a unit
 
-// misc
+// misc -- these are keys many data structures have
 const WEIGHT = "Weight";                            // weight of an object
 const LEVEL_RESTRICTION = "LevelRestriction";       // level restriction of an object
 const MIN = "Min";
 const MAX = "Max";
+const INDEX = "Index";
+const MINIMUM = "Minimum";
+const MODIFIES_TYPE = "ModifiesType";
+const KEY = "Key";
+const AMOUNT = "Amount";
+const MODIFICATIONS = "Modifications";
 
 // map related
+const DEFAULT_SIZE = 36;
 const MAP_TITLE_KEY = "Map_";                           // key used in map title data
 const MAP_WORLD = "World";                              // key in map data structure for the map's world
 const MAP_LEVEL = "MapLevel";                           // key in mapa data structure for the map's level
+const MAP_SIZE = "MapSize";                             // key for size of the map (int)
+const MAP_AREAS = "Areas";                              // key for list/array of areas inside a map
+
+// map defaults
+const DEFAULT_MAP_WEIGHTS = "DefaultMapWeights";        // title data key
+const DEFAULT_COMBAT_WEIGHT = 40;
+const DEFAULT_COMBAT_MINIMUM = 10;
+const DEFAULT_EXPLORE_WEIGHT = 40;
+const DEFAULT_EXPLORE_MINIMUM = 10;
+const DEFAULT_MISC_WEIGHT = 20;
+const DEFAULT_MISC_MINIMUM = 5;
+
+// map area related
+const MAP_AREA_TYPE = "AreaType";                       // key holding the type an area is (combat, explore, misc, etc)
+const MAP_AREA_MISSION = "Mission";                     // key holding the mission of an area
 
 // map piece related
 const MAP_PIECES_TITLE_KEY = "MapPieces_";
 const MAP_PREFIX = "Prefix";                            // keys for the 3 parts of a map name that determine its characteristics
 const MAP_TERRAIN = "Terrain";
 const MAP_SUFFIX = "Suffix";
-const MAP_PIECE_ID = "ID";                              // key in map piece data for the piece's ID
+const MAP_PIECE_ID = "ID";                              // key in map piece data for the piece's ID               
 
 // buildings
 const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
@@ -435,11 +457,37 @@ handlers.testMapNames = function(args) {
 
     var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
     var mapWorld = args.data[MAP_WORLD];
+    var mapSize = GetNumberFromArgs(args, MAP_SIZE);
 
-    var map = CreateMapObject(mapLevel, mapWorld);
+    var map = CreateMapObject(mapWorld, mapLevel, mapSize);
     SetMapName(map);
+    SetMapAreas(map);
 
     return ReturnDataToClient(map);
+}
+
+handlers.testMapAreas = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
+    var mapWorld = args.data[MAP_WORLD];
+    var mapSize = GetNumberFromArgs(args, MAP_SIZE);
+
+    var map = CreateMap(mapWorld, mapLevel, mapSize);
+
+    return ReturnDataToClient(map);
+}
+
+handlers.getDefaultMapAreaWeights = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var defaultWeights = GetTitleData(DEFAULT_MAP_WEIGHTS);
+
+    return ReturnDataToClient(defaultWeights);
 }
 
 /////////////////////////////////////////////////
@@ -451,36 +499,192 @@ handlers.testMapNames = function(args) {
 /////////////////////////////////////////////////
 
 /// Creates a map for the given level and world
-function CreateMap(mapLevel, worldKey) {    
-    var map = CreateMapObject(mapLevel, worldKey);
+function CreateMap(worldKey, mapLevel, mapSize) {    
+    var map = CreateMapObject(worldKey, mapLevel, mapSize);
 
     SetMapName(map);
+    SetMapAreas(map);
 
+    log.info("Returning map: " + JSON.stringify(map));
     return map;
 }
 
-function CreateMapObject(mapLevel, worldKey) {
-    log.info("Creating a map object with level " + mapLevel + " and world " + worldKey);
+function CreateMapObject(worldKey, mapLevel, mapSize) {
+    log.info("Creating a map object with level " + mapLevel + " and world " + worldKey + " and size " + mapSize);
 
     var map = {};
     map[MAP_WORLD] = worldKey;
     map[MAP_LEVEL] = mapLevel;
+    map[MAP_SIZE] = mapSize;
+
+    map[MAP_AREAS] = [];
 
     return map;
 }
 
 function SetMapName(map) {
-    log.info("Setting map name");
+    log.info("Setting map name for " + JSON.stringify(map));
 
     map[MAP_PREFIX] = GetMapPiece(map, MAP_PREFIX);
     map[MAP_TERRAIN] = GetMapPiece(map, MAP_TERRAIN);
     map[MAP_SUFFIX] = GetMapPiece(map, MAP_SUFFIX);
 }
 
+function SetMapAreas(map) {
+    log.info("Setting map areas for " + JSON.stringify(map));
+
+    var indexArray = CreateMapIndexArray(map);
+    var areaWeights = GetMapAreaWeights(map);
+    var areas = map[MAP_AREAS];
+    var weightedAreaList = GetWeightedMapAreaList(areaWeights);
+
+    for (i = indexArray.length-1; i >= 0; i--) {   
+        var index = indexArray[i];
+        areas[index] = CreateMapArea(map, index, areaWeights, weightedAreaList);
+
+        indexArray.splice(i, 1);    // remove index from array
+    }
+}
+
+function GetMapAreaWeights(map) {
+    log.info("Getting map area weights");
+    
+    var areaWeights = GetTitleData(DEFAULT_MAP_WEIGHTS);
+
+    var mapNameModifications = GetMapModificationsFromName(map);
+    for (var index in mapNameModifications) {        
+        ModifyWeightsFromModification(areaWeights, mapNameModifications[index]);
+    }
+
+    log.info("Area weights after modifications: " + JSON.stringify(areaWeights));
+    return areaWeights;
+}
+
+function ModifyWeightsFromModification(areaWeights, modification) {
+    log.info("Modifying area weights from " + JSON.stringify(modification));
+    
+    var areaTypeModified = modification[MODIFIES_TYPE];
+    var areaTypeWeight = areaWeights[areaTypeModified];
+
+    var modifications = modification[MODIFICATIONS];
+    for (var index in modifications) {
+        var modifier = modifications[index];
+        var modifierType = modifier[KEY];
+        var modifierAmount = modifier[AMOUNT];
+        areaTypeWeight[modifierType] += modifierAmount;
+    }
+}
+
+function GetMapModificationsFromName(map) {
+    log.info("Getting map modifications from map name");
+
+    var prefixMods = GetMapModificationsFromMapPiece(map, MAP_PREFIX);
+    var terrainMods = GetMapModificationsFromMapPiece(map, MAP_TERRAIN);
+    var suffixMods = GetMapModificationsFromMapPiece(map, MAP_SUFFIX);
+
+    var allModifications = prefixMods.concat(terrainMods, suffixMods);
+
+    log.info("Total map modifications from map name: " + JSON.stringify(allModifications));
+
+    return allModifications;
+}
+
+function GetMapModificationsFromMapPiece(map, pieceKey) {
+    var mapPiece = map[pieceKey];
+    var mapModifications = mapPiece[MODIFICATIONS];
+
+    return mapModifications;
+}
+
+function CreateMapArea(map, areaIndex, areaWeights, weightedAreaList) {
+    var area = {};
+
+    area[INDEX] = areaIndex;
+    area[MAP_AREA_TYPE] = GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList);
+    area[MAP_AREA_MISSION];
+
+    return area;
+}
+
+function GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList) {
+    if (DoAreaWeightsHaveMinimumRemaining(areaWeights)) {
+        return GenerateMapAreaTypeFromMinimum(areaWeights);
+    } else {
+        return GenerateMapAreaTypeFromWeight(weightedAreaList);
+    }
+}
+
+function GenerateMapAreaTypeFromMinimum(areaWeights) {
+    for (var index in areaWeights) {
+        var areaWeight = areaWeights[index];
+        var minimumRemaining = areaWeight[MINIMUM];
+        if (minimumRemaining > 0) {
+            var areaType = areaWeight[MAP_AREA_TYPE];
+
+            areaWeight[MINIMUM] = minimumRemaining - 1;
+
+            return areaType;
+        }
+    }
+
+    log.info("ERROR: Attempting to generate a minimum from area weights that have no minimum remaining!");
+    return 0;
+}
+
+function GenerateMapAreaTypeFromWeight(weightedList) {
+    var selectedAreaType = GetRandomArrayElement(weightedList);
+
+    return selectedAreaType;
+}
+
+function GetWeightedMapAreaList(areaWeights) {
+    log.info("Generating weighted map area list from " + JSON.stringify(areaWeights));
+
+    var weightedList = [];
+    for (var index in areaWeights) {
+        var areaWeight = areaWeights[index];
+        var weightValue = areaWeight[WEIGHT];
+        if (weightValue > 0) {
+            var areaType = areaWeight[MAP_AREA_TYPE];
+            for (i = 0; i < weightValue; i++) {
+                weightedList.push(areaType);
+            }            
+        }
+    }
+
+    log.info("Got weighted area list: " + JSON.stringify(weightedList));
+    return weightedList;
+}
+
+function DoAreaWeightsHaveMinimumRemaining(areaWeights) {
+    for (var index in areaWeights) {
+        var areaWeight = areaWeights[index];
+
+        if (areaWeight[MINIMUM] > 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function CreateMapIndexArray(map) {
+    log.info("Creating a map index array of size " + map[MAP_SIZE]);
+
+    var indexArray = [];
+
+    for (i = 0; i < map[MAP_SIZE]; i++) {
+        indexArray.push(i);
+    }
+
+    ShuffleArray(indexArray);
+    return indexArray;
+}
+
 function GetMapPiece(map, pieceKey) {
     var allPieces = GetTitleDataForMapPiece(pieceKey);    
     var validPieces = [];
-    
+
     for (var index in allPieces) {
         var pieceData = allPieces[index];
         log.info("Processing piece: " + JSON.stringify(pieceData));
@@ -495,7 +699,7 @@ function GetMapPiece(map, pieceKey) {
         }
     }
 
-    var randomPiece = validPieces[Math.floor(Math.random() * validPieces.length)];
+    var randomPiece = GetRandomArrayElement(validPieces);
     log.info("Chose map piece: " + randomPiece[MAP_PIECE_ID]);
 
     return randomPiece;
@@ -1054,25 +1258,34 @@ function returnOutOfSync() {
     return { outOfSync : true };
 }
 
-/// returns an array of JSON objects for the given data keys
-/// doesn't work right now because title data storage isn't consistent (some are an array of data, some are kvp)
-/*function GetTitleData(dataKeys) {
-    var titleData = server.GetTitleData({ Keys : dataKeys });
-    var allData = titleData[DATA];
-    var objectData = {};
+function GetRandomArrayElement(array) {
+    var randomElement = array[Math.floor(Math.random() * array.length)];
+    return randomElement;
+}
 
-    for (var dataType in allData) {
-        var jsonData = JSON.parse(allData[dataType]);
-
-        for(var data in jsonData) {
-            objectData[data] = jsonData[data];
-        }
+function ShuffleArray(array) {
+    var j, x, i;
+    for (i = array.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = array[i - 1];
+        array[i - 1] = array[j];
+        array[j] = x;
     }
+}
 
-    log.info("Getting title data for " + className + ": " + JSON.stringify(objectData));
+/// returns an array of JSON objects for the given data keys
+function GetTitleData(titleDataKey) {
+    log.info("Getting title data for " + titleDataKey);
 
-    return objectData;
-}*/
+    var titleData = server.GetTitleData({ Keys : titleDataKey });
+    var data = titleData[DATA];
+    var actualDataAsString = data[titleDataKey];
+
+    var actualDataAsObject = JSON.parse(actualDataAsString);
+    log.info("Title data as string: " + actualDataAsString);
+
+    return actualDataAsObject;
+}
 
 function GetPlayerInventory() {
     var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
