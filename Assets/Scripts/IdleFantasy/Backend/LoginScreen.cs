@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using MyLibrary;
 using System.Collections;
+using TMPro;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {
+        public const string STATUS_CONNECTING = "Connecting to server...";
+        public const string STATUS_DOWNLOADING = "Connected to server -- downloading data!";
+        public const string STATUS_FAILED = "Failed to connect to server. Please close and try again.";
+
         public GameObject LoginFailurePopup;
 
         private IdleFantasyBackend mBackend;
@@ -15,6 +21,9 @@ namespace IdleFantasy {
 
         private Login mLogin;   // is this the best way...?
 
+        public GameObject PlayButton;
+        public TextMeshProUGUI LoginStatusText;
+
         void Start() {        
             mBackend = new IdleFantasyBackend();
             BackendManager.Init( mBackend );
@@ -22,8 +31,17 @@ namespace IdleFantasy {
             MyMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLoginSuccess );
             MyMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
+            LoginStatusText.text = STATUS_CONNECTING;
+
             mLogin = new Login( mBackend );
             mLogin.Start();
+        }
+
+        private void DoneLoadingData() {
+            if ( !mBackendFailure ) {
+                LoginStatusText.gameObject.SetActive( false );
+                PlayButton.SetActive( true );
+            }
         }
 
         void OnDestroy() {
@@ -36,6 +54,7 @@ namespace IdleFantasy {
             if ( !mBackendFailure ) {
                 mBackendFailure = true;
                 gameObject.InstantiateUI( LoginFailurePopup );
+                LoginStatusText.text = STATUS_FAILED;
             }
         }
 
@@ -44,6 +63,8 @@ namespace IdleFantasy {
         }
 
         private IEnumerator LoadDataFromBackend() {
+            LoginStatusText.text = STATUS_DOWNLOADING;
+
             StringTableManager.Init( "English", mBackend );
             Constants.Init( mBackend );
             GenericDataLoader.Init( mBackend );
@@ -67,12 +88,6 @@ namespace IdleFantasy {
             playerData.CreateManagers();
 
             DoneLoadingData();
-        }
-
-        private void DoneLoadingData() {
-            if ( !mBackendFailure ) {
-                SceneManager.LoadScene( "Main" );
-            }
         }
     }
 }

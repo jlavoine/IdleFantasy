@@ -58,6 +58,11 @@ const DEFAULT_EXPLORE_MINIMUM = 10;
 const DEFAULT_MISC_WEIGHT = 20;
 const DEFAULT_MISC_MINIMUM = 5;
 
+// map area types
+const AREA_COMBAT = "Combat";       // 0
+const AREA_EXPLORE = "Explore";     // 1
+const AREA_MISC = "Misc";           // 2
+
 // map area related
 const MAP_AREA_TYPE = "AreaType";                       // key holding the type an area is (combat, explore, misc, etc)
 const MAP_AREA_MISSION = "Mission";                     // key holding the mission of an area
@@ -114,6 +119,7 @@ const MISSION_PROPOSAL_UNIT = "UnitID";         // key in task proposal holding 
 const MISSION_PROPOSAL_COUNT = "UnitCount";     // key in task proposal holding # of units proposed
 const MISSION_REQUIRED_STAT = "StatRequirement";    // key in a mission task holding the required stat
 const MISSION_REQUIRED_POWER = "PowerRequirement";  // key in a mission task holing the required power
+const MISSION_BASE_TITLE_KEY = "MissionBase_"   // key for title data that holds the basis for missions of a type (combat, explore, etc)
 
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
@@ -537,10 +543,11 @@ function SetMapAreas(map) {
     var areaWeights = GetMapAreaWeights(map);
     var areas = map[MAP_AREAS];
     var weightedAreaList = GetWeightedMapAreaList(areaWeights);
+    var defaultMission = GetTitleData("DefaultMission");
 
     for (i = indexArray.length-1; i >= 0; i--) {   
         var index = indexArray[i];
-        areas[index] = CreateMapArea(map, index, areaWeights, weightedAreaList);
+        areas[index] = CreateMapArea(map, index, areaWeights, weightedAreaList, defaultMission);
 
         indexArray.splice(i, 1);    // remove index from array
     }
@@ -596,14 +603,27 @@ function GetMapModificationsFromMapPiece(map, pieceKey) {
     return mapModifications;
 }
 
-function CreateMapArea(map, areaIndex, areaWeights, weightedAreaList) {
+function CreateMapArea(map, areaIndex, areaWeights, weightedAreaList, defaultMission) {
     var area = {};
 
     area[INDEX] = areaIndex;
     area[MAP_AREA_TYPE] = GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList);
-    area[MAP_AREA_MISSION];
+    area[MAP_AREA_MISSION] = defaultMission; //GenerateMapMission(map, area[MAP_AREA_TYPE]);
+    area[MAP_TERRAIN] = GenerateMapAreaTerrain();
 
     return area;
+}
+
+function GenerateMapMission(map, areaType, missionBases) {
+    
+}
+
+/// this needs to be improved!
+function GenerateMapAreaTerrain() {
+    var terrains = [ 0, 1, 2 ];
+    var selectedTerrain = GetRandomArrayElement(terrains);
+
+    return selectedTerrain;
 }
 
 function GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList) {
