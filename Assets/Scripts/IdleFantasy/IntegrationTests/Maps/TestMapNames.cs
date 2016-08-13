@@ -29,27 +29,27 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void CheckMapNames( Dictionary<string, string> i_results ) {
             MapData data = JsonConvert.DeserializeObject<MapData>( i_results[BackendConstants.DATA] );
 
-            if ( data.Prefix.PieceType != MapPieceTypes.Prefix ) {
-                IntegrationTest.Fail( "Map name test failed: Prefix piece type was " + data.Prefix.PieceType + " and not " + MapPieceTypes.Prefix );
+            if ( data.Name.Prefix.PieceType != MapPieceTypes.Prefix ) {
+                IntegrationTest.Fail( "Map name test failed: Prefix piece type was " + data.Name.Prefix.PieceType + " and not " + MapPieceTypes.Prefix );
             }
 
-            if ( !data.Prefix.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
+            if ( !data.Name.Prefix.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
                 IntegrationTest.Fail( "Map name test failed: Prefix level not valid" );
             }
 
-            if ( data.Terrain.PieceType != MapPieceTypes.Terrain ) {
-                IntegrationTest.Fail( "Map name test failed: Terrain piece type was " + data.Prefix.PieceType + " and not " + MapPieceTypes.Terrain );
+            if ( data.Name.Terrain.PieceType != MapPieceTypes.Terrain ) {
+                IntegrationTest.Fail( "Map name test failed: Terrain piece type was " + data.Name.Terrain.PieceType + " and not " + MapPieceTypes.Terrain );
             }
 
-            if ( !data.Terrain.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
+            if ( !data.Name.Terrain.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
                 IntegrationTest.Fail( "Map name test failed: Terrain level not valid" );
             }
 
-            if ( data.Suffix.PieceType != MapPieceTypes.Suffix ) {
-                IntegrationTest.Fail( "Map name test failed: Suffix piece type was " + data.Prefix.PieceType + " and not " + MapPieceTypes.Suffix );
+            if ( data.Name.Suffix.PieceType != MapPieceTypes.Suffix ) {
+                IntegrationTest.Fail( "Map name test failed: Suffix piece type was " + data.Name.Suffix.PieceType + " and not " + MapPieceTypes.Suffix );
             }
 
-            if ( !data.Suffix.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
+            if ( !data.Name.Suffix.LevelRestriction.DoesPass( TEST_LEVEL ) ) {
                 IntegrationTest.Fail( "Map name test failed: Suffix level not valid" );
             }
         }

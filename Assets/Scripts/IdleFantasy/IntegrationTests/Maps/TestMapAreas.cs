@@ -45,9 +45,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 defaultWeights = RemoveNonMinimumsFromDefaults( defaultWeights );
 
                 // now change the weights based on the modifications of the map data
-                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Prefix );
-                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Terrain );
-                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Suffix );
+                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Name.Prefix );
+                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Name.Terrain );
+                defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Name.Suffix );
 
                 // decrement the minimum for a weight when it shows up -- NOT SAFE IF SOME TYPES NOT REPRESENTED
                 foreach (MapAreaData areaData in i_mapData.Areas ) {

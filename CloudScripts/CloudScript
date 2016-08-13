@@ -40,6 +40,7 @@ const MODIFIES_TYPE = "ModifiesType";
 const KEY = "Key";
 const AMOUNT = "Amount";
 const MODIFICATIONS = "Modifications";
+const NAME = "Name";
 
 // map related
 const DEFAULT_SIZE = 36;
@@ -534,9 +535,12 @@ function CreateMapObject(worldKey, mapLevel, mapSize) {
 function SetMapName(map) {
     log.info("Setting map name for " + JSON.stringify(map));
 
-    map[MAP_PREFIX] = GetMapPiece(map, MAP_PREFIX);
-    map[MAP_TERRAIN] = GetMapPiece(map, MAP_TERRAIN);
-    map[MAP_SUFFIX] = GetMapPiece(map, MAP_SUFFIX);
+    var mapName = {};
+    mapName[MAP_PREFIX] = GetMapPiece(map, MAP_PREFIX);
+    mapName[MAP_TERRAIN] = GetMapPiece(map, MAP_TERRAIN);
+    mapName[MAP_SUFFIX] = GetMapPiece(map, MAP_SUFFIX);
+
+    map[NAME] = mapName;
 }
 
 function SetMapAreas(map) {
@@ -605,7 +609,8 @@ function GetMapModificationsFromName(map) {
 }
 
 function GetMapModificationsFromMapPiece(map, pieceKey) {
-    var mapPiece = map[pieceKey];
+    var mapName = map[NAME];
+    var mapPiece = mapName[pieceKey];
     var mapModifications = mapPiece[MODIFICATIONS];
 
     return mapModifications;
