@@ -16,11 +16,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             TestColor();  
         }
 
-        private IEnumerator InitConstants() {
-            Constants.Init( mBackend );
-            yield return mBackend.WaitUntilNotBusy();
-        }
-
         private void FailTest( string i_constantType ) {
             IntegrationTest.Fail( "Constant test failed for: " + i_constantType );
         }

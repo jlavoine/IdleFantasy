@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using MyLibrary;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class IntegrationTestBase : MonoBehaviour {        
@@ -83,6 +84,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 }
             } );
 
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
+        protected IEnumerator InitConstants() {
+            Constants.Init( mBackend );
             yield return mBackend.WaitUntilNotBusy();
         }
 

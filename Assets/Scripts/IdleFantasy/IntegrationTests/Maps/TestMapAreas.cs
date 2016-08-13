@@ -1,46 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestMapAreas : IntegrationTestBase {
-
-        public const int NUM_TESTS = 5;
-        public const int TEST_LEVEL = 1;
-        public const int TEST_SIZE = 36;
-        public const string TEST_WORLD = "TestWorld";
-
-        protected override IEnumerator RunAllTests() {
-            Dictionary<string, string> testParams = new Dictionary<string, string>();
-            testParams[BackendConstants.MAP_LEVEL] = TEST_LEVEL.ToString();
-            testParams[BackendConstants.MAP_WORLD] = TEST_WORLD;
-            testParams[BackendConstants.MAP_SIZE] = TEST_SIZE.ToString();
-
-            for ( int i = 0; i < NUM_TESTS; ++i ) {
-                mBackend.MakeCloudCall( CloudTestMethods.testMapAreas.ToString(), testParams, CheckAreas );
-            }
-
-            yield return mBackend.WaitUntilNotBusy();
-
-            FailTestIfClientOutOfSync( "Map area test" );          
+    public class TestMapAreas {
+        public TestMapAreas( MapData i_data, int i_size) {
+            CheckAreasSize( i_data, i_size );
+            CheckAreaTypeMinimums( i_data );
         }
 
-        private void CheckAreas( Dictionary<string, string> i_results ) {
-            MapData mapData = JsonConvert.DeserializeObject<MapData>( i_results[BackendConstants.DATA] );
-
-            CheckAreasSize( mapData );
-            CheckAreaTypeMinimums( mapData );
-        }
-
-        private void CheckAreasSize( MapData i_mapData ) {
-            if ( i_mapData.Areas.Count != TEST_SIZE ) {
-                IntegrationTest.Fail( "Test map areas fail: Expecting " + TEST_SIZE + " areas but there were " + i_mapData.Areas.Count );
+        private void CheckAreasSize( MapData i_mapData, int i_size ) {
+            if ( i_mapData.Areas.Count != i_size ) {
+                IntegrationTest.Fail( "Test map areas fail: Expecting " + i_size + " areas but there were " + i_mapData.Areas.Count );
             }
         }
 
         // this method is ugly...this whole thing is not great or flexible
         private void CheckAreaTypeMinimums( MapData i_mapData ) {
-            mBackend.MakeCloudCall( CloudTestMethods.getDefaultMapAreaWeights.ToString(), null, ( results ) => {
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.getDefaultMapAreaWeights.ToString(), null, ( results ) => {
                 List<MapModification> defaultWeights = JsonConvert.DeserializeObject<List<MapModification>>( results[BackendConstants.DATA] );
                 defaultWeights = RemoveNonMinimumsFromDefaults( defaultWeights );
 
@@ -50,13 +26,12 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Name.Suffix );
 
                 // decrement the minimum for a weight when it shows up -- NOT SAFE IF SOME TYPES NOT REPRESENTED
-                foreach (MapAreaData areaData in i_mapData.Areas ) {
-                    UnityEngine.Debug.Log( "Processing: " + areaData.AreaType );
-                    defaultWeights[(int)areaData.AreaType].Amount--;
+                foreach ( MapAreaData areaData in i_mapData.Areas ) {
+                    defaultWeights[(int) areaData.AreaType].Amount--;
                 }
 
                 foreach ( MapModification defaultWeight in defaultWeights ) {
-                    if ( IsMinimumKey(defaultWeight.Key) && defaultWeight.Amount > 0 ) {
+                    if ( IsMinimumKey( defaultWeight.Key ) && defaultWeight.Amount > 0 ) {
                         IntegrationTest.Fail( "Test map areas failed: Minimum not met for area type " + defaultWeight.Key + "(" + defaultWeight.Amount + ")" );
                     }
                 }
@@ -87,11 +62,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private List<MapModification> ModifyDefaultWeightsFromMapPieces( List<MapModification> io_weights, MapPieceData i_pieceData ) {
             foreach ( MapModification modifier in i_pieceData.Modifications ) {
                 if ( modifier.Key == BackendConstants.COMBAT_MIN ) {
-                    io_weights[(int)MapAreaTypes.Combat].Amount += (int) modifier.Amount;
-                } else if ( modifier.Key == BackendConstants.EXPLORE_MIN ) {
+                    io_weights[(int) MapAreaTypes.Combat].Amount += (int) modifier.Amount;
+                }
+                else if ( modifier.Key == BackendConstants.EXPLORE_MIN ) {
                     io_weights[(int) MapAreaTypes.Explore].Amount += (int) modifier.Amount;
-                } else if ( modifier.Key == BackendConstants.MISC_MIN ) {
-                    io_weights[(int)MapAreaTypes.Misc].Amount += (int) modifier.Amount;
+                }
+                else if ( modifier.Key == BackendConstants.MISC_MIN ) {
+                    io_weights[(int) MapAreaTypes.Misc].Amount += (int) modifier.Amount;
                 }
             }
 

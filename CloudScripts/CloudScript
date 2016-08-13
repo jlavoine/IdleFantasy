@@ -49,6 +49,8 @@ const MAP_WORLD = "World";                              // key in map data struc
 const MAP_LEVEL = "MapLevel";                           // key in mapa data structure for the map's level
 const MAP_SIZE = "MapSize";                             // key for size of the map (int)
 const MAP_AREAS = "Areas";                              // key for list/array of areas inside a map
+const MAP_UPCOMING = "UpcomingMaps";                    // key for list/array of upcoming maps, from a map
+const UPCOMING_MAPS_COUNT = 4;                          // standard # of upcoming maps, from a map
 
 // map area types
 const AREA_COMBAT = "Combat";       // 0
@@ -460,23 +462,7 @@ handlers.setPlayerCurrency = function(args) {
     }
 }
 
-handlers.testMapNames = function(args) {
-    if (!isTesting()) {
-        return returnOutOfSync();
-    }
-
-    var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
-    var mapWorld = args.data[MAP_WORLD];
-    var mapSize = GetNumberFromArgs(args, MAP_SIZE);
-
-    var map = CreateMapObject(mapWorld, mapLevel, mapSize);
-    SetMapName(map);
-    SetMapAreas(map);
-
-    return ReturnDataToClient(map);
-}
-
-handlers.testMapAreas = function(args) {
+handlers.createMapForTesting = function(args) {
     if (!isTesting()) {
         return returnOutOfSync();
     }
@@ -505,14 +491,52 @@ handlers.getDefaultMapAreaWeights = function(args) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Map Data
+/////////////////////////////////////////////////
+
+function GetMapLevel(map) {
+    return map[MAP_LEVEL];
+}
+
+function GetUpcomingMapCount() {
+    return UPCOMING_MAPS_COUNT;
+}
+
+/////////////////////////////////////////////////
+/// ~Map Data
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Map Globals
+/// These kinds of things exist because we can
+/// only make so many API calls per cloud call.
+/////////////////////////////////////////////////
+
+// sets the map piece data for each piece type, used by various method
+var global_allPieces;
+function SetAllPieceData_Global() {
+    global_allPieces = {};
+    global_allPieces[MAP_PREFIX] = GetTitleDataForMapPiece(MAP_PREFIX);
+    global_allPieces[MAP_TERRAIN] = GetTitleDataForMapPiece(MAP_TERRAIN);
+    global_allPieces[MAP_SUFFIX] = GetTitleDataForMapPiece(MAP_SUFFIX);
+}
+
+/////////////////////////////////////////////////
+/// ~Map Globals
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// Map Creation
 /////////////////////////////////////////////////
 
 /// Creates a map for the given level and world
 function CreateMap(worldKey, mapLevel, mapSize) {    
+    SetAllPieceData_Global();    
+
     var map = CreateMapObject(worldKey, mapLevel, mapSize);
 
     SetMapName(map);
+    SetUpcomingMaps(map);
     SetMapAreas(map);
 
     log.info("Returning map: " + JSON.stringify(map));
@@ -535,12 +559,34 @@ function CreateMapObject(worldKey, mapLevel, mapSize) {
 function SetMapName(map) {
     log.info("Setting map name for " + JSON.stringify(map));
 
-    var mapName = {};
-    mapName[MAP_PREFIX] = GetMapPiece(map, MAP_PREFIX);
-    mapName[MAP_TERRAIN] = GetMapPiece(map, MAP_TERRAIN);
-    mapName[MAP_SUFFIX] = GetMapPiece(map, MAP_SUFFIX);
+    var mapLevel = GetMapLevel(map);
+    var mapName = GenerateMapName(mapLevel);
 
     map[NAME] = mapName;
+}
+
+function GenerateMapName(mapLevel) {
+    var mapName = {};
+    mapName[MAP_PREFIX] = GetMapPiece(mapLevel, MAP_PREFIX);
+    mapName[MAP_TERRAIN] = GetMapPiece(mapLevel, MAP_TERRAIN);
+    mapName[MAP_SUFFIX] = GetMapPiece(mapLevel, MAP_SUFFIX);
+
+    return mapName;
+}
+
+function SetUpcomingMaps(map) {
+    log.info("Setting upcoming maps");
+    var nextMapLevel = GetMapLevel(map) + 1;
+    var numUpcomingMaps = GetUpcomingMapCount();
+
+    var upcomingMaps = [];
+    for (var i = 0; i < numUpcomingMaps; i++) {
+        log.info("Creating a map for upcoming map # " + i + " of " + numUpcomingMaps);
+        var potentialMap = GenerateMapName(nextMapLevel);
+        upcomingMaps.push(potentialMap);
+    }
+
+    map[MAP_UPCOMING] = upcomingMaps;
 }
 
 function SetMapAreas(map) {
@@ -552,7 +598,7 @@ function SetMapAreas(map) {
     var weightedAreaList = GetWeightedMapAreaList(areaWeights);
     var defaultMission = GetTitleData("DefaultMission");
 
-    for (i = indexArray.length-1; i >= 0; i--) {   
+    for (var i = indexArray.length-1; i >= 0; i--) {   
         var index = indexArray[i];
         areas[index] = CreateMapArea(map, index, areaWeights, weightedAreaList, defaultMission);
 
@@ -683,7 +729,7 @@ function GetWeightedMapAreaList(areaWeights) {
             var weightValue = areaWeight[AMOUNT];
             if (weightValue > 0) {
                 var areaType = GetAreaTypeIndexFromWeight(areaWeight);
-                for (i = 0; i < weightValue; i++) {
+                for (var i = 0; i < weightValue; i++) {
                     weightedList.push(areaType);
                 }            
             }
@@ -739,7 +785,7 @@ function CreateMapIndexArray(map) {
 
     var indexArray = [];
 
-    for (i = 0; i < map[MAP_SIZE]; i++) {
+    for (var i = 0; i < map[MAP_SIZE]; i++) {
         indexArray.push(i);
     }
 
@@ -747,8 +793,8 @@ function CreateMapIndexArray(map) {
     return indexArray;
 }
 
-function GetMapPiece(map, pieceKey) {
-    var allPieces = GetTitleDataForMapPiece(pieceKey);    
+function GetMapPiece(level, pieceKey) {  
+    var allPieces = global_allPieces[pieceKey];  
     var validPieces = [];
 
     for (var index in allPieces) {
@@ -756,10 +802,10 @@ function GetMapPiece(map, pieceKey) {
         //log.info("Processing piece: " + JSON.stringify(pieceData));
 
         var levelRestriction = GetMapPieceLevelRestriction(pieceData);
-        if (DoesPassNumberRestriction(levelRestriction, map[MAP_LEVEL])) {
+        if (DoesPassNumberRestriction(levelRestriction, level)) {
             var weight = GetMapPieceWeight(pieceData);
             //log.info(pieceData[MAP_PIECE_ID] + " is a valid piece, pushing it " + weight + " times");
-            for (i = 0; i < weight; i++) {
+            for (var i = 0; i < weight; i++) {
                 validPieces.push(pieceData);
             }
         }
@@ -803,11 +849,9 @@ function GetMapPieceLevelRestriction(pieceData) {
 function DoesPassNumberRestriction(restriction, value) {
     var min = restriction[MIN];
     var max = restriction[MAX];
-    log.info("Checking number restriction with min/max of " + min + "/" + max + " and value " + value);
 
     var passes = value >= min && value <= max;
 
-    log.info("Passes: " + passes);
     return passes;
 }
 
@@ -1331,7 +1375,7 @@ function GetRandomArrayElement(array) {
 
 function ShuffleArray(array) {
     var j, x, i;
-    for (i = array.length; i; i--) {
+    for (var i = array.length; i; i--) {
         j = Math.floor(Math.random() * i);
         x = array[i - 1];
         array[i - 1] = array[j];
