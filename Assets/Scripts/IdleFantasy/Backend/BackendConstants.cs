@@ -33,6 +33,15 @@ namespace IdleFantasy {
         public const string COMPLETE_MISSION = "initiateCompleteMission";
         #endregion
 
+        #region Map Piece Modifiers
+        public const string COMBAT_WEIGHT = "CombatWeight";
+        public const string COMBAT_MIN = "CombatMinimum";
+        public const string EXPLORE_WEIGHT = "ExploreWeight";
+        public const string EXPLORE_MIN = "ExploreMinimum";
+        public const string MISC_WEIGHT = "MiscWeight";
+        public const string MISC_MIN = "MiscMinimum";
+        #endregion
+
         public const string DATA = "data";
 
         // constants on the server

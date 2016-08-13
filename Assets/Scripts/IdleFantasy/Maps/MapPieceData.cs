@@ -7,6 +7,6 @@ namespace IdleFantasy {
         public MapPieceTypes PieceType;
         public int Weight;
         public NumberRestriction LevelRestriction;
-        public List<MapModifier> Modifications;
+        public List<MapModification> Modifications;
     }
 }

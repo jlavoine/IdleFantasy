@@ -4,5 +4,6 @@ namespace IdleFantasy {
         public int Index;
         public MapAreaTypes AreaType;
         public MissionData Mission;
+        public TerrainTypes Terrain;
     }
 }

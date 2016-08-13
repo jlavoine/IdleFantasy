@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestMapAreas : IntegrationTestBase {
 
-        public const int NUM_TESTS = 1;
+        public const int NUM_TESTS = 5;
         public const int TEST_LEVEL = 1;
         public const int TEST_SIZE = 36;
         public const string TEST_WORLD = "TestWorld";
@@ -38,10 +38,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             }
         }
 
-        // this method is ugly...
+        // this method is ugly...this whole thing is not great or flexible
         private void CheckAreaTypeMinimums( MapData i_mapData ) {
             mBackend.MakeCloudCall( CloudTestMethods.getDefaultMapAreaWeights.ToString(), null, ( results ) => {
-                List<DefaultMapAreaWeight> defaultWeights = JsonConvert.DeserializeObject<List<DefaultMapAreaWeight>>( results[BackendConstants.DATA] );
+                List<MapModification> defaultWeights = JsonConvert.DeserializeObject<List<MapModification>>( results[BackendConstants.DATA] );
+                defaultWeights = RemoveNonMinimumsFromDefaults( defaultWeights );
 
                 // now change the weights based on the modifications of the map data
                 defaultWeights = ModifyDefaultWeightsFromMapPieces( defaultWeights, i_mapData.Prefix );
@@ -50,23 +51,47 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
                 // decrement the minimum for a weight when it shows up -- NOT SAFE IF SOME TYPES NOT REPRESENTED
                 foreach (MapAreaData areaData in i_mapData.Areas ) {
-                    defaultWeights[(int)areaData.AreaType].Minimum--;
+                    UnityEngine.Debug.Log( "Processing: " + areaData.AreaType );
+                    defaultWeights[(int)areaData.AreaType].Amount--;
                 }
 
-                foreach ( DefaultMapAreaWeight defaultWeight in defaultWeights ) {
-                    if ( defaultWeight.Minimum > 0 ) {
-                        IntegrationTest.Fail( "Test map areas failed: Minimum not met for area type " + defaultWeight.AreaType );
+                foreach ( MapModification defaultWeight in defaultWeights ) {
+                    if ( IsMinimumKey(defaultWeight.Key) && defaultWeight.Amount > 0 ) {
+                        IntegrationTest.Fail( "Test map areas failed: Minimum not met for area type " + defaultWeight.Key + "(" + defaultWeight.Amount + ")" );
                     }
                 }
             } );
         }
 
-        private List<DefaultMapAreaWeight> ModifyDefaultWeightsFromMapPieces( List<DefaultMapAreaWeight> io_weights, MapPieceData i_pieceData ) {
-            foreach ( MapModifier modifier in i_pieceData.Modifications ) {
-                foreach ( MapModification modification in modifier.Modifications ) {
-                    if ( modification.Key == BackendConstants.MINIMUM ) {
-                        io_weights[(int) modifier.ModifiesType].Minimum += (int) modification.Amount;
-                    }
+        // checks to see if the incoming key is a "minimum" key, i.e. that the modification it represents is a what dicates
+        // the minimum # of areas for a given type
+        private bool IsMinimumKey( string i_key ) {
+            return i_key == BackendConstants.COMBAT_MIN || i_key == BackendConstants.EXPLORE_MIN || i_key == BackendConstants.MISC_MIN;
+        }
+
+        // this is a total hack. the default list of map modifications contains things other than area minimums, which is what 
+        // we are testing here. this method recreates a list and adds only the minimums to it. the order is presume to be
+        // combat, explore, and then misc. very fragile...sorry future coder...
+        private List<MapModification> RemoveNonMinimumsFromDefaults( List<MapModification> io_weights ) {
+            List<MapModification> newList = new List<MapModification>();
+
+            foreach ( MapModification modification in io_weights ) {
+                if ( IsMinimumKey( modification.Key ) ) {
+                    newList.Add( modification );
+                }
+            }
+
+            return newList;
+        }
+
+        private List<MapModification> ModifyDefaultWeightsFromMapPieces( List<MapModification> io_weights, MapPieceData i_pieceData ) {
+            foreach ( MapModification modifier in i_pieceData.Modifications ) {
+                if ( modifier.Key == BackendConstants.COMBAT_MIN ) {
+                    io_weights[(int)MapAreaTypes.Combat].Amount += (int) modifier.Amount;
+                } else if ( modifier.Key == BackendConstants.EXPLORE_MIN ) {
+                    io_weights[(int) MapAreaTypes.Explore].Amount += (int) modifier.Amount;
+                } else if ( modifier.Key == BackendConstants.MISC_MIN ) {
+                    io_weights[(int)MapAreaTypes.Misc].Amount += (int) modifier.Amount;
                 }
             }
 

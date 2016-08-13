@@ -49,19 +49,22 @@ const MAP_LEVEL = "MapLevel";                           // key in mapa data stru
 const MAP_SIZE = "MapSize";                             // key for size of the map (int)
 const MAP_AREAS = "Areas";                              // key for list/array of areas inside a map
 
-// map defaults
-const DEFAULT_MAP_WEIGHTS = "DefaultMapWeights";        // title data key
-const DEFAULT_COMBAT_WEIGHT = 40;
-const DEFAULT_COMBAT_MINIMUM = 10;
-const DEFAULT_EXPLORE_WEIGHT = 40;
-const DEFAULT_EXPLORE_MINIMUM = 10;
-const DEFAULT_MISC_WEIGHT = 20;
-const DEFAULT_MISC_MINIMUM = 5;
-
 // map area types
 const AREA_COMBAT = "Combat";       // 0
 const AREA_EXPLORE = "Explore";     // 1
 const AREA_MISC = "Misc";           // 2
+
+// constants for parsing map modification data in terms of area types
+const DEFAULT_MAP_WEIGHTS = "DefaultMapWeights";    // title data field holding the default map weights
+const COMBAT_WEIGHT = "CombatWeight";
+const COMBAT_MINIMUM = "CombatMinimum";
+const COMBAT_INDEX = 0;
+const EXPLORE_WEIGHT = "ExploreWeight";
+const EXPLORE_MINIMUM = "ExploreMinimum";
+const EXPLORE_INDEX = 1;
+const MISC_WEIGHT = "MiscWeight";
+const MISC_MINIMUM = "MiscMinimum";
+const MISC_INDEX = 2;
 
 // map area related
 const MAP_AREA_TYPE = "AreaType";                       // key holding the type an area is (combat, explore, misc, etc)
@@ -560,7 +563,7 @@ function GetMapAreaWeights(map) {
 
     var mapNameModifications = GetMapModificationsFromName(map);
     for (var index in mapNameModifications) {        
-        ModifyWeightsFromModification(areaWeights, mapNameModifications[index]);
+        ModifyWeightsFromModification(areaWeights, mapNameModifications[index]); 
     }
 
     log.info("Area weights after modifications: " + JSON.stringify(areaWeights));
@@ -570,15 +573,20 @@ function GetMapAreaWeights(map) {
 function ModifyWeightsFromModification(areaWeights, modification) {
     log.info("Modifying area weights from " + JSON.stringify(modification));
     
-    var areaTypeModified = modification[MODIFIES_TYPE];
-    var areaTypeWeight = areaWeights[areaTypeModified];
+    var modifierType = modification[KEY];
+    var modifierAmount = modification[AMOUNT];
 
-    var modifications = modification[MODIFICATIONS];
-    for (var index in modifications) {
-        var modifier = modifications[index];
-        var modifierType = modifier[KEY];
-        var modifierAmount = modifier[AMOUNT];
-        areaTypeWeight[modifierType] += modifierAmount;
+    var found = false;
+    for (var index in areaWeights) {
+        var areaWeight = areaWeights[index];
+        if (areaWeight[KEY] == modifierType) {
+            areaWeight[AMOUNT] += modifierAmount;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        areaWeights.push(modification);
     }
 }
 
@@ -635,15 +643,17 @@ function GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList) {
 }
 
 function GenerateMapAreaTypeFromMinimum(areaWeights) {
-    for (var index in areaWeights) {
+    for (var index in areaWeights) {        
         var areaWeight = areaWeights[index];
-        var minimumRemaining = areaWeight[MINIMUM];
-        if (minimumRemaining > 0) {
-            var areaType = areaWeight[MAP_AREA_TYPE];
+        if(IsAreaTypeMinimum(areaWeight)) {
+            var minimumRemaining = areaWeight[AMOUNT];
+            if (minimumRemaining > 0) {
+                var areaType = GetAreaTypeIndexFromWeight(areaWeight);
 
-            areaWeight[MINIMUM] = minimumRemaining - 1;
+                areaWeight[AMOUNT] = minimumRemaining - 1;
 
-            return areaType;
+                return areaType;
+            }
         }
     }
 
@@ -663,12 +673,15 @@ function GetWeightedMapAreaList(areaWeights) {
     var weightedList = [];
     for (var index in areaWeights) {
         var areaWeight = areaWeights[index];
-        var weightValue = areaWeight[WEIGHT];
-        if (weightValue > 0) {
-            var areaType = areaWeight[MAP_AREA_TYPE];
-            for (i = 0; i < weightValue; i++) {
-                weightedList.push(areaType);
-            }            
+        var isAreaTypeWeight = IsAreaTypeWeight(areaWeight);
+        if (isAreaTypeWeight) {
+            var weightValue = areaWeight[AMOUNT];
+            if (weightValue > 0) {
+                var areaType = GetAreaTypeIndexFromWeight(areaWeight);
+                for (i = 0; i < weightValue; i++) {
+                    weightedList.push(areaType);
+                }            
+            }
         }
     }
 
@@ -676,12 +689,40 @@ function GetWeightedMapAreaList(areaWeights) {
     return weightedList;
 }
 
+function IsAreaTypeWeight(areaWeight) {
+    var key = areaWeight[KEY];
+    return key == COMBAT_WEIGHT || key == MISC_WEIGHT || key == EXPLORE_WEIGHT;
+}
+
+function IsAreaTypeMinimum(areaWeight) {
+    var key = areaWeight[KEY];
+    return key == COMBAT_MINIMUM || key == MISC_MINIMUM || key == EXPLORE_MINIMUM;
+}
+
+// this is a crappy function that translates an area type to an index
+function GetAreaTypeIndexFromWeight(areaWeight) {
+    var key = areaWeight[KEY];
+    if (key == COMBAT_WEIGHT || key == COMBAT_MINIMUM) {
+        return COMBAT_INDEX;
+    } else if (key == EXPLORE_WEIGHT || key == EXPLORE_MINIMUM) {
+        return EXPLORE_INDEX;
+    } else if (key == MISC_WEIGHT || key == MISC_MINIMUM) {
+        return MISC_INDEX;
+    } else {
+        log.info("Area weight with no area type index: " + key);
+        return 0;
+    }
+}
+
 function DoAreaWeightsHaveMinimumRemaining(areaWeights) {
-    for (var index in areaWeights) {
+    for (var index in areaWeights) {        
+        //log.info("What's this: " + index);
         var areaWeight = areaWeights[index];
 
-        if (areaWeight[MINIMUM] > 0) {
-            return true;
+        if (IsAreaTypeMinimum(areaWeight)) {        
+            if (areaWeight[AMOUNT] > 0) {
+                return true;
+            }
         }
     }
 
@@ -707,12 +748,12 @@ function GetMapPiece(map, pieceKey) {
 
     for (var index in allPieces) {
         var pieceData = allPieces[index];
-        log.info("Processing piece: " + JSON.stringify(pieceData));
+        //log.info("Processing piece: " + JSON.stringify(pieceData));
 
         var levelRestriction = GetMapPieceLevelRestriction(pieceData);
         if (DoesPassNumberRestriction(levelRestriction, map[MAP_LEVEL])) {
             var weight = GetMapPieceWeight(pieceData);
-            log.info(pieceData[MAP_PIECE_ID] + " is a valid piece, pushing it " + weight + " times");
+            //log.info(pieceData[MAP_PIECE_ID] + " is a valid piece, pushing it " + weight + " times");
             for (i = 0; i < weight; i++) {
                 validPieces.push(pieceData);
             }
