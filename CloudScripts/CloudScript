@@ -41,6 +41,7 @@ const KEY = "Key";
 const AMOUNT = "Amount";
 const MODIFICATIONS = "Modifications";
 const NAME = "Name";
+const DESC = "DescriptionKey";
 
 // map related
 const DEFAULT_SIZE = 36;
@@ -50,6 +51,7 @@ const MAP_LEVEL = "MapLevel";                           // key in mapa data stru
 const MAP_SIZE = "MapSize";                             // key for size of the map (int)
 const MAP_AREAS = "Areas";                              // key for list/array of areas inside a map
 const MAP_UPCOMING = "UpcomingMaps";                    // key for list/array of upcoming maps, from a map
+const MAP_ALL_MODS = "AllModifications";                // key for list/array of all modifications on a map
 const UPCOMING_MAPS_COUNT = 4;                          // standard # of upcoming maps, from a map
 
 // map area types
@@ -68,6 +70,9 @@ const EXPLORE_INDEX = 1;
 const MISC_WEIGHT = "MiscWeight";
 const MISC_MINIMUM = "MiscMinimum";
 const MISC_INDEX = 2;
+
+/// other map mod constants
+const MAP_GOLD_MOD = "BaseGoldReward";                  // affects gold earned from a mission
 
 // map area related
 const MAP_AREA_TYPE = "AreaType";                       // key holding the type an area is (combat, explore, misc, etc)
@@ -126,6 +131,14 @@ const MISSION_PROPOSAL_COUNT = "UnitCount";     // key in task proposal holding 
 const MISSION_REQUIRED_STAT = "StatRequirement";    // key in a mission task holding the required stat
 const MISSION_REQUIRED_POWER = "PowerRequirement";  // key in a mission task holing the required power
 const MISSION_BASE_TITLE_KEY = "MissionBase_"   // key for title data that holds the basis for missions of a type (combat, explore, etc)
+const MISSION_GOLD_REWARD = "GoldReward";
+const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how much power a mission task requires. scales with map level.
+
+/// mission categories
+const MISSION_MAIN = "Main";                    // the main game (exploring continents)
+
+/// mission constants
+const BASE_GOLD_REWARD = 500;
 
 /// classes of objects in the game
 const CLASS_BUILDING = "Buildings";     // game buildings that produce units
@@ -502,6 +515,23 @@ function GetUpcomingMapCount() {
     return UPCOMING_MAPS_COUNT;
 }
 
+function GetAllMapModifications(map) {
+    return map[MAP_ALL_MODS];
+}
+
+function GetMapModification(map, key) {
+    var allMapMods = GetAllMapModifications(map);
+    for (var index in allMapMods) {
+        var mod = allMapMods[index];
+        if (mod[KEY] == key) {
+            return mod[AMOUNT];
+        }
+    }
+
+    log.info("ERROR: No such map modification for " + key);
+    return 0;
+}
+
 /////////////////////////////////////////////////
 /// ~Map Data
 /////////////////////////////////////////////////
@@ -593,42 +623,42 @@ function SetMapAreas(map) {
     log.info("Setting map areas for " + JSON.stringify(map));
 
     var indexArray = CreateMapIndexArray(map);
-    var areaWeights = GetMapAreaWeights(map);
+    SetMapModifications(map);
     var areas = map[MAP_AREAS];
-    var weightedAreaList = GetWeightedMapAreaList(areaWeights);
+    var weightedAreaList = GetWeightedMapAreaList(map);
     var defaultMission = GetTitleData("DefaultMission");
 
     for (var i = indexArray.length-1; i >= 0; i--) {   
         var index = indexArray[i];
-        areas[index] = CreateMapArea(map, index, areaWeights, weightedAreaList, defaultMission);
+        areas[index] = CreateMapArea(map, index, weightedAreaList, defaultMission);
 
         indexArray.splice(i, 1);    // remove index from array
     }
 }
 
-function GetMapAreaWeights(map) {
+function SetMapModifications(map) {
     log.info("Getting map area weights");
     
-    var areaWeights = GetTitleData(DEFAULT_MAP_WEIGHTS);
+    var allModifications = GetTitleData(DEFAULT_MAP_WEIGHTS);
 
     var mapNameModifications = GetMapModificationsFromName(map);
     for (var index in mapNameModifications) {        
-        ModifyWeightsFromModification(areaWeights, mapNameModifications[index]); 
+        AddMapModification(allModifications, mapNameModifications[index]); 
     }
 
-    log.info("Area weights after modifications: " + JSON.stringify(areaWeights));
-    return areaWeights;
+    log.info("All map mods: " + JSON.stringify(allModifications));
+    map[MAP_ALL_MODS] = allModifications;
 }
 
-function ModifyWeightsFromModification(areaWeights, modification) {
+function AddMapModification(allModifications, modification) {
     log.info("Modifying area weights from " + JSON.stringify(modification));
     
     var modifierType = modification[KEY];
     var modifierAmount = modification[AMOUNT];
 
     var found = false;
-    for (var index in areaWeights) {
-        var areaWeight = areaWeights[index];
+    for (var index in allModifications) {
+        var areaWeight = allModifications[index];
         if (areaWeight[KEY] == modifierType) {
             areaWeight[AMOUNT] += modifierAmount;
             found = true;
@@ -636,7 +666,7 @@ function ModifyWeightsFromModification(areaWeights, modification) {
     }
 
     if (!found) {
-        areaWeights.push(modification);
+        allModifications.push(modification);
     }
 }
 
@@ -662,19 +692,76 @@ function GetMapModificationsFromMapPiece(map, pieceKey) {
     return mapModifications;
 }
 
-function CreateMapArea(map, areaIndex, areaWeights, weightedAreaList, defaultMission) {
+function CreateMapArea(map, areaIndex, weightedAreaList, defaultMission) {
     var area = {};
 
     area[INDEX] = areaIndex;
-    area[MAP_AREA_TYPE] = GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList);
-    area[MAP_AREA_MISSION] = defaultMission; //GenerateMapMission(map, area[MAP_AREA_TYPE]);
+    area[MAP_AREA_TYPE] = GenerateMapAreaTypeFromWeights(map, weightedAreaList);
+    area[MAP_AREA_MISSION] = GenerateMapMission(map, areaIndex, area[MAP_AREA_TYPE]);
     area[MAP_TERRAIN] = GenerateMapAreaTerrain();
 
     return area;
 }
 
-function GenerateMapMission(map, areaType, missionBases) {
+function GenerateMapMission(map, areaIndex, areaType) {
+    var mission = {};
+
+    mission[MISSION_TYPE_KEY] = MISSION_MAIN;
+    mission[MISSION_INDEX_KEY] = areaIndex;
+    mission[MISSION_GOLD_REWARD] = GetMissionGoldReward(map);
+    mission[MISSION_TASKS_KEY] = GenerateMissionTasks(map, areaIndex, areaType);
+
+    return mission;
+}
+
+/// for alpha, I'm just going to generate one task for each mission
+function GenerateMissionTasks(map, areaIndex, areaType) {
+    var tasks = [];
     
+    var task = {};
+    task[MISSION_INDEX_KEY] = areaIndex;
+    task[MISSION_REQUIRED_STAT] = GetMissionStat(areaType);
+    task[DESC] = GetMissionTaskDescription(task);
+    task[MISSION_REQUIRED_POWER] = MISSION_TASK_BASE_POWER * (GetMapLevel(map) + 1);
+
+    tasks.push(task);
+    return tasks;
+}
+
+function GetMissionTaskDescription(task) {
+    var stat = task[MISSION_REQUIRED_STAT];
+    var key = stat + "_MISSION_DESC";
+
+    return key;
+}
+
+function GetMissionStat(areaType) {
+    if (areaType == COMBAT_INDEX) {
+        return GetRandomCombatStat();
+    } else {
+        return GetRandomExploreStat();
+    }
+}
+
+function GetRandomCombatStat() {
+    var stats = ["BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+    return GetRandomArrayElement(stats);
+}
+
+function GetRandomExploreStat() {
+    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4"];
+    return GetRandomArrayElement(stats);   
+}
+
+function GetMissionGoldReward(map) {
+    var mapLevel = GetMapLevel(map);
+    var goldReward = mapLevel * BASE_GOLD_REWARD;
+    
+    var goldModAmount = GetMapModification(map, MAP_GOLD_MOD);
+    goldReward = goldReward + Math.ceil(goldReward * goldModAmount);
+
+    log.info("Gold reward: " + goldReward);
+    return goldReward;
 }
 
 /// this needs to be improved!
@@ -685,7 +772,9 @@ function GenerateMapAreaTerrain() {
     return selectedTerrain;
 }
 
-function GenerateMapAreaTypeFromWeights(areaWeights, weightedAreaList) {
+function GenerateMapAreaTypeFromWeights(map, weightedAreaList) {
+    var areaWeights = GetAllMapModifications(map);
+
     if (DoAreaWeightsHaveMinimumRemaining(areaWeights)) {
         return GenerateMapAreaTypeFromMinimum(areaWeights);
     } else {
@@ -718,8 +807,9 @@ function GenerateMapAreaTypeFromWeight(weightedList) {
     return selectedAreaType;
 }
 
-function GetWeightedMapAreaList(areaWeights) {
+function GetWeightedMapAreaList(map) {
     log.info("Generating weighted map area list from " + JSON.stringify(areaWeights));
+    var areaWeights = GetAllMapModifications(map);
 
     var weightedList = [];
     for (var index in areaWeights) {

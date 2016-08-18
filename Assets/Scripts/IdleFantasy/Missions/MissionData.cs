@@ -6,6 +6,7 @@ namespace IdleFantasy {
         public int Index;
         public string DescriptionKey;
         public string RewardKey;
+        public int GoldReward;
 
         public List<MissionTaskData> Tasks;
     }

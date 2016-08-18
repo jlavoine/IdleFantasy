@@ -8,6 +8,7 @@ namespace IdleFantasy {
 
         public MapName Name;
 
+        public List<MapModification> AllModifications;
         public List<MapName> UpcomingMaps;
         public List<MapAreaData> Areas;
     }
