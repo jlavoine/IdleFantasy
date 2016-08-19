@@ -32,7 +32,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             new TestMapNames( mapData.Name, TEST_LEVEL );
             new TestMapAreas( mapData, TEST_SIZE );
-            new TestUpcomingMaps( mapData, TEST_LEVEL );           
+            new TestUpcomingMaps( mapData, TEST_LEVEL );
+            new TestMapMissions( mapData.Areas, mapData.AllModifications, TEST_LEVEL );   
         }
     }
 }

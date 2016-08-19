@@ -40,6 +40,7 @@ namespace IdleFantasy {
         public const string EXPLORE_MIN = "ExploreMinimum";
         public const string MISC_WEIGHT = "MiscWeight";
         public const string MISC_MIN = "MiscMinimum";
+        public const string BASE_GOLD_MOD = "BaseGoldReward";
         #endregion
 
         public const string DATA = "data";
