@@ -177,7 +177,7 @@ namespace MyLibrary {
             };
 
             PlayFabClientAPI.RunCloudScript( request, ( result ) => {
-                RequestComplete( "Cloud logs for all data request for " + i_className + ": " + result.ActionLog, LogTypes.Info );
+                RequestComplete( "Cloud logs for all data request for " + i_className + "(" + result.ExecutionTime + "):" + result.ActionLog, LogTypes.Info );
 
                 if ( result.Results != null ) {
                     string res = result.Results.ToString();

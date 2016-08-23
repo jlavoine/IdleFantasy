@@ -42,6 +42,7 @@ const AMOUNT = "Amount";
 const MODIFICATIONS = "Modifications";
 const NAME = "Name";
 const DESC = "DescriptionKey";
+const ID = "ID";
 
 // map related
 const DEFAULT_SIZE = 36;
@@ -104,6 +105,12 @@ const TRAINER_COUNTS = "TrainerCounts";         // key for trainer counts within
 const NORMAL_TRAINER = "Normal";                // the normal trainers a player can purchase
 const TRAINERS_ASSIGNED = "Trainers";           // key in unit progress data for the # of trainers assigned to the unit
 const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
+
+// World progress
+const WORLD_PROGRESS_KEY = "WorldsProgress";
+const WORLD_PROGRESS_RESTARTS = "RestartCount";
+const WORLD_PROGRESS_CUR_MAP = "CurrentMapLevel";
+
 
 /// game modules
 const MODULE_BASE = "Base";    // the base game!
@@ -1106,7 +1113,7 @@ function GetMissionsOfType(type) {
     log.info("Getting all missions with type: " + type);
     var saveKey = MISSION_SAVE_KEY + type;
 
-    return GetInternalSaveData(saveKey);
+    return GetReadOnlySaveData(saveKey);
 }
 
 function GetMissionType(mission) {
@@ -1274,6 +1281,70 @@ function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modi
 
 handlers.onLogin = function (args) {
     UpdateAllUnitCounts(Date.now());
+
+    AddMissingPlayerData();
+}
+
+/// This method looks through all the player's data and makes sure that the default values get added
+/// if there were no values there.
+function AddMissingPlayerData() {
+    var saveDataObject = GetAllReadOnlySaveData();
+    var allSaveData = saveDataObject[DATA];
+    var allModules = GetAllModules();    
+
+    SetExistingSaveData(allSaveData);
+
+    AddBuildingProgress_IfMissing(allSaveData);
+    AddGuildProgress_IfMissing(allSaveData);
+    AddTrainerProgress_IfMissing(allSaveData);
+    AddUnitProgress_IfMissing(allSaveData);
+    AddWorldProgress_IfMissing(allSaveData, allModules);
+
+    SetSaveDataWithObject(allSaveData, READ_ONLY);
+}
+
+/// This method iterates through all the save data in the save data object gotten from the server.
+/// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
+/// when we re-save the object, this is the format the API wants it in.
+function SetExistingSaveData(allSaveData) {
+    for (var data in allSaveData) {
+        var saveObject = allSaveData[data];
+        var saveData = saveObject[VALUE];
+        allSaveData[data] = saveData;
+    }
+}
+
+function AddBuildingProgress_IfMissing(allSaveData) {
+    
+}
+
+function AddGuildProgress_IfMissing(allSaveData) {
+    
+}
+
+function AddTrainerProgress_IfMissing(allSaveData) {
+    
+}
+
+function AddUnitProgress_IfMissing(allSaveData) {
+    
+}
+
+function AddWorldProgress_IfMissing(allSaveData, allModules) {
+    if (!allSaveData.hasOwnProperty(WORLD_PROGRESS_KEY)) {
+        var totalProgress = [];
+        for (var i = 0; i < allModules.length; i++) {
+            var worldProgress = {};
+
+            worldProgress[ID] = MODULE_BASE;
+            worldProgress[WORLD_PROGRESS_RESTARTS] = 0;
+            worldProgress[WORLD_PROGRESS_CUR_MAP] = 0;
+
+            totalProgress.push(worldProgress);
+        }        
+
+        allSaveData[WORLD_PROGRESS_KEY] = JSON.stringify(totalProgress);
+    }
 }
 
 /////////////////////////////////////////////////
@@ -1302,27 +1373,9 @@ function GetDataForTarget(className, targetID) {
     return dataForTarget;
 }
 
+/// This method used to be a lot more complex, getting multiple title datas for each expansion
 function GetTitleDataForClass(className) {
-    var moduleNames = GetAllModules();
-    for (var i = 0; i < moduleNames.length; i++) {
-        moduleNames[i] += className;
-    }
-
-    var titleData = server.GetTitleData({ Keys : moduleNames });
-    var dataPerModule = titleData[DATA];
-    var classData = {};
-
-    for (var moduleKey in dataPerModule) {
-        var classesInModule = JSON.parse(dataPerModule[moduleKey]);
-
-        for(var data in classesInModule) {
-            classData[data] = classesInModule[data];
-        }
-    }
-
-    log.info("Getting title data for " + className + ": " + JSON.stringify(classData));
-
-    return classData;
+    return GetTitleData(className);
 }
 
 /// returns all active modules are currently active in the game
@@ -1349,6 +1402,10 @@ function GetReadOnlySaveData(key) {
     var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [key] });
 
     return GetSaveObjectFromRawData(rawData, key); 
+}
+
+function GetAllReadOnlySaveData() {
+    return server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
 }
 
 function GetInternalSaveData(key) {
@@ -1380,10 +1437,16 @@ function SetSaveData(dataKey, dataAsString, dataType) {
     data[dataKey] = dataAsString;
     log.info("Saving " + dataType + " data for key " + dataKey + ": " + dataAsString);
 
+    SetSaveDataWithObject(data, dataType);
+}
+
+function SetSaveDataWithObject(dataObject, dataType) {
+    log.info("Setting save data of " + dataType + ": " + JSON.stringify(dataObject));
+
     if (dataType == READ_ONLY) {
-        server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+        server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: dataObject, Permission: "Public"});
     } else if (dataType == INTERNAL) {
-        server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: data, Permission: "Public"});
+        server.UpdateUserInternalData({ PlayFabId: currentPlayerId, Data: dataObject, Permission: "Public"});
     } else {
         log.info("Can't save to data type: " + dataType);
     }
