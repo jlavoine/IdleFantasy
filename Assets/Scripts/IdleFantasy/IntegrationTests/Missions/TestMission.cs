@@ -26,7 +26,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             List<MissionData> testMissionData = CreateMissionData();
 
             string data = JsonConvert.SerializeObject( testMissionData );
-            yield return IntegrationTestUtils.SetInternalData( "Missions_" + MISSION_CATEGORY, data );
+            IntegrationTestUtils.SetReadOnlyData( "Missions_" + MISSION_CATEGORY, data );
+
+            yield return mBackend.WaitUntilNotBusy();
         }
 
         private IEnumerator ClearUnitModifierData() {
