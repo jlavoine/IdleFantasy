@@ -12,7 +12,9 @@ namespace IdleFantasy {
 
         private void PopulateMenu() {
             foreach( Building building in PlayerManager.Data.Buildings ) {
-                CreateAndInitView( building );
+                if ( building.Level.Value > 0 ) {
+                    CreateAndInitView( building );
+                }
             }
         }
 
