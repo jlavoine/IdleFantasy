@@ -1288,28 +1288,28 @@ handlers.onLogin = function (args) {
 /// This method looks through all the player's data and makes sure that the default values get added
 /// if there were no values there.
 function AddMissingPlayerData() {
-    var saveDataObject = GetAllReadOnlySaveData();
-    var allSaveData = saveDataObject[DATA];
+    var allSaveData = GetAllReadOnlySaveData();  // change this methos to just return data
 
-    var arrayDataKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
-    var allTitleData = GetMultipleTitleData(arrayDataKeys);
+    var arraySaveKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
+    var titleData = GetMultipleTitleData(arraySaveKeys); // iterate through this structure in the method and parse everything
 
-    SetExistingSaveData(allSaveData);
-
-    AddMissingSaveData(arrayDataKeys, allSaveData);
-
-    AddBuildingProgress_IfMissing(allSaveData[GetProgressKey(CLASS_BUILDING)], JSON.parse(allTitleData[CLASS_BUILDING]));
-    AddGuildProgress_IfMissing(allSaveData[GetProgressKey(CLASS_GUILD)], JSON.parse(allTitleData[CLASS_GUILD]));
-    AddTrainerProgress_IfMissing(allSaveData);
-    AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], JSON.parse(allTitleData[CLASS_UNIT]));
-    AddWorldProgress_IfMissing(allSaveData);
-
+    AddMissingSaveData(allSaveData, arraySaveKeys, titleData);
     StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
 }
 
+function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
+    AddMissingSaveObjects(arraySaveKeys, allSaveData);
+
+    AddBuildingProgress_IfMissing(allSaveData[GetProgressKey(CLASS_BUILDING)], titleData[CLASS_BUILDING]);
+    AddGuildProgress_IfMissing(allSaveData[GetProgressKey(CLASS_GUILD)], titleData[CLASS_GUILD]);
+    AddTrainerProgress_IfMissing(allSaveData);
+    AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], titleData[CLASS_UNIT]);
+    AddWorldProgress_IfMissing(allSaveData);
+}
+
 /// This method will add any save data keys as empty objects
-function AddMissingSaveData(arrayDataKeys, allSaveData) {
+function AddMissingSaveObjects(arrayDataKeys, allSaveData) {
     for (var index in arrayDataKeys) {
         var saveKey = GetProgressKey(arrayDataKeys[index]);        
         
@@ -1325,17 +1325,6 @@ function StringifySaveData(allSaveData) {
         var saveObject = allSaveData[data];
         var saveData = JSON.stringify(saveObject);
         allSaveData[data] = saveData;
-    }
-}
-
-/// This method iterates through all the save data in the save data object gotten from the server.
-/// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
-/// when we re-save the object, this is the format the API wants it in.
-function SetExistingSaveData(allSaveData) {
-    for (var data in allSaveData) {
-        var saveObject = allSaveData[data];
-        var saveData = saveObject[VALUE];
-        allSaveData[data] = JSON.parse(saveData);
     }
 }
 
@@ -1466,7 +1455,19 @@ function GetReadOnlySaveData(key) {
 }
 
 function GetAllReadOnlySaveData() {
-    return server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
+    var saveDataObject = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
+    var allSaveData = saveDataObject[DATA];
+
+    /// Iterate through all the save data in the save data object gotten from the server.
+    /// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
+    /// when we re-save the object, this is the format the API wants it in.
+    for (var data in allSaveData) {
+        var saveObject = allSaveData[data];
+        var saveData = saveObject[VALUE];
+        allSaveData[data] = JSON.parse(saveData);
+    }
+
+    return allSaveData;
 }
 
 function GetInternalSaveData(key) {
@@ -1617,8 +1618,17 @@ function GetMultipleTitleData(arrayKeys) {
 
     var arrayData = {};
     var titleData = server.GetTitleData({ Keys : arrayKeys });
+    titleData = titleData[DATA];
+
+    // parse all the data into objects so it's easier to use
+    for (var dataKey in titleData) {
+        log.info("whats the key: " + dataKey);
+        var data = titleData[dataKey];
+        log.info("Whats this: " + data);
+        titleData[dataKey] = JSON.parse(data);
+    }
     
-    return titleData[DATA];
+    return titleData;
 }
 
 function GetPlayerInventory() {
