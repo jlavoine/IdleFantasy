@@ -20,7 +20,7 @@ namespace IdleFantasy.UnitTests.Units {
         };
 
         static object[] RoundedStatTestSource = {
-            new object[] { TEST_STAT_1, 0, 2 },
+            new object[] { TEST_STAT_1, 0, 0 },
             new object[] { TEST_STAT_1, 1, 2 },
             new object[] { TEST_STAT_1, 2, 3 },
             new object[] { TEST_STAT_2, 1, 3 },

@@ -25,8 +25,8 @@ namespace IdleFantasy.UnitTests.Upgradeables {
             if ( upgradedLevel > i_upgrade.MaxLevel ) {
                 upgradedLevel = i_upgrade.MaxLevel;
             }
-            else if ( upgradedLevel < 1 ) {
-                upgradedLevel = 1;
+            else if ( upgradedLevel < 0 ) {
+                upgradedLevel = 0;
             }
 
             return upgradedLevel;

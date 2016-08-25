@@ -27,8 +27,8 @@ namespace IdleFantasy {
                     value = mData.MaxLevel;
                     MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " above max level.", "Upgradeable" );
                 }
-                else if ( value < 1 ) {
-                    value = 1;
+                else if ( value < 0 ) {
+                    value = 0;
                     MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Attempt to set " + mData.PropertyName + " below min level.", "Upgradeable" );
                 }
 
