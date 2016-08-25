@@ -1280,7 +1280,7 @@ function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modi
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    UpdateAllUnitCounts(Date.now());
+    //UpdateAllUnitCounts(Date.now());
 
     AddMissingPlayerData();
 }
@@ -1290,17 +1290,42 @@ handlers.onLogin = function (args) {
 function AddMissingPlayerData() {
     var saveDataObject = GetAllReadOnlySaveData();
     var allSaveData = saveDataObject[DATA];
-    var allModules = GetAllModules();    
+
+    var arrayDataKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
+    var allTitleData = GetMultipleTitleData(arrayDataKeys);
 
     SetExistingSaveData(allSaveData);
 
-    AddBuildingProgress_IfMissing(allSaveData);
-    AddGuildProgress_IfMissing(allSaveData);
-    AddTrainerProgress_IfMissing(allSaveData);
-    AddUnitProgress_IfMissing(allSaveData);
-    AddWorldProgress_IfMissing(allSaveData, allModules);
+    AddMissingSaveData(arrayDataKeys, allSaveData);
 
+    AddBuildingProgress_IfMissing(allSaveData[GetProgressKey(CLASS_BUILDING)], JSON.parse(allTitleData[CLASS_BUILDING]));
+    AddGuildProgress_IfMissing(allSaveData[GetProgressKey(CLASS_GUILD)], JSON.parse(allTitleData[CLASS_GUILD]));
+    AddTrainerProgress_IfMissing(allSaveData);
+    AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], JSON.parse(allTitleData[CLASS_UNIT]));
+    AddWorldProgress_IfMissing(allSaveData);
+
+    StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
+}
+
+/// This method will add any save data keys as empty objects
+function AddMissingSaveData(arrayDataKeys, allSaveData) {
+    for (var index in arrayDataKeys) {
+        var saveKey = GetProgressKey(arrayDataKeys[index]);        
+        
+        if(!allSaveData.hasOwnProperty(saveKey)) {
+            allSaveData[saveKey] = {};
+        }
+    }    
+}
+
+/// In order to be saved, our hash of objects must be a hash of strings
+function StringifySaveData(allSaveData) {
+    for (var data in allSaveData) {
+        var saveObject = allSaveData[data];
+        var saveData = JSON.stringify(saveObject);
+        allSaveData[data] = saveData;
+    }
 }
 
 /// This method iterates through all the save data in the save data object gotten from the server.
@@ -1310,27 +1335,63 @@ function SetExistingSaveData(allSaveData) {
     for (var data in allSaveData) {
         var saveObject = allSaveData[data];
         var saveData = saveObject[VALUE];
-        allSaveData[data] = saveData;
+        allSaveData[data] = JSON.parse(saveData);
     }
 }
 
-function AddBuildingProgress_IfMissing(allSaveData) {
-    
+function AddBuildingProgress_IfMissing(buildingProgress, titleData) {
+    for (var buildingKey in titleData) {
+        if (!buildingProgress.hasOwnProperty(buildingKey)) {
+            var missingProgress = {};
+            missingProgress[UPGRADE_LEVEL] = 0;
+
+            buildingProgress[buildingKey] = missingProgress;
+        }
+    }
 }
 
-function AddGuildProgress_IfMissing(allSaveData) {
-    
+function AddGuildProgress_IfMissing(guildProgress, titleData) {
+    for (var key in titleData) {
+        if (!guildProgress.hasOwnProperty(key)) {
+            var missingProgress = {};
+            missingProgress[UPGRADE_LEVEL] = 0;
+            missingProgress[UPGRADE_POINTS] = 0;
+
+            guildProgress[key] = missingProgress;
+        }
+    }    
 }
 
 function AddTrainerProgress_IfMissing(allSaveData) {
-    
+    if (!allSaveData.hasOwnProperty(TRAINER_SAVE_DATA)) {
+        allSaveData[TRAINER_SAVE_DATA] = {};
+    }
+
+    var trainerSaveData = allSaveData[TRAINER_SAVE_DATA];
+    if (!trainerSaveData.hasOwnProperty(TRAINER_COUNTS)) {
+        var trainerCounts = {};
+        trainerCounts[NORMAL_TRAINER] = 0;
+        trainerSaveData[TRAINER_COUNTS] = trainerCounts;
+    }
 }
 
-function AddUnitProgress_IfMissing(allSaveData) {
-    
+function AddUnitProgress_IfMissing(unitProgress, titleData) {
+    for (var key in titleData) {
+        if (!unitProgress.hasOwnProperty(key)) {
+            var missingProgress = {};
+            missingProgress[UPGRADE_LEVEL] = 0;
+            missingProgress[TRAINERS_ASSIGNED] = 0;
+            missingProgress[UNIT_COUNT] = 0;
+            missingProgress[LAST_UNIT_COUNT] = 0;
+
+            unitProgress[key] = missingProgress;
+        }
+    }    
 }
 
 function AddWorldProgress_IfMissing(allSaveData, allModules) {
+    var allModules = GetAllModules();  
+    
     if (!allSaveData.hasOwnProperty(WORLD_PROGRESS_KEY)) {
         var totalProgress = [];
         for (var i = 0; i < allModules.length; i++) {
@@ -1343,7 +1404,7 @@ function AddWorldProgress_IfMissing(allSaveData, allModules) {
             totalProgress.push(worldProgress);
         }        
 
-        allSaveData[WORLD_PROGRESS_KEY] = JSON.stringify(totalProgress);
+        allSaveData[WORLD_PROGRESS_KEY] = totalProgress;
     }
 }
 
@@ -1541,6 +1602,7 @@ function GetTitleData(titleDataKey) {
     log.info("Getting title data for " + titleDataKey);
 
     var titleData = server.GetTitleData({ Keys : titleDataKey });
+    log.info("what is this: " + JSON.stringify(titleData));
     var data = titleData[DATA];
     var actualDataAsString = data[titleDataKey];
 
@@ -1548,6 +1610,15 @@ function GetTitleData(titleDataKey) {
     log.info("Title data as string: " + actualDataAsString);
 
     return actualDataAsObject;
+}
+
+function GetMultipleTitleData(arrayKeys) {
+    log.info("Getting array of title data for " + JSON.stringify(arrayKeys));
+
+    var arrayData = {};
+    var titleData = server.GetTitleData({ Keys : arrayKeys });
+    
+    return titleData[DATA];
 }
 
 function GetPlayerInventory() {
