@@ -1280,7 +1280,7 @@ function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modi
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    //UpdateAllUnitCounts(Date.now());
+    UpdateAllUnitCounts(Date.now());
 
     AddMissingPlayerData();
 }
