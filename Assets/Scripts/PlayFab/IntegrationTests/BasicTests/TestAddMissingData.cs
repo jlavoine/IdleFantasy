@@ -85,7 +85,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             Dictionary<string, WorldProgress> worldProgress = JsonConvert.DeserializeObject<Dictionary<string, WorldProgress>>( i_saveData );
             foreach ( KeyValuePair<string, WorldProgress> pair in worldProgress ) {
                 WorldProgress world = pair.Value;
-                UnityEngine.Debug.Log( "checking: " + world.ID + " and " + world.RestartCount );
                 if ( world.CurrentMapLevel != 0 || world.RestartCount != 0 ) {
                     IntegrationTest.Fail( "World progress for " + world.ID + " not default" );
                 }
