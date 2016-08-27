@@ -7,6 +7,9 @@ using System.Collections;
 
 namespace MyLibrary {
     public class PlayFabBackend : IBasicBackend {
+        public const Dictionary<string, string> NULL_CLOUD_PARAMS = null;
+        public const Callback<Dictionary<string, string>> NULL_CLOUD_CALLBACK = null;
+
         private const string TITLE_ID = "B9C6";
         public const string PLAYFAB = "PlayFab";
         public const string CLIENT_OUT_OF_SYNC_KEY = "outOfSync";
@@ -92,6 +95,12 @@ namespace MyLibrary {
 
                 RequestComplete( "Cloud logs for " + i_methodName + "(" + result.ExecutionTime + ") call " + ": " + result.ActionLog, LogTypes.Info );
             }, ( error ) => { HandleError( error, i_methodName ); } );
+        }
+
+        public IEnumerator WaitForCloudCall( string i_methodName, Dictionary<string, string> i_params, Callback<Dictionary<string, string>> i_requestSuccessCallback ) {
+            MakeCloudCall( i_methodName, i_params, i_requestSuccessCallback );
+
+            yield return WaitUntilNotBusy();
         }
 
         private void LogCloudCallParams( Dictionary<string, string> i_params ) {

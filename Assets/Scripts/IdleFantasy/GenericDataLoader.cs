@@ -56,7 +56,7 @@ namespace IdleFantasy {
             }
         }
 
-        private static Dictionary<string, T> DeserializeData<T>( string i_data, string i_className ) {            
+        private static Dictionary<string, T> DeserializeData<T>( string i_data, string i_className ) {
             Dictionary<string, T> dataAsDictionary = JsonConvert.DeserializeObject<Dictionary<string, T>>( i_data );
 
             return dataAsDictionary;

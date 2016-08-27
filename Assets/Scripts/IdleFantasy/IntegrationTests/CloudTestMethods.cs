@@ -16,6 +16,7 @@ namespace IdleFantasy {
         getMaxLevelForUpgrade,
         getAvailableTrainers,
         getInternalData,
+        getReadOnlyData,
         getTrainerCount,
         getProgressData,
         getUnitCount,
@@ -23,6 +24,9 @@ namespace IdleFantasy {
         addProgressToUpgrade,
         getTestMissions,
         createMapForTesting,
-        getDefaultMapAreaWeights
+        getDefaultMapAreaWeights,
+        deleteAllPlayerReadOnlyData,
+        addMissingPlayerData,
+        getAllPlayerReadOnlySaveData
     }
 }

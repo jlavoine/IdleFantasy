@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+using MyLibrary;
 using System;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestCloudscriptTestMethodsOnlyForTesting : IntegrationTestBase {
         protected override IEnumerator RunAllTests() {
             foreach ( CloudTestMethods testMethod in Enum.GetValues( typeof( CloudTestMethods ) ) ) {
-                mBackend.MakeCloudCall( testMethod.ToString(), null, null );
+                mBackend.MakeCloudCall( testMethod.ToString(), PlayFabBackend.NULL_CLOUD_PARAMS, PlayFabBackend.NULL_CLOUD_CALLBACK );
 
                 yield return mBackend.WaitUntilNotBusy();
 

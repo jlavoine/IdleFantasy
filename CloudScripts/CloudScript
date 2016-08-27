@@ -419,6 +419,18 @@ handlers.getInternalData = function(args) {
     return ReturnDataToClient(value);
 }
 
+/// for getting read only data
+handlers.getReadOnlyData = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();    
+    }
+
+    var key = args.data[SAVE_KEY];
+    var value = GetReadOnlySaveData(key); 
+    
+    return ReturnDataToClient(value);
+}
+
 /// returns the # of available trainers
 handlers.getAvailableTrainers = function(args) {
     if (!isTesting()) {
@@ -482,6 +494,7 @@ handlers.setPlayerCurrency = function(args) {
     }
 }
 
+/// for testing the creation of a map
 handlers.createMapForTesting = function(args) {
     if (!isTesting()) {
         return returnOutOfSync();
@@ -496,6 +509,7 @@ handlers.createMapForTesting = function(args) {
     return ReturnDataToClient(map);
 }
 
+/// test function used to get some title data
 handlers.getDefaultMapAreaWeights = function(args) {
     if (!isTesting()) {
         return returnOutOfSync();
@@ -504,6 +518,41 @@ handlers.getDefaultMapAreaWeights = function(args) {
     var defaultWeights = GetTitleData(DEFAULT_MAP_WEIGHTS);
 
     return ReturnDataToClient(defaultWeights);
+}
+
+/// for tests where the players save data needs to be wiped
+handlers.deleteAllPlayerReadOnlyData = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }    
+
+    var emptyData = {};
+    emptyData[GetProgressKey(CLASS_BUILDING)] = "{}";
+    emptyData[GetProgressKey(CLASS_UNIT)] = "{}";
+    emptyData[GetProgressKey(CLASS_GUILD)] = "{}";
+    emptyData[TRAINER_SAVE_DATA] = "{}";
+    emptyData[WORLD_PROGRESS_KEY] = "{}";
+
+    SetSaveDataWithObject(emptyData, READ_ONLY);
+}
+
+/// for testing adding missing player data
+handlers.addMissingPlayerData = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    AddMissingPlayerData();    
+}
+
+handlers.getAllPlayerReadOnlySaveData = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var allSaveData = GetAllReadOnlySaveData();
+
+    return ReturnDataToClient(allSaveData);
 }
 
 /////////////////////////////////////////////////
@@ -1332,6 +1381,7 @@ function AddBuildingProgress_IfMissing(buildingProgress, titleData) {
     for (var buildingKey in titleData) {
         if (!buildingProgress.hasOwnProperty(buildingKey)) {
             var missingProgress = {};
+            missingProgress[ID] = buildingKey;
             missingProgress[UPGRADE_LEVEL] = 0;
 
             buildingProgress[buildingKey] = missingProgress;
@@ -1343,6 +1393,7 @@ function AddGuildProgress_IfMissing(guildProgress, titleData) {
     for (var key in titleData) {
         if (!guildProgress.hasOwnProperty(key)) {
             var missingProgress = {};
+            missingProgress[ID] = key;
             missingProgress[UPGRADE_LEVEL] = 0;
             missingProgress[UPGRADE_POINTS] = 0;
 
@@ -1368,6 +1419,7 @@ function AddUnitProgress_IfMissing(unitProgress, titleData) {
     for (var key in titleData) {
         if (!unitProgress.hasOwnProperty(key)) {
             var missingProgress = {};
+            missingProgress[ID] = key;
             missingProgress[UPGRADE_LEVEL] = 0;
             missingProgress[TRAINERS_ASSIGNED] = 0;
             missingProgress[UNIT_COUNT] = 0;
@@ -1382,19 +1434,22 @@ function AddWorldProgress_IfMissing(allSaveData, allModules) {
     var allModules = GetAllModules();  
     
     if (!allSaveData.hasOwnProperty(WORLD_PROGRESS_KEY)) {
-        var totalProgress = [];
-        for (var i = 0; i < allModules.length; i++) {
+        allSaveData[WORLD_PROGRESS_KEY] = {};
+    }
+
+    var worldProgressData = allSaveData[WORLD_PROGRESS_KEY]
+    for (var i = 0; i < allModules.length; i++) {
+        var module = allModules[i];
+        if (!worldProgressData.hasOwnProperty(module)) {
             var worldProgress = {};
 
-            worldProgress[ID] = MODULE_BASE;
+            worldProgress[ID] = module;
             worldProgress[WORLD_PROGRESS_RESTARTS] = 0;
             worldProgress[WORLD_PROGRESS_CUR_MAP] = 0;
 
-            totalProgress.push(worldProgress);
-        }        
-
-        allSaveData[WORLD_PROGRESS_KEY] = totalProgress;
-    }
+            worldProgressData[module] = worldProgress;
+        }
+    }        
 }
 
 /////////////////////////////////////////////////

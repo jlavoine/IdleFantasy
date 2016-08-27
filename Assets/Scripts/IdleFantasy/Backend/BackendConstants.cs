@@ -43,6 +43,14 @@ namespace IdleFantasy {
         public const string BASE_GOLD_MOD = "BaseGoldReward";
         #endregion
 
+        #region Player save data keys
+        public const string BUILDING_PROGRESS = "BuildingsProgress";
+        public const string GUILD_PROGRESS = "GuildsProgress";
+        public const string UNIT_PROGRESS = "UnitsProgress";
+        public const string WORLD_PROGRESS = "WorldsProgress";
+        public const string TRAINER_PROGRESS = "TrainerSaveData";
+        #endregion
+
         public const string DATA = "data";
 
         // constants on the server

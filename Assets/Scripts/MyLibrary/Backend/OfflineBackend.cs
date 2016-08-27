@@ -48,6 +48,10 @@ namespace MyLibrary {
             throw new NotImplementedException();
         }
 
+        public IEnumerator WaitForCloudCall( string i_methodName, Dictionary<string, string> i_params, Callback<Dictionary<string, string>> requestSuccessCallback ) {
+            throw new NotImplementedException();
+        }
+
         public IEnumerator WaitUntilNotBusy() {
             throw new NotImplementedException();
         }
