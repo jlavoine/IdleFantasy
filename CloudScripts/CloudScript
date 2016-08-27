@@ -46,7 +46,8 @@ const ID = "ID";
 
 // map related
 const DEFAULT_SIZE = 36;
-const MAP_TITLE_KEY = "Map_";                           // key used in map title data
+const NEW_PLAYER_MAP = "NewPlayerMap";                  // title data key for the map data that should be a new player's
+const MAP_SAVE_KEY = "Map_";                            // key used in player's save data for defining a type of map
 const MAP_WORLD = "World";                              // key in map data structure for the map's world
 const MAP_LEVEL = "MapLevel";                           // key in mapa data structure for the map's level
 const MAP_SIZE = "MapSize";                             // key for size of the map (int)
@@ -575,7 +576,7 @@ function GetAllMapModifications(map) {
     return map[MAP_ALL_MODS];
 }
 
-function GetMapModification(map, key) {
+function GetMapModificationAmount(map, key) {
     var allMapMods = GetAllMapModifications(map);
     for (var index in allMapMods) {
         var mod = allMapMods[index];
@@ -584,7 +585,6 @@ function GetMapModification(map, key) {
         }
     }
 
-    log.info("ERROR: No such map modification for " + key);
     return 0;
 }
 
@@ -676,7 +676,7 @@ function SetUpcomingMaps(map) {
 }
 
 function SetMapAreas(map) {
-    log.info("Setting map areas for " + JSON.stringify(map));
+    //log.info("Setting map areas for " + JSON.stringify(map));
 
     var indexArray = CreateMapIndexArray(map);
     SetMapModifications(map);
@@ -813,10 +813,10 @@ function GetMissionGoldReward(map) {
     var mapLevel = GetMapLevel(map);
     var goldReward = mapLevel * BASE_GOLD_REWARD;
     
-    var goldModAmount = GetMapModification(map, MAP_GOLD_MOD);
+    var goldModAmount = GetMapModificationAmount(map, MAP_GOLD_MOD);
     goldReward = goldReward + Math.ceil(goldReward * goldModAmount);
 
-    log.info("Gold reward: " + goldReward);
+    //log.info("Gold reward: " + goldReward);
     return goldReward;
 }
 
@@ -958,7 +958,7 @@ function GetMapPiece(level, pieceKey) {
     }
 
     var randomPiece = GetRandomArrayElement(validPieces);
-    log.info("Chose map piece: " + randomPiece[MAP_PIECE_ID]);
+    //log.info("Chose map piece: " + randomPiece[MAP_PIECE_ID]);
 
     return randomPiece;
 }
@@ -971,7 +971,7 @@ function GetTitleDataForMapPiece(pieceKey) {
     var data = titleData[DATA];
     var allPieceData = data[titleDataKey];
 
-    log.info("Getting piece data for " + pieceKey + ": " + allPieceData);
+    //log.info("Getting piece data for " + pieceKey + ": " + allPieceData);
 
     return JSON.parse(allPieceData);
 }
@@ -1355,6 +1355,7 @@ function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddTrainerProgress_IfMissing(allSaveData);
     AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], titleData[CLASS_UNIT]);
     AddWorldProgress_IfMissing(allSaveData);
+    AddFirstMap_IfMissing(allSaveData);
 }
 
 /// This method will add any save data keys as empty objects
@@ -1402,19 +1403,6 @@ function AddGuildProgress_IfMissing(guildProgress, titleData) {
     }    
 }
 
-function AddTrainerProgress_IfMissing(allSaveData) {
-    if (!allSaveData.hasOwnProperty(TRAINER_SAVE_DATA)) {
-        allSaveData[TRAINER_SAVE_DATA] = {};
-    }
-
-    var trainerSaveData = allSaveData[TRAINER_SAVE_DATA];
-    if (!trainerSaveData.hasOwnProperty(TRAINER_COUNTS)) {
-        var trainerCounts = {};
-        trainerCounts[NORMAL_TRAINER] = 0;
-        trainerSaveData[TRAINER_COUNTS] = trainerCounts;
-    }
-}
-
 function AddUnitProgress_IfMissing(unitProgress, titleData) {
     for (var key in titleData) {
         if (!unitProgress.hasOwnProperty(key)) {
@@ -1428,6 +1416,30 @@ function AddUnitProgress_IfMissing(unitProgress, titleData) {
             unitProgress[key] = missingProgress;
         }
     }    
+}
+
+function AddTrainerProgress_IfMissing(allSaveData) {
+    if (!allSaveData.hasOwnProperty(TRAINER_SAVE_DATA)) {
+        allSaveData[TRAINER_SAVE_DATA] = {};
+    }
+
+    var trainerSaveData = allSaveData[TRAINER_SAVE_DATA];
+    if (!trainerSaveData.hasOwnProperty(TRAINER_COUNTS)) {
+        var trainerCounts = {};
+        trainerCounts[NORMAL_TRAINER] = 0;
+        trainerSaveData[TRAINER_COUNTS] = trainerCounts;
+    }
+}
+
+/// This sets the player's first ever map, if they have no map for the base module
+function AddFirstMap_IfMissing(allSaveData) {
+    var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
+    if (!allSaveData.hasOwnProperty(MAP_SAVE_KEY)) {
+        var firstMapData = GetTitleData(NEW_PLAYER_MAP);
+        var testobj = {};
+        testobj["Test"] = 5;
+        allSaveData[baseMapKey] = firstMapData;
+    }
 }
 
 function AddWorldProgress_IfMissing(allSaveData, allModules) {
@@ -1657,13 +1669,12 @@ function ShuffleArray(array) {
 function GetTitleData(titleDataKey) {
     log.info("Getting title data for " + titleDataKey);
 
-    var titleData = server.GetTitleData({ Keys : titleDataKey });
-    log.info("what is this: " + JSON.stringify(titleData));
+    var titleData = server.GetTitleData({ Keys : titleDataKey });    
     var data = titleData[DATA];
     var actualDataAsString = data[titleDataKey];
 
     var actualDataAsObject = JSON.parse(actualDataAsString);
-    log.info("Title data as string: " + actualDataAsString);
+    //log.info("Title data as string: " + actualDataAsString);
 
     return actualDataAsObject;
 }
@@ -1677,9 +1688,7 @@ function GetMultipleTitleData(arrayKeys) {
 
     // parse all the data into objects so it's easier to use
     for (var dataKey in titleData) {
-        log.info("whats the key: " + dataKey);
         var data = titleData[dataKey];
-        log.info("Whats this: " + data);
         titleData[dataKey] = JSON.parse(data);
     }
     
