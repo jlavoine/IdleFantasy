@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestAddMissingData : IntegrationTestBase {
-        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS };     
+        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS };
+        //private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS };
         private const string EMPTY_SAVE_DATA = "{}";
 
         protected override IEnumerator RunAllTests() {
@@ -22,7 +23,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IEnumerator VerifyPlayerSaveDataIsEmpty() {
             foreach ( string keyToTest in DATA_KEYS_TO_TEST ) {
                 Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.SAVE_KEY, keyToTest } };
-                mBackend.MakeCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
+                yield return mBackend.WaitForCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
                     FailIfSaveDataNotEmpty( results[BackendConstants.DATA], keyToTest );                    
                 } );
             }
@@ -43,7 +44,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IEnumerator VerifyAllSaveData() {
             foreach ( string keyToTest in DATA_KEYS_TO_TEST ) {
                 Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.SAVE_KEY, keyToTest } };
-                mBackend.MakeCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
+                yield return mBackend.WaitForCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
                     FailIfDataNotDefault( results[BackendConstants.DATA], keyToTest );
                 } );
             }
@@ -68,6 +69,12 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                     break;
                 case BackendConstants.TRAINER_PROGRESS:
                     VerifyTrainerProgressDefault( i_saveData );
+                    break;
+                case BackendConstants.MAP_BASE:
+                    VerifyFirstMapIsDefault( i_saveData );
+                    break;
+                default:
+                    UnityEngine.Debug.LogError( "No case for default data check on " + i_saveKey );
                     break;
             }
         }
@@ -98,6 +105,15 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                     IntegrationTest.Fail( "Trainer save data value not default: " + pair.Key );
                 }
             }
+        }
+
+        private void VerifyFirstMapIsDefault( string i_saveData ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.SAVE_KEY, BackendConstants.MAP_BASE } };
+            mBackend.MakeCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
+                if ( results[BackendConstants.DATA] != i_saveData ) {
+                    IntegrationTest.Fail( "First map default data did not match title data" );
+                }
+            } );
         }
     }
 }

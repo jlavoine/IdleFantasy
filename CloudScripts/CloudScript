@@ -557,6 +557,17 @@ handlers.getAllPlayerReadOnlySaveData = function(args) {
     return ReturnDataToClient(allSaveData);
 }
 
+handlers.getTitleData = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var key = args.data[SAVE_KEY];
+    var titleData= GetTitleData(key);
+
+    return ReturnDataToClient(titleData);
+}
+
 /////////////////////////////////////////////////
 /// ~Testing
 /////////////////////////////////////////////////
@@ -1437,8 +1448,6 @@ function AddFirstMap_IfMissing(allSaveData) {
     var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
     if (!allSaveData.hasOwnProperty(MAP_SAVE_KEY)) {
         var firstMapData = GetTitleData(NEW_PLAYER_MAP);
-        var testobj = {};
-        testobj["Test"] = 5;
         allSaveData[baseMapKey] = firstMapData;
     }
 }

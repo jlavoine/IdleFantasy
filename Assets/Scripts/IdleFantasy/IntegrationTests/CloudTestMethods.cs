@@ -27,6 +27,7 @@ namespace IdleFantasy {
         getDefaultMapAreaWeights,
         deleteAllPlayerReadOnlyData,
         addMissingPlayerData,
-        getAllPlayerReadOnlySaveData
+        getAllPlayerReadOnlySaveData,
+        getTitleData
     }
 }

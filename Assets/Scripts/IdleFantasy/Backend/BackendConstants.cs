@@ -49,6 +49,7 @@ namespace IdleFantasy {
         public const string UNIT_PROGRESS = "UnitsProgress";
         public const string WORLD_PROGRESS = "WorldsProgress";
         public const string TRAINER_PROGRESS = "TrainerSaveData";
+        public const string MAP_BASE = "Map_Base";
         #endregion
 
         public const string DATA = "data";
