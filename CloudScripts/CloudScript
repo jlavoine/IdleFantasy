@@ -533,6 +533,7 @@ handlers.deleteAllPlayerReadOnlyData = function(args) {
     emptyData[GetProgressKey(CLASS_GUILD)] = "{}";
     emptyData[TRAINER_SAVE_DATA] = "{}";
     emptyData[WORLD_PROGRESS_KEY] = "{}";
+    emptyData[MAP_SAVE_KEY + MODULE_BASE] = "{}";
 
     SetSaveDataWithObject(emptyData, READ_ONLY);
 }
