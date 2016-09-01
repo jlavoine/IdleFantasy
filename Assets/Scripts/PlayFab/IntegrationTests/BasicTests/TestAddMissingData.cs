@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestAddMissingData : IntegrationTestBase {
-        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS };
-        //private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS };
+        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS };        
         private const string EMPTY_SAVE_DATA = "{}";
+        private const int DEFAULT_MAP_SIZE = 36;
 
         protected override IEnumerator RunAllTests() {
             yield return DeleteAllPlayerSaveData();
@@ -73,6 +73,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 case BackendConstants.MAP_BASE:
                     VerifyFirstMapIsDefault( i_saveData );
                     break;
+                case BackendConstants.MISSION_PROGRESS:
+                    VerifyMissionProgressIsDefault( i_saveData );
+                    break;
                 default:
                     UnityEngine.Debug.LogError( "No case for default data check on " + i_saveKey );
                     break;
@@ -112,6 +115,24 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             mBackend.MakeCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
                 if ( results[BackendConstants.DATA] != i_saveData ) {
                     IntegrationTest.Fail( "First map default data did not match title data" );
+                }
+            } );
+        }
+
+        private void VerifyMissionProgressIsDefault( string i_saveData ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.SAVE_KEY, BackendConstants.MISSION_PROGRESS } };
+            mBackend.MakeCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
+                Dictionary<string, WorldMissionProgress> allMissionProgress = JsonConvert.DeserializeObject<Dictionary<string, WorldMissionProgress>>( results[BackendConstants.DATA] );
+                WorldMissionProgress baseWorldMissionProgress = allMissionProgress[BackendConstants.WORLD_BASE];
+
+                if ( baseWorldMissionProgress.Missions.Count != DEFAULT_MAP_SIZE ) {
+                    IntegrationTest.Fail( "Missions completed list was not default: " + baseWorldMissionProgress.Missions.Count );
+                }
+
+                foreach (SingleMissionProgress singleMission in baseWorldMissionProgress.Missions ) {
+                    if ( singleMission.Completed != false ) {
+                        IntegrationTest.Fail( "A mission was marked as completed when it should not have been." );
+                    }
                 }
             } );
         }

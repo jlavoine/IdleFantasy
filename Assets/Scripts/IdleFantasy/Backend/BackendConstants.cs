@@ -53,6 +53,10 @@ namespace IdleFantasy {
         public const string MAP_BASE = "Map_Base";
         #endregion
 
+        #region Worlds
+        public const string WORLD_BASE = "Base";
+        #endregion
+
         public const string DATA = "data";
 
         // constants on the server
