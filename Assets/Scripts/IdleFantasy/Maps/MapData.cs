@@ -5,6 +5,7 @@ namespace IdleFantasy {
         public string World;
 
         public int MapLevel;
+        public int MapSize;
 
         public MapName Name;
 
