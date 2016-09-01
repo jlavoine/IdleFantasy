@@ -219,6 +219,10 @@ namespace MyLibrary {
             return ClientOutOfSync;
         }
 
+        public void ResetSyncState() {
+            ClientOutOfSync = false;
+        }
+
         protected void CheckForOutOfSyncState( Dictionary<string, string> results ) {
             if ( results.ContainsKey(CLIENT_OUT_OF_SYNC_KEY ) ) {
                 bool outOfSync = bool.Parse( results[CLIENT_OUT_OF_SYNC_KEY] );

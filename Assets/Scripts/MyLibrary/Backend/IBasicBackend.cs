@@ -15,6 +15,7 @@ namespace MyLibrary {
         void GetVirtualCurrency( string i_key, Callback<int> requetSuccessCallback );
 
         bool IsClientOutOfSync();
+        void ResetSyncState();
 
         bool IsBusy();
         IEnumerator WaitUntilNotBusy();

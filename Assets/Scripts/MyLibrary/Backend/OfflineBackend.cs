@@ -44,6 +44,10 @@ namespace MyLibrary {
             throw new NotImplementedException();
         }
 
+        public void ResetSyncState() {
+            throw new NotImplementedException();
+        }
+
         public void SetUpCloudServices( bool i_testing ) {
             throw new NotImplementedException();
         }
