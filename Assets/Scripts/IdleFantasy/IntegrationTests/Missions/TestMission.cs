@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
-        private const string MISSION_CATEGORY = "Test";
+        protected const string MISSION_WORLD = "Base";
         private const int MISSION_INDEX = 0;
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
@@ -12,21 +12,43 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected abstract string GetUnitProgressData();
 
         protected override IEnumerator RunAllTests() {
+            bool completedMission = ShouldMarkMissionsComplete();
+
             yield return SetMissionDataOnServer();
+            yield return SetMissionProgressOnServer( completedMission );
             yield return ClearUnitModifierData();
             yield return SetPlayerDataOnServer();
             yield return InitiateMissionComplete();
 
             if ( IsTestExpectedToFail() ) {
                 FailTestIfClientInSync( GetType().ToString() );
+            } else {
+                FailTestIfClientOutOfSync( GetType().ToString() );
             }
+
+            yield return RunOtherFailureChecks();
         }
 
         private IEnumerator SetMissionDataOnServer() {
-            List<MissionData> testMissionData = CreateMissionData();
+            MapData map = CreateMapData();           
+            string data = JsonConvert.SerializeObject( map );
 
-            string data = JsonConvert.SerializeObject( testMissionData );
-            IntegrationTestUtils.SetReadOnlyData( "Missions_" + MISSION_CATEGORY, data );
+            IntegrationTestUtils.SetReadOnlyData( "Map_" + MISSION_WORLD, data );
+
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
+        protected IEnumerator SetMissionProgressOnServer( bool i_bCompleted ) {
+            List<SingleMissionProgress> listProgress = new List<SingleMissionProgress>();
+            listProgress.Add( new SingleMissionProgress() { Completed = i_bCompleted } );
+
+            WorldMissionProgress progressForWorld = new WorldMissionProgress();
+            progressForWorld.World = MISSION_WORLD;
+            progressForWorld.Missions = listProgress;
+
+            Dictionary<string, WorldMissionProgress> dictData = new Dictionary<string, WorldMissionProgress>() { { MISSION_WORLD, progressForWorld } };
+
+            IntegrationTestUtils.SetReadOnlyData( BackendConstants.MISSION_PROGRESS, JsonConvert.SerializeObject( dictData ) );
 
             yield return mBackend.WaitUntilNotBusy();
         }
@@ -37,10 +59,24 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return mBackend.WaitUntilNotBusy();
         }
 
-        private List<MissionData> CreateMissionData() {           
+        private MapData CreateMapData() {
+            MapData map = new MapData();
+            map.World = MISSION_WORLD;
+            map.MapSize = 1;
+            map.Areas = new List<MapAreaData>();
+
+            MapAreaData area0 = new MapAreaData();
+            area0.Index = 0;
+            area0.Mission = CreateMissionData();
+            map.Areas.Add( area0 );
+
+            return map;
+        }
+
+        private MissionData CreateMissionData() {           
             MissionData testMissionData = new MissionData();
 
-            testMissionData.MissionCategory = MISSION_CATEGORY;
+            testMissionData.MissionCategory = MISSION_WORLD;
             testMissionData.Index = MISSION_INDEX;
 
             List<MissionTaskData> missionTasks = new List<MissionTaskData>();
@@ -58,7 +94,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             testMissionData.Tasks = missionTasks;
 
-            return new List<MissionData>() { testMissionData };
+            return testMissionData;
         }
 
         private IEnumerator SetPlayerDataOnServer() {
@@ -70,9 +106,31 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator InitiateMissionComplete() {
             Dictionary<int, MissionTaskProposal> taskProposals = GetTaskProposals();
-            BackendManager.Backend.CompleteMission( MISSION_CATEGORY, MISSION_INDEX, taskProposals );
+            BackendManager.Backend.CompleteMission( MISSION_WORLD, MISSION_INDEX, taskProposals );
 
             yield return mBackend.WaitUntilNotBusy();
         }
+
+        #region Convenience methods for various tests
+        protected string GetValidUnitProgressForMission() {
+            return "{\"BASE_MELEE_1\":{\"Level\":1, \"Count\":10000, \"Trainers\":0, \"LastCountTime\":0}}";
+        }
+
+        protected Dictionary<int, MissionTaskProposal> GetValidMissionProposal() {
+            Dictionary<int, MissionTaskProposal> taskProposals = new Dictionary<int, MissionTaskProposal>();
+            taskProposals.Add( 0, new MissionTaskProposal( 0, "BASE_MELEE_1", 500 ) );
+            taskProposals.Add( 1, new MissionTaskProposal( 1, "BASE_MELEE_1", 667 ) );
+
+            return taskProposals;
+        }
+
+        protected virtual bool ShouldMarkMissionsComplete() {
+            return false;
+        }
+
+        protected virtual IEnumerator RunOtherFailureChecks() {
+            yield return null;
+        }
+        #endregion
     }
 }
