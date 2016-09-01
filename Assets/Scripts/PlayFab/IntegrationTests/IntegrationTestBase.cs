@@ -12,6 +12,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         void Start() {
             mBackend = BackendManager.Backend;
+            mBackend.ResetSyncState();
+
             StartCoroutine( StartTests() );
         }
 
