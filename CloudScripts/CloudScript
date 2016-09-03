@@ -674,11 +674,12 @@ function CreateMap(worldKey, mapLevel, mapSize) {
     SetAllPieceData_Global();    
 
     var map = CreateMapObject(worldKey, mapLevel, mapSize);
+    var isFirstMap = false;
 
     SetMapName(map);
     SetUpcomingMaps(map);
     SetMapAreas(map);
-    SetMissionProgressForMap(map);
+    SetMissionProgressForMap(map, isFirstMap);
 
     log.info("Returning map: " + JSON.stringify(map));
     return map;
@@ -1040,12 +1041,14 @@ function GetMapPieceLevelRestriction(pieceData) {
 }
 
 /// This seems like it's mission related, but it is always set in relation to a map, so I put it with the maps
-function SetMissionProgressForMap(map) {
-    log.info("&&&& this is happening");
+function SetMissionProgressForMap(map, isFirstMap) {
     var world = GetMapWorld(map);
     var size = GetMapSize(map);
 
-    var missionProgressSaveData = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+    var missionProgressSaveData = {};
+    if (!isFirstMap) {
+        missionProgressSaveData = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+    }
     var missionProgressForMap = CreateMissionProgress(world, size);
 
     log.info("Setting thing for " + world + ": " + JSON.stringify(missionProgressForMap));
@@ -1500,6 +1503,7 @@ function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddTrainerProgress_IfMissing(allSaveData);
     AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], titleData[CLASS_UNIT]);
     AddWorldProgress_IfMissing(allSaveData);
+
     AddFirstMap_IfMissing(allSaveData);
 }
 
@@ -1589,7 +1593,8 @@ function AddFirstMap_IfMissing(allSaveData) {
         var firstMapData = GetTitleData(NEW_PLAYER_MAP);
         allSaveData[baseMapKey] = firstMapData;
 
-        SetMissionProgressForMap(firstMapData);
+        var isFirstMap = true;
+        SetMissionProgressForMap(firstMapData, isFirstMap);
     }
 }
 
