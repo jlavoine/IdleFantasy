@@ -21,6 +21,7 @@ namespace IdleFantasy {
         private void SetUpModel() {
             SetTerrain();
             SetCompletedState();
+            SetAreaAccessibility();
         }
 
         private void SetTerrain() {
@@ -29,6 +30,10 @@ namespace IdleFantasy {
 
         private void SetCompletedState() {
             ViewModel.SetProperty( MapViewProperties.AREA_COMPLETED, Progress.Completed );
+        }
+
+        private void SetAreaAccessibility() {
+            ViewModel.SetProperty( MapViewProperties.AREA_ACCESS, !Progress.Completed );
         }
     }
 }
