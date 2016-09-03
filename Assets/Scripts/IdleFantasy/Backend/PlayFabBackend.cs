@@ -154,6 +154,29 @@ namespace MyLibrary {
             }, ( error ) => { HandleError( error, BackendMessages.PLAYER_DATA_REQUEST_FAIL ); } );
         }
 
+        public void GetPlayerDataDeserialized<T>( string i_key, Callback<T> requestSuccessCallback ) {
+            StartRequest( "Request player data " + i_key );
+
+            GetUserDataRequest request = new GetUserDataRequest() {
+                PlayFabId = PlayFabId,
+                Keys = new List<string>() { i_key }
+            };
+
+            PlayFabClientAPI.GetUserReadOnlyData( request, ( result ) => {
+                RequestComplete( "Player data request complete: " + i_key, LogTypes.Info );
+
+                if ( ( result.Data == null ) || ( result.Data.Count == 0 ) ) {
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No user data for " + i_key, PLAYFAB );
+                }
+                else {
+                    // should only call the callback ONCE because there is only one key
+                    foreach ( var item in result.Data ) {
+                        requestSuccessCallback( JsonConvert.DeserializeObject<T>( item.Value.Value ) );
+                    }
+                }
+            }, ( error ) => { HandleError( error, BackendMessages.PLAYER_DATA_REQUEST_FAIL ); } );
+        }
+
         public void GetVirtualCurrency( string i_key, Callback<int> requestSuccessCallback ) {
             StartRequest( "Requesting virtual currency: " + i_key );
 

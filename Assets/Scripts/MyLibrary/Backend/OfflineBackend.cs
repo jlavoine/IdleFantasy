@@ -3,6 +3,7 @@ using UnityEngine;
 using MyLibrary.PlayFab;    // this is here just for string clean up/deserialization since I just copy the json on the playfab servers for offline usage (unit tests)
 using System.Collections.Generic;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace MyLibrary {
     public class OfflineBackend : IBasicBackend {
@@ -17,7 +18,9 @@ namespace MyLibrary {
         }
 
         public void GetPlayerData( string i_key, Callback<string> requestSuccessCallback ) {
-            throw new NotImplementedException();
+            string filePath = Application.streamingAssetsPath + "/OfflineData/PlayerData/" + i_key + ".json";
+            string data = GetCleanTextAtPath( filePath );
+            requestSuccessCallback( data );
         }
 
         public void GetTitleData( string i_key, Callback<string> requestSuccessCallback ) {
@@ -26,6 +29,16 @@ namespace MyLibrary {
                 string data = GetCleanTextAtPath( filePath );
                 requestSuccessCallback( data );
             }
+        }
+
+        public void GetPlayerDataDeserialized<T>( string i_key, Callback<T> requestSuccessCallback ) {
+            requestSuccessCallback( GetPlayerData_Offline<T>( i_key ) );
+        }
+
+        public T GetPlayerData_Offline<T>( string i_key ) {
+            string filePath = Application.streamingAssetsPath + "/OfflineData/Player/" + i_key + ".json";
+            string data = GetCleanTextAtPath( filePath );
+            return JsonConvert.DeserializeObject<T>( data );
         }
 
         public void GetVirtualCurrency( string i_key, Callback<int> requetSuccessCallback ) {

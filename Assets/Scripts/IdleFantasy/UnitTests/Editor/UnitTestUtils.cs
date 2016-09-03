@@ -4,10 +4,11 @@ using NSubstitute;
 
 namespace IdleFantasy.UnitTests {
     public static class UnitTestUtils {
-        private static IBasicBackend mOfflineBackend;
+        private static IdleFantasyOfflineBackend mOfflineBackend;
 
         public static void LoadOfflineData() {
-            mOfflineBackend = new OfflineBackend();
+            mOfflineBackend = new IdleFantasyOfflineBackend();
+            BackendManager.Backend = mOfflineBackend;
 
             LoadConstants();
             LoadGenericData();
