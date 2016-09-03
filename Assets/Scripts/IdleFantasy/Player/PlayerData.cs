@@ -20,7 +20,10 @@ namespace IdleFantasy {
         public List<Guild> Guilds { get { return mGuilds; } }
 
         private List<Building> mBuildings = new List<Building>();
-        public List<Building> Buildings { get { return mBuildings; } }       
+        public List<Building> Buildings { get { return mBuildings; } }
+
+        public Dictionary<string, MapData> mMaps = new Dictionary<string, MapData>();    
+        public Dictionary<string, MapData> Maps { get { return mMaps; } }
 
         private TrainerSaveData mTrainerSaveData;
         private ITrainerManager mTrainerManager;
@@ -37,16 +40,28 @@ namespace IdleFantasy {
             mModel = new ViewModel();
 
             DownloadAllProgressData();
+            DownloadTrainerData();
+            DownloadCurrencyData();
+            DownloadMapData();
+        }
 
+        private void DownloadMapData() {
+            mBackend.GetPlayerData( BackendConstants.MAP_BASE, ( jsonData ) => {
+                mMaps[BackendConstants.WORLD_BASE] = JsonConvert.DeserializeObject<MapData>( jsonData );
+            });
+        }
+
+        private void DownloadTrainerData() {
             mBackend.GetPlayerData( TRAINER_SAVE_DATA, ( jsonData ) => {
-                mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );                
+                mTrainerSaveData = JsonConvert.DeserializeObject<TrainerSaveData>( jsonData );
             } );
+        }
 
+        private void DownloadCurrencyData() {
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 Gold = numGold;
             } );
         }
-
         private void DownloadAllProgressData() {            
             DownloadProgressDataForKey<UnitProgress>( GenericDataLoader.UNITS );
             DownloadProgressDataForKey<BuildingProgress>( GenericDataLoader.BUILDINGS );

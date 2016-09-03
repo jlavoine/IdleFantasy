@@ -64,6 +64,12 @@ namespace IdleFantasy {
             }
         }
 
+        public Dictionary<string, MapData> Maps {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public ViewModel GetViewModel() {
             return mModel;
         }

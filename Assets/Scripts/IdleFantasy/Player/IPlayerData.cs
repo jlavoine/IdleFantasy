@@ -14,5 +14,6 @@ namespace IdleFantasy {
         List<Guild> Guilds { get; }
         List<Building> Buildings { get; }
         ITrainerManager TrainerManager { get; }
+        Dictionary<string, MapData> Maps { get; }
     }
 }
