@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MyLibrary;
 
 //////////////////////////////////////////
 /// AudioManager
@@ -21,7 +22,7 @@ public class AudioManager : Singleton<AudioManager>{
 			i_hashOptional = new Hashtable();
 
 		if ( strResource == "" ) {
-			Debug.LogError("Something trying to play a sound with an empty sound id...");
+			UnityEngine.Debug.LogError("Something trying to play a sound with an empty sound id...");
 			return null;
 		}
 

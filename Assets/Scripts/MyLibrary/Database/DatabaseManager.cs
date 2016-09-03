@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using MyLibrary;
 
 public class DatabaseManager : Singleton<DatabaseManager> {
 
