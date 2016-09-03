@@ -4,5 +4,6 @@ namespace IdleFantasy {
         public const string NAME = "MapName";
 
         public const string TERRAIN_TYPE = "TerrainType";
+        public const string AREA_COMPLETED = "IsAreaCompleted";
     }
 }

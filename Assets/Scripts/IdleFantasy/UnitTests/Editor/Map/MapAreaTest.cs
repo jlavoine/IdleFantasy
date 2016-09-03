@@ -16,7 +16,11 @@ namespace IdleFantasy.UnitTests {
             OfflineBackend backend = (OfflineBackend) BackendManager.Backend;
             MapData mapData = backend.GetPlayerData_Offline<MapData>( BackendConstants.MAP_BASE );
             mMapAreaData = mapData.Areas[0];
-            mAreaUnderTest = new MapArea( mMapAreaData );
+
+            SingleMissionProgress mockMissionProgress = new SingleMissionProgress();
+            mockMissionProgress.Completed = false;
+
+            mAreaUnderTest = new MapArea( mMapAreaData, mockMissionProgress );
         }
 
         [Test]

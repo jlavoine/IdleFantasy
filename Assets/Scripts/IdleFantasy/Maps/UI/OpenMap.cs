@@ -13,9 +13,10 @@ namespace IdleFantasy {
 
         private void CreateMapView() {
             mMap = new Map( PlayerManager.Data.Maps[BackendConstants.WORLD_BASE] );
+
             GameObject mapUI = gameObject.InstantiateUI( MapPrefab, MainCanvas );
             MapView view = mapUI.GetComponent<MapView>();
-            view.Init( mMap );
+            view.Init( mMap, PlayerManager.Data.MissionProgress[BackendConstants.WORLD_BASE] );
         }
     }
 }

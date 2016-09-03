@@ -25,6 +25,9 @@ namespace IdleFantasy {
         public Dictionary<string, MapData> mMaps = new Dictionary<string, MapData>();    
         public Dictionary<string, MapData> Maps { get { return mMaps; } }
 
+        public Dictionary<string, WorldMissionProgress> mMissionProgress = new Dictionary<string, WorldMissionProgress>();
+        public Dictionary<string, WorldMissionProgress> MissionProgress { get { return mMissionProgress; } }
+
         private TrainerSaveData mTrainerSaveData;
         private ITrainerManager mTrainerManager;
         public ITrainerManager TrainerManager { get { return mTrainerManager; } }
@@ -43,12 +46,19 @@ namespace IdleFantasy {
             DownloadTrainerData();
             DownloadCurrencyData();
             DownloadMapData();
+            DownloadMissionProgress();
         }
 
         private void DownloadMapData() {
             mBackend.GetPlayerData( BackendConstants.MAP_BASE, ( jsonData ) => {
                 mMaps[BackendConstants.WORLD_BASE] = JsonConvert.DeserializeObject<MapData>( jsonData );
             });
+        }
+
+        private void DownloadMissionProgress() {
+            mBackend.GetPlayerDataDeserialized<Dictionary<string, WorldMissionProgress>>( BackendConstants.MISSION_PROGRESS, ( progress ) => {
+                mMissionProgress = progress;
+            } );
         }
 
         private void DownloadTrainerData() {

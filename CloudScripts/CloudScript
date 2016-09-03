@@ -1484,7 +1484,8 @@ handlers.onLogin = function (args) {
 /// This method looks through all the player's data and makes sure that the default values get added
 /// if there were no values there.
 function AddMissingPlayerData() {
-    var saveKeysToCheck = [GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, MAP_SAVE_KEY + MODULE_BASE];
+    var baseMapSaveKey = MAP_SAVE_KEY + MODULE_BASE;
+    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
     var arraySaveKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
@@ -1589,7 +1590,7 @@ function AddMissionProgres_IfMissing(allSaveData) {
 /// This sets the player's first ever map, if they have no map for the base module
 function AddFirstMap_IfMissing(allSaveData) {
     var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
-    if (!allSaveData.hasOwnProperty(MAP_SAVE_KEY)) {
+    if (!allSaveData.hasOwnProperty(baseMapKey)) {
         var firstMapData = GetTitleData(NEW_PLAYER_MAP);
         allSaveData[baseMapKey] = firstMapData;
 
@@ -1683,9 +1684,10 @@ function GetMultipleReadOnlySaveData(keys) {
     /// Iterate through all the save data in the save data object gotten from the server.
     /// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
     /// when we re-save the object, this is the format the API wants it in.
-    for (var data in allSaveData) {
+    for (var data in allSaveData) {        
         var saveObject = allSaveData[data];
         var saveData = saveObject[VALUE];
+        
         allSaveData[data] = JSON.parse(saveData);
     }
 
@@ -1783,7 +1785,7 @@ function GetCapacityForUnit(unitKey, allBuildingProgress, allBuildingData) {
 }
 
 function GetBuildingKeyForUnit(unitKey, allBuildingData) {
-    log.info("Trying to get building for unit " + unitKey + ": " + JSON.stringify(allBuildingData));
+    //log.info("Trying to get building for unit " + unitKey + ": " + JSON.stringify(allBuildingData));
     for (var buildingKey in allBuildingData) {
         var buildingData = allBuildingData[buildingKey];
         var buildingUnitKey = GetBuildingUnitKey(buildingData);

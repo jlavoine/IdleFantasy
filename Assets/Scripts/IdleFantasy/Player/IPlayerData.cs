@@ -15,5 +15,6 @@ namespace IdleFantasy {
         List<Building> Buildings { get; }
         ITrainerManager TrainerManager { get; }
         Dictionary<string, MapData> Maps { get; }
+        Dictionary<string, WorldMissionProgress> MissionProgress { get; }
     }
 }

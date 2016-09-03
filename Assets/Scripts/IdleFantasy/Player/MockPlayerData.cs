@@ -70,6 +70,12 @@ namespace IdleFantasy {
             }
         }
 
+        public Dictionary<string, WorldMissionProgress> MissionProgress {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public ViewModel GetViewModel() {
             return mModel;
         }
