@@ -13,5 +13,9 @@ namespace IdleFantasy {
 
             SetModel( i_area.ViewModel );
         }
+
+        public void OnMapAreaClicked() {
+            MissionInterfaceManager.Instance.CreateUI( new Mission( mArea.Data.Mission ) );
+        }
     }
 }
