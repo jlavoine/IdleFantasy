@@ -13,11 +13,15 @@ namespace MyLibrary {
             }
         }
 
+        public bool TargetBoolValue = true;
+
         public override void UpdateView() {
             bool state = GetValue<bool>();
 
             if ( Interactable != null ) {
-                Interactable.interactable = state;
+                Interactable.interactable = state == TargetBoolValue; ;
+            } else {
+                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "No interactable element for SetInteractableView: " + PropertyName, "UI" );
             }
         }
     }
