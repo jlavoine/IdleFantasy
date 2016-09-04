@@ -29,20 +29,14 @@ namespace IdleFantasy {
             } );
         }
 
-        public void CompleteMission(string i_missionType, int i_missionIndex, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
-            SendMissionCompletionMessage( i_missionType, i_missionIndex );
-
+        public void CompleteMission(string i_missionType, int i_missionIndex, Dictionary<int, MissionTaskProposal> i_taskProposals ) {            
             Dictionary<string, string> cloudParams = new Dictionary<string, string>();
             cloudParams.Add( BackendConstants.MISSION_TYPE, i_missionType );
             cloudParams.Add( BackendConstants.MISSION_INDEX, i_missionIndex.ToString() );
             cloudParams.Add( BackendConstants.MISSION_PROPOSALS, JsonConvert.SerializeObject( i_taskProposals ) );            
 
             MakeCloudCall( BackendConstants.COMPLETE_MISSION, cloudParams, null );
-        }
-
-        private void SendMissionCompletionMessage( string i_missionType, int i_missionIndex ) {
-            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, i_missionType, i_missionIndex );
-        }    
+        }  
 
         public void MakeAddPointsToUpgradeCall( string i_className, string i_targetID, string i_upgradeID, int i_points ) {
             Dictionary<string, string> upgradeParams = new Dictionary<string, string>();

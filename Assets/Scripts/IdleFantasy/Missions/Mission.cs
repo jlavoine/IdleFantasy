@@ -41,7 +41,8 @@ namespace IdleFantasy {
 
         public void CompleteMission() {
             AlterLocalUnits();
-
+            SendMissionCompletionMessage();
+            ApplyMissionRewards();
             SendCompletionToServer();            
         }
 
@@ -51,8 +52,16 @@ namespace IdleFantasy {
             }
         }
 
+        private void SendMissionCompletionMessage() {
+            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, mData.MissionCategory, mData.Index );
+        }
+
+        private void ApplyMissionRewards() {
+            PlayerManager.Data.Gold += mData.GoldReward;
+        }
+
         private void SendCompletionToServer() {
             BackendManager.Backend.CompleteMission( mData.MissionCategory, mData.Index, MissionProposal.TaskProposals );
-        }
+        }    
     }
 }
