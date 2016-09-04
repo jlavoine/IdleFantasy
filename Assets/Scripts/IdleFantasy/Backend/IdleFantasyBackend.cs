@@ -1,6 +1,7 @@
 ﻿using MyLibrary;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IIdleFantasyBackend {
@@ -73,6 +74,11 @@ namespace IdleFantasy {
             assignParams.Add( BackendConstants.TARGET_ID, i_unitID );
 
             MakeCloudCall( BackendConstants.INIT_TRAINING_CHANGE, assignParams, null );
+        }
+
+        public override void RestartClient() {
+            GameObject mainCanvas = GameObject.Find( "MainCanvas" );
+            mainCanvas.InstantiateUI( "RestartClientPopup" );
         }
     }
 }

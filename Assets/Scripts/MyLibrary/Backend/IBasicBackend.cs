@@ -20,5 +20,7 @@ namespace MyLibrary {
 
         bool IsBusy();
         IEnumerator WaitUntilNotBusy();
+
+        void RestartClient();
     }
 }

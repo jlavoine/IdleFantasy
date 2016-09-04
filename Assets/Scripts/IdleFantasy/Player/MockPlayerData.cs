@@ -120,5 +120,9 @@ namespace IdleFantasy {
 
             return progress;
         }
+
+        public void Dispose() {
+            throw new NotImplementedException();
+        }
     }
 }

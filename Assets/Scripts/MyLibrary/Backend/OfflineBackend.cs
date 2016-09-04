@@ -79,5 +79,9 @@ namespace MyLibrary {
 
             return data;
         }
+
+        public void RestartClient() {
+            throw new NotImplementedException();
+        }
     }
 }

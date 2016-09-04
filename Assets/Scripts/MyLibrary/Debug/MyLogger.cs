@@ -21,11 +21,9 @@ namespace MyLibrary {
                     break;
                 case LogTypes.Error:
                 case LogTypes.Fatal:
-                    UnityEngine.Debug.LogError( i_message );
-                    break;
                 case LogTypes.Warn:
-                    UnityEngine.Debug.Log( "WARNING! " + i_message );
-                    break;
+                    UnityEngine.Debug.LogError( i_message );
+                    break;                                    
                 default:
                     UnityEngine.Debug.LogError( "Debug type " + i_type + " unsupported!" );
                     break;

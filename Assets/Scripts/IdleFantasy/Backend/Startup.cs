@@ -5,7 +5,7 @@ namespace IdleFantasy {
     public class Startup : MonoBehaviour {
 
         void Start() {
-            SceneManager.LoadScene( "Login" );
+            SceneManager.LoadScene( SceneList.LOGIN );
         }
     }
 }

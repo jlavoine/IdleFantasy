@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace IdleFantasy {
     public interface IPlayerData {
+        void Dispose();
+
         ViewModel GetViewModel();
 
         int Gold {

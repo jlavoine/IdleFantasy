@@ -76,6 +76,17 @@ namespace IdleFantasy {
                 yield return 0;
             }
 
+            yield return SetUpPlayerData();
+
+            DoneLoadingData();
+        }
+
+        private IEnumerator SetUpPlayerData() {
+            // it's possible that the client is restarting and old player data exists -- we need to dispose of it
+            if ( PlayerManager.Data != null ) {
+                PlayerManager.Data.Dispose();
+            }
+
             PlayerData playerData = new PlayerData();
             playerData.Init( mBackend );
             PlayerManager.Init( playerData );
@@ -86,8 +97,6 @@ namespace IdleFantasy {
 
             playerData.AddDataStructures();
             playerData.CreateManagers();
-
-            DoneLoadingData();
         }
     }
 }
