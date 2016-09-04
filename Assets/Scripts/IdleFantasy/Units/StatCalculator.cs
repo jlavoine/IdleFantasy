@@ -25,7 +25,8 @@ namespace IdleFantasy {
             List<IUnit> unitsWithStat = new List<IUnit>();
 
             foreach ( Building building in PlayerManager.Data.Buildings ) {
-                if ( building.Unit.HasStat( i_stat ) ) {
+                int unitStat = GetTotalStatFromUnit( building.Unit, i_stat );
+                if ( unitStat > 0 ) {
                     unitsWithStat.Add( building.Unit );
                 }
             }
