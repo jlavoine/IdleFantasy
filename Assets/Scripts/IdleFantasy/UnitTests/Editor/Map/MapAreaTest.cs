@@ -24,6 +24,16 @@ namespace IdleFantasy.UnitTests {
             mAreaUnderTest = new MapArea( mMapAreaData, mMissionProgress );
         }
 
+        [TearDown]
+        public void AfterTest() {
+            mAreaUnderTest.Dispose();
+        }
+
+        private void RecreateArea() {
+            mAreaUnderTest.Dispose();
+            mAreaUnderTest = new MapArea( mMapAreaData, mMissionProgress );
+        }
+
         [Test]
         public void MapAreaTerrain_MatchesData() {
             string mapAreaTerrainProperty = mAreaUnderTest.ViewModel.GetPropertyValue<string>( MapViewProperties.TERRAIN_TYPE );
@@ -37,9 +47,9 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
-        public void WhenMissionCompleted_AreaNotAccessible() {
+        public void WhenMissionIsComplete_AreaNotAccessible() {
             mMissionProgress.Completed = true;
-            mAreaUnderTest = new MapArea( mMapAreaData, mMissionProgress );
+            RecreateArea();
 
             bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
 
@@ -47,12 +57,40 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
-        public void WhenMissionNotCompleted_AreaAccessible() {
+        public void WhenMissionIsNotComplete_AreaAccessible() {
             mMissionProgress.Completed = false;
-            mAreaUnderTest = new MapArea( mMapAreaData, mMissionProgress );
+            RecreateArea();
 
             bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
 
+            Assert.IsTrue( isAccessible );
+        }
+
+        [Test]
+        public void WhenMissionGetsComplete_WithAreaIndex_AreaIsCompleteAndInaccessible() {
+            mMissionProgress.Completed = false;
+            RecreateArea();
+
+            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, "", mAreaUnderTest.Data.Index );
+
+            bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
+            bool isComplete = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_COMPLETED );
+
+            Assert.IsTrue( isComplete );
+            Assert.IsFalse( isAccessible );
+        }
+
+        [Test]
+        public void WhenMissionGetsComplete_NotWithAreaIndex_NothingChanges() {
+            mMissionProgress.Completed = false;
+            RecreateArea();
+
+            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, "", mAreaUnderTest.Data.Index+1 );
+
+            bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
+            bool isComplete = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_COMPLETED );
+
+            Assert.IsFalse( isComplete );
             Assert.IsTrue( isAccessible );
         }
     }
