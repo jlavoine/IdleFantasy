@@ -2,10 +2,6 @@
 
 namespace IdleFantasy {
     public class MapAreaView : GroupView {
-        #region Inspector
-
-        #endregion
-
         private MapArea mArea;
 
         public void Init( MapArea i_area ) {
@@ -16,6 +12,12 @@ namespace IdleFantasy {
 
         public void OnMapAreaClicked() {
             MissionInterfaceManager.Instance.CreateUI( new Mission( mArea.Data.Mission ) );
+        }
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+
+            mArea.Dispose();
         }
     }
 }

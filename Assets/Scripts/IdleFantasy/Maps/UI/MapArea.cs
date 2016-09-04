@@ -15,25 +15,46 @@ namespace IdleFantasy {
             mData = i_areaData;
             mProgress = i_missionProgressForArea;
 
+            SubscribeToMessages();
+
             SetUpModel();
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+        }
+
+        public void Dispose() {
+            UnsubscribeFromMessages();
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+        }
+
+        private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
+            if ( i_missionIndex == mData.Index ) {
+                SetCompletedState( true );
+                SetAreaAccessibility( false );
+            }
         }
 
         private void SetUpModel() {
             SetTerrain();
-            SetCompletedState();
-            SetAreaAccessibility();
+            SetCompletedState( Progress.Completed );
+            SetAreaAccessibility( !Progress.Completed );
         }
 
         private void SetTerrain() {
             ViewModel.SetProperty( MapViewProperties.TERRAIN_TYPE, Data.Terrain.ToString() );
         }
 
-        private void SetCompletedState() {
-            ViewModel.SetProperty( MapViewProperties.AREA_COMPLETED, Progress.Completed );
+        private void SetCompletedState( bool i_state ) {
+            ViewModel.SetProperty( MapViewProperties.AREA_COMPLETED, i_state );
         }
 
-        private void SetAreaAccessibility() {
-            ViewModel.SetProperty( MapViewProperties.AREA_ACCESS, !Progress.Completed );
+        private void SetAreaAccessibility( bool i_isAccessible ) {
+            ViewModel.SetProperty( MapViewProperties.AREA_ACCESS, i_isAccessible );
         }
     }
 }

@@ -39,6 +39,8 @@ namespace IdleFantasy {
         private IBasicBackend mBackend;
         
         public void Init( IBasicBackend i_backend ) {
+            SubscribeToMessages();
+
             mBackend = i_backend;
             mModel = new ViewModel();
 
@@ -47,6 +49,23 @@ namespace IdleFantasy {
             DownloadCurrencyData();
             DownloadMapData();
             DownloadMissionProgress();
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+        }
+
+        public void Dispose() {
+            UnsubscribeFromMessages();
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+        }
+
+        private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
+            WorldMissionProgress missionProgress = MissionProgress[i_missionWorld];
+            missionProgress.Missions[i_missionIndex].Completed = true;
         }
 
         private void DownloadMapData() {

@@ -73,7 +73,6 @@ namespace IdleFantasy {
         }
 
         private void OnUnitSelectedForThisTask( TaskUnitSelection i_selection ) {
-            UnityEngine.Debug.LogError( "Hey a selection" );
             MyMessenger.Send( MissionKeys.UNIT_SELECTED_EVENT, mTaskIndex );
         }
 
