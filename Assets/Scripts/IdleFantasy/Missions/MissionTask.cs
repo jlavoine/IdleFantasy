@@ -23,8 +23,8 @@ namespace IdleFantasy {
         }
 
         private void SetUpModel() {
-            mModel.SetProperty( MissionKeys.DESCRIPTION, Data.DescriptionKey );
-            mModel.SetProperty( MissionKeys.TASK_STAT, Data.StatRequirement );
+            mModel.SetProperty( MissionKeys.DESCRIPTION, StringTableManager.Get( Data.DescriptionKey ) );
+            mModel.SetProperty( MissionKeys.TASK_STAT, StatCalculator.Instance.GetStatName( Data.StatRequirement ) );
             mModel.SetProperty( MissionKeys.TASK_POWER, Data.PowerRequirement );
         }
 

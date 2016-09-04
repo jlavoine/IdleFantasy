@@ -6,5 +6,7 @@ namespace IdleFantasy {
         int GetNumUnitsForRequirement( IUnit i_unit, string i_stat, int i_powerRequirement );
         int GetTotalStatFromUnit( IUnit i_unit, string i_stat );
         int GetStatBonusFromSource( IUnit i_unit, string i_stat, StatBonusSources i_source );
+
+        string GetStatName( string i_stat );
     }
 }

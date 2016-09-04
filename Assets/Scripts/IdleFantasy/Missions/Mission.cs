@@ -18,14 +18,15 @@ namespace IdleFantasy {
         public Mission( MissionData i_data ) {         
             mModel = new ViewModel();
             mData = i_data;
-
+            
             SetUpModel();
 
             CreateMissionTasks();         
         }
 
         private void SetUpModel() {
-            mModel.SetProperty( MissionKeys.DESCRIPTION, Data.DescriptionKey );
+            // not using this at the moment
+            //mModel.SetProperty( MissionKeys.DESCRIPTION, StringTableManager.Get( Data.DescriptionKey ) );
         }
 
         private void CreateMissionTasks() {

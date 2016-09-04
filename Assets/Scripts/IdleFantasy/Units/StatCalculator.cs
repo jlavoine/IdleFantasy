@@ -83,5 +83,10 @@ namespace IdleFantasy {
 
             return (int) Math.Ceiling( bonus );
         }
+
+        public string GetStatName( string i_stat ) {
+            string key = "STAT_NAME_" + i_stat;
+            return StringTableManager.Get( key );
+        }
     }
 }
