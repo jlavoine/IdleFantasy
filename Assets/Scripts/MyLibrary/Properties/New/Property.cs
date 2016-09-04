@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace MyLibrary {
     public class Property {
@@ -19,7 +18,7 @@ namespace MyLibrary {
                 return (T) mValue;
             }
             else {
-                Debug.LogError( "Property " + Name + "(" + ID.ToString() + ") was expected to be " + typeof( T ) + " but was " + mValue.GetType().ToString() );
+                Debug.Log( LogTypes.Error, "Property " + Name + " is wrong value.", "Property" );
                 return default( T );
             }
         }
