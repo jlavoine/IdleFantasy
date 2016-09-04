@@ -14,7 +14,6 @@ namespace IdleFantasy {
         private int mTaskIndex;
 
         private MissionTask mMissionTask;
-        private TaskUnitSelectView mUnitSelectView;
 
         public void Init( MissionTask i_task, int i_index ) {
             mMissionTask = i_task;
@@ -33,9 +32,9 @@ namespace IdleFantasy {
         private void CreateEligibleUnitsList() {
             foreach ( TaskUnitSelection unitSelection in mMissionTask.UnitsEligibleForTask ) {
                 GameObject unitObject = gameObject.InstantiateUI( EligibleUnitPrefab, EligibleUnitContent );
-                mUnitSelectView = unitObject.GetComponent<TaskUnitSelectView>();
-                mUnitSelectView.Init( unitSelection );
-                mUnitSelectView.UnitSelectedEvent += OnUnitSelectedForThisTask;
+                TaskUnitSelectView unitSelectView = unitObject.GetComponent<TaskUnitSelectView>();
+                unitSelectView.Init( unitSelection );
+                unitSelectView.UnitSelectedEvent += OnUnitSelectedForThisTask;
             }
         }
 
@@ -74,6 +73,7 @@ namespace IdleFantasy {
         }
 
         private void OnUnitSelectedForThisTask( TaskUnitSelection i_selection ) {
+            UnityEngine.Debug.LogError( "Hey a selection" );
             MyMessenger.Send( MissionKeys.UNIT_SELECTED_EVENT, mTaskIndex );
         }
 
@@ -84,7 +84,6 @@ namespace IdleFantasy {
         protected override void OnDestroy() {
             base.OnDestroy();
 
-            UnsubscribeFromEvents();
             UnsubscribeFromMessages();
         }
 
@@ -94,10 +93,6 @@ namespace IdleFantasy {
 
         private void UnsubscribeFromMessages() {
             MyMessenger.RemoveListener<int>( MissionKeys.UNIT_SELECTED_EVENT, OnUnitSelected );
-        }
-
-        private void UnsubscribeFromEvents() {
-            mUnitSelectView.UnitSelectedEvent -= OnUnitSelectedForThisTask;
         }
     }
 }
