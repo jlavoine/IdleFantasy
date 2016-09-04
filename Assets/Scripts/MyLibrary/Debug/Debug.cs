@@ -61,6 +61,10 @@ namespace MyLibrary {
             SendMessageToServer( message );
         }
 
+        public static void Log( LogTypes i_type, string i_message, string i_category ) {
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, i_type, i_message, i_category );
+        }
+
         public static void LogError( object message, UnityEngine.Object context ) {
             UnityEngine.Debug.LogError( message, context );
 
