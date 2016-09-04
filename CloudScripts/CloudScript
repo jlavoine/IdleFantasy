@@ -144,9 +144,6 @@ const MISSION_BASE_TITLE_KEY = "MissionBase_"   // key for title data that holds
 const MISSION_GOLD_REWARD = "GoldReward";
 const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how much power a mission task requires. scales with map level.
 
-/// mission categories
-const MISSION_MAIN = "Main";                    // the main game (exploring continents)
-
 /// mission constants
 const BASE_GOLD_REWARD = 500;
 
@@ -818,7 +815,7 @@ function CreateMapArea(map, areaIndex, weightedAreaList, defaultMission) {
 function GenerateMapMission(map, areaIndex, areaType) {
     var mission = {};
 
-    mission[MISSION_TYPE_KEY] = MISSION_MAIN;
+    mission[MISSION_TYPE_KEY] = MODULE_BASE;
     mission[MISSION_INDEX_KEY] = areaIndex;
     mission[MISSION_GOLD_REWARD] = GetMissionGoldReward(map);
     mission[MISSION_TASKS_KEY] = GenerateMissionTasks(map, areaIndex, areaType);
@@ -831,7 +828,7 @@ function GenerateMissionTasks(map, areaIndex, areaType) {
     var tasks = [];
     
     var task = {};
-    task[MISSION_INDEX_KEY] = areaIndex;
+    task[MISSION_INDEX_KEY] = 0;
     task[MISSION_REQUIRED_STAT] = GetMissionStat(areaType);
     task[DESC] = GetMissionTaskDescription(task);
     task[MISSION_REQUIRED_POWER] = MISSION_TASK_BASE_POWER * (GetMapLevel(map) + 1);
