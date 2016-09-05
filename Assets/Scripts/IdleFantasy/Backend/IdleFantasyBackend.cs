@@ -71,8 +71,8 @@ namespace IdleFantasy {
         }
 
         public override void RestartClient() {
-            GameObject mainCanvas = GameObject.Find( "MainCanvas" );
-            mainCanvas.InstantiateUI( "RestartClientPopup" );
+            //GameObject mainCanvas = GameObject.Find( "MainCanvas" );
+            //mainCanvas.InstantiateUI( "RestartClientPopup" );
         }
     }
 }
