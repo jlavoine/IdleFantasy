@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestAddMissingData : IntegrationTestBase {
-        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS };        
+        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS, BackendConstants.GAME_METRICS };        
         private const string EMPTY_SAVE_DATA = "{}";
         private const int DEFAULT_MAP_SIZE = 36;
         private const int STARTING_GOLD = 1000;
@@ -86,6 +86,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 case BackendConstants.MISSION_PROGRESS:
                     VerifyMissionProgressIsDefault( i_saveData );
                     break;
+                case BackendConstants.GAME_METRICS:
+                    VerifyGameMetricsIsDefault( i_saveData );
+                    break;
                 default:
                     UnityEngine.Debug.LogError( "No case for default data check on " + i_saveKey );
                     break;
@@ -108,6 +111,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 if ( world.CurrentMapLevel != 0 || world.RestartCount != 0 ) {
                     IntegrationTest.Fail( "World progress for " + world.ID + " not default" );
                 }
+            }
+        }
+
+        private void VerifyGameMetricsIsDefault( string i_saveData ) {
+            GameMetrics metrics = JsonConvert.DeserializeObject<GameMetrics>( i_saveData );
+            if ( metrics.Metrics.Count != 0 ) {
+                IntegrationTest.Fail( "Game metrics was not empty" );
             }
         }
 

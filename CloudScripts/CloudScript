@@ -77,6 +77,10 @@ const MISC_WEIGHT = "MiscWeight";
 const MISC_MINIMUM = "MiscMinimum";
 const MISC_INDEX = 2;
 
+/// achievement related
+const GAME_METRICS = "GameMetrics";
+const METRICS = "Metrics";
+
 /// other map mod constants
 const MAP_GOLD_MOD = "BaseGoldReward";                  // affects gold earned from a mission
 
@@ -544,6 +548,7 @@ handlers.deleteAllPlayerReadOnlyData = function(args) {
     emptyData[WORLD_PROGRESS_KEY] = "{}";
     emptyData[MAP_SAVE_KEY + MODULE_BASE] = "{}";
     emptyData[MISSION_PROGRESS_KEY] = "{}";
+    emptyData[GAME_METRICS] = "{}";
 
     SetSaveDataWithObject(emptyData, READ_ONLY);
 
@@ -1140,6 +1145,8 @@ function GetMissionProgressList(missionProgressForWorld) {
 /////////////////////////////////////////////////
 
 handlers.initiateCompleteMission = function (args) { 
+    UpdateAllUnitCounts(Date.now());
+
     global_allMissionProgress = null;
        
     var missionType = args.data[MISSION_TYPE_KEY];
@@ -1147,7 +1154,7 @@ handlers.initiateCompleteMission = function (args) {
     var taskProposalsJSON = args.data[MISSION_PROPOSALS_KEY];
 
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
-    var allUnitProgress = GetProgressData(CLASS_UNIT);
+    var allUnitProgress = GetProgressData(CLASS_UNIT);    
 
     log.info("Trying to complete mission # " + missionIndex + " for type " + missionType);
     log.info("Trying to complete the mission with proposal: " + taskProposalsJSON);
@@ -1186,9 +1193,7 @@ function ApplyMissionRewards(mission) {
 }
 
 function PayUnitsFromTaskProposals(taskProposals, allUnitProgress) {
-    log.info("Paying units from task proposals");
-
-    UpdateAllUnitCounts(Date.now());
+    log.info("Paying units from task proposals");    
 
     for(var index in taskProposals) {
         log.info("Processing proposal " + index);
@@ -1496,7 +1501,7 @@ handlers.onLogin = function (args) {
 /// if there were no values there.
 function AddMissingPlayerData() {
     var baseMapSaveKey = MAP_SAVE_KEY + MODULE_BASE;
-    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA];
+    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, GAME_METRICS];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
     var arraySaveKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
@@ -1513,6 +1518,7 @@ function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddBuildingProgress_IfMissing(allSaveData[GetProgressKey(CLASS_BUILDING)], titleData[CLASS_BUILDING]);
     AddGuildProgress_IfMissing(allSaveData[GetProgressKey(CLASS_GUILD)], titleData[CLASS_GUILD]);
     AddTrainerProgress_IfMissing(allSaveData);
+    AddGameMetrics_IfMissing(allSaveData);
     AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], titleData[CLASS_UNIT]);
     AddWorldProgress_IfMissing(allSaveData);
 
@@ -1590,6 +1596,18 @@ function AddTrainerProgress_IfMissing(allSaveData) {
         var trainerCounts = {};
         trainerCounts[NORMAL_TRAINER] = 0;
         trainerSaveData[TRAINER_COUNTS] = trainerCounts;
+    }
+}
+
+function AddGameMetrics_IfMissing(allSaveData) {
+    if (!allSaveData.hasOwnProperty(GAME_METRICS)) {
+        allSaveData[GAME_METRICS] = {};        
+    }
+
+    var metricsSaveData = allSaveData[GAME_METRICS];
+    if (!metricsSaveData.hasOwnProperty(METRICS)) {
+        var metrics = {};
+        metricsSaveData[METRICS] = metrics;
     }
 }
 
@@ -1738,7 +1756,7 @@ function GetSaveObjectFromRawData(rawData, key) {
     var data = actualData[key];
     var valueData = JSON.parse(data[VALUE]);
 
-    log.info("Got save data: " + data[VALUE]);
+    //log.info("Got save data: " + data[VALUE]);
 
     return valueData; 
 }
