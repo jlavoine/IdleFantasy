@@ -51,6 +51,11 @@ namespace IdleFantasy {
         public const string TRAINER_PROGRESS = "TrainerSaveData";
         public const string MISSION_PROGRESS = "MissionProgress";
         public const string MAP_BASE = "Map_Base";
+        public const string GAME_METRICS = "GameMetrics";
+        #endregion
+
+        #region Title data keys
+        public const string UNIT_UNLOCKS = "UnitUnlockPlan";
         #endregion
 
         #region Worlds
