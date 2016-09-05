@@ -7,8 +7,6 @@ using System.Collections;
 
 namespace MyLibrary {
     public abstract class PlayFabBackend : IBasicBackend {
-        public abstract void RestartClient();
-
         public const Dictionary<string, string> NULL_CLOUD_PARAMS = null;
         public const Callback<Dictionary<string, string>> NULL_CLOUD_CALLBACK = null;
 
@@ -255,7 +253,7 @@ namespace MyLibrary {
 
                 if ( outOfSync ) {
                     MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Client is out of sync", PLAYFAB );
-                    RestartClient();
+                    MyMessenger.Send( BackendMessages.BACKEND_OUT_OF_SYNC );                    
                 }
             }
         }

@@ -11,7 +11,8 @@ namespace IdleFantasy {
 
             MyLogger logger = new MyLogger();
             PlayFabAnalytics playFab = new PlayFabAnalytics();
-            InfoPopupManager manager = new InfoPopupManager();
+            InfoPopupManager popupManager = new InfoPopupManager();
+            OutOfSyncManager outOfSyncManager = new OutOfSyncManager();
         }
     }
 }

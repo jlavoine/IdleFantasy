@@ -10,6 +10,8 @@ namespace MyLibrary {
         public const string CLOUD_SETUP_SUCCESS = "CloudSetupSuccess";
         public const string CLOUD_SETUP_FAIL = "CloudSetupFail";
 
+        public const string BACKEND_OUT_OF_SYNC = "BackendOutOfSync";
+
         public const string BACKEND_REQUEST_FAIL = "BackendRequestFail";
         public const string TITLE_DATA_REQUEST_FAIL = "TitleDataRequestFail";
         public const string ALL_TITLE_DATA_REQUEST_FAIL = "AllTitleDataRequestFail";

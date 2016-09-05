@@ -69,10 +69,5 @@ namespace IdleFantasy {
 
             MakeCloudCall( BackendConstants.INIT_TRAINING_CHANGE, assignParams, null );
         }
-
-        public override void RestartClient() {
-            //GameObject mainCanvas = GameObject.Find( "MainCanvas" );
-            //mainCanvas.InstantiateUI( "RestartClientPopup" );
-        }
     }
 }
