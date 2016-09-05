@@ -96,7 +96,8 @@ namespace IdleFantasy {
 
         private void UnlockUnit( string i_unitID ) {
             ShowUnlockPopup( i_unitID );
-            //UpdateUnitData();            
+            UpdateUnitDataForUnlock( i_unitID );
+            SendUnitUnlockEvent( i_unitID );            
         }
 
         private void ShowUnlockPopup( string i_unitID ) {
@@ -108,6 +109,19 @@ namespace IdleFantasy {
             model.SetProperty( InfoPopupProperties.MAIN_TEXT, unlockText );
 
             MyMessenger.Send<string, ViewModel>( InfoPopupEvents.QUEUE, InfoPopupProperties.STANDARD_POPUP, model );
+        }
+
+        private void UpdateUnitDataForUnlock( string i_unitID ) {
+            foreach ( Building building in Buildings ) {
+                if ( building.Unit.GetID() == i_unitID ) {
+                    building.Level.Upgrade();
+                    building.Unit.Level.Upgrade();
+                }
+            }
+        }
+
+        private void SendUnitUnlockEvent( string i_unitID ) {
+            MyMessenger.Send<string>( UnitKeys.UNLOCK_EVENT, i_unitID );
         }
 
         private void DownloadUnlockPlan() {

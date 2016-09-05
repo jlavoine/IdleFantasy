@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
+using MyLibrary;
 
 namespace IdleFantasy {
     public class BuildingMenu : MonoBehaviour {
@@ -8,7 +8,30 @@ namespace IdleFantasy {
         public GameObject BuildingViewPrefab;
 
         void Start() {
-            PopulateMenu();            
+            PopulateMenu();
+
+            SubscribeToMessages();      
+        }
+
+        void OnDestroy() {
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener<string>( UnitKeys.UNLOCK_EVENT, OnUnitUnlocked );
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener<string>( UnitKeys.UNLOCK_EVENT, OnUnitUnlocked );
+        }
+
+        private void OnUnitUnlocked( string i_unitID ) {
+            RefreshMenu();
+        }
+
+        private void RefreshMenu() {
+            Content.DestroyChildren();
+            PopulateMenu();
         }
 
         private void PopulateMenu() {
