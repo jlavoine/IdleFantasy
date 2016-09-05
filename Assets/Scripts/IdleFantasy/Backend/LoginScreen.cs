@@ -10,7 +10,8 @@ using Newtonsoft.Json;
 namespace IdleFantasy {
     public class LoginScreen : MonoBehaviour {
         public const string STATUS_CONNECTING = "Connecting to server...";
-        public const string STATUS_DOWNLOADING = "Connected to server -- downloading data!";
+        public const string STATUS_DOWNLOADING_GAME = "Connected to server -- downloading game data!";
+        public const string STATUS_DOWNLOADING_PLAYER = "Connected to server -- downloading player data!";
         public const string STATUS_FAILED = "Failed to connect to server. Please close and try again.";
 
         public GameObject LoginFailurePopup;
@@ -63,7 +64,7 @@ namespace IdleFantasy {
         }
 
         private IEnumerator LoadDataFromBackend() {
-            LoginStatusText.text = STATUS_DOWNLOADING;
+            LoginStatusText.text = STATUS_DOWNLOADING_GAME;
 
             StringTableManager.Init( "English", mBackend );
             Constants.Init( mBackend );
@@ -82,6 +83,8 @@ namespace IdleFantasy {
         }
 
         private IEnumerator SetUpPlayerData() {
+            LoginStatusText.text = STATUS_DOWNLOADING_PLAYER;
+
             // it's possible that the client is restarting and old player data exists -- we need to dispose of it
             if ( PlayerManager.Data != null ) {
                 PlayerManager.Data.Dispose();
