@@ -4,6 +4,7 @@ using System;
 
 namespace IdleFantasy {
     public class BuildingMenu : MonoBehaviour {
+        public GameObject Content;
         public GameObject BuildingViewPrefab;
 
         void Start() {
@@ -19,7 +20,7 @@ namespace IdleFantasy {
         }
 
         private void CreateAndInitView( Building i_building ) {
-            GameObject buildingViewObject = gameObject.InstantiateUI( BuildingViewPrefab );
+            GameObject buildingViewObject = gameObject.InstantiateUI( BuildingViewPrefab, Content );
             BuildingView buildingView = buildingViewObject.GetComponent<BuildingView>();
             buildingView.Init( i_building );
         }
