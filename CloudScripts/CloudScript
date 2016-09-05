@@ -492,10 +492,23 @@ handlers.setPlayerCurrency = function(args) {
     log.info("Setting player currency(" + currencyType + ") to " + amountToSet);
 
     if (changeInCurrency > 0) {
-        server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: changeInCurrency });
+        SubtractCurrency(currencyType, changeInCurrency);        
     } else if (changeInCurrency < 0) {
-        server.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: Math.abs(changeInCurrency) });
+        AddCurrency(currencyType, Math.abs(changeInCurrency));        
     }
+}
+
+handlers.getPlayerCurrency = function(args) {
+        if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var currencyType = args.data["Type"];
+    var playerInventory = GetPlayerInventory();   
+
+    var amount = GetAmountOfCurrency(playerInventory, currencyType);
+
+    return ReturnDataToClient(amount);
 }
 
 /// for testing the creation of a map
@@ -1159,6 +1172,7 @@ function CompleteMission(mission, missionType, taskProposals, allUnitProgress) {
     log.info("Successfully completed mission: " + GetMissionType(mission) + " #" + GetMissionIndex(mission) );
 
     MarkMissionComplete(mission, missionType);
+    ApplyMissionRewards(mission);
     PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
 }
 
@@ -1169,6 +1183,11 @@ function MarkMissionComplete(mission, world) {
     missionProgress[MISSION_PROGRESS_DONE] = true;
 
     SaveMissionProgress();
+}
+
+function ApplyMissionRewards(mission) {
+    var goldReward = mission[MISSION_GOLD_REWARD];
+    AddCurrency(CURRENCY_GOLD, goldReward);
 }
 
 function PayUnitsFromTaskProposals(taskProposals, allUnitProgress) {
@@ -1587,7 +1606,9 @@ function AddMissionProgres_IfMissing(allSaveData) {
 /// This sets the player's first ever map, if they have no map for the base module
 function AddFirstMap_IfMissing(allSaveData) {
     var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
-    if (!allSaveData.hasOwnProperty(baseMapKey)) {
+
+    // the || here is because I can't figure out a way to fully wipe a piece of player save data
+    if (!allSaveData.hasOwnProperty(baseMapKey) || !allSaveData[baseMapKey].hasOwnProperty(WORLD)) {
         var firstMapData = GetTitleData(NEW_PLAYER_MAP);
         allSaveData[baseMapKey] = firstMapData;
 
@@ -1811,6 +1832,38 @@ function GetBuildingStartingSize(buildingTitleData) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Currency
+/////////////////////////////////////////////////
+
+function AddCurrency(currencyType, amount) {
+    server.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: amount });
+}
+
+function SubtractCurrency(currencyType, amount) {
+    server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: amount });
+}
+
+function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
+    var currentCurrency = playerCurrencies[currencyType];    
+    return currentCurrency >= amount;
+}
+
+function GetAmountOfCurrency(playerInventory, currencyType) {
+    var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
+    return playerCurrencies[currencyType];
+}
+
+function GetPlayerCurrenciesFromInventory(playerInventory) {    
+    var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
+
+    return playerCurrencies;
+}
+
+/////////////////////////////////////////////////
+/// ~Currency
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// Misc
 /// Misc methods that are used by many different
 /// server methods.
@@ -1871,22 +1924,6 @@ function GetPlayerInventory() {
     log.info("Getting player inventory: " + JSON.stringify(inventory));
 
     return inventory;
-}
-
-function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
-    var currentCurrency = playerCurrencies[currencyType];    
-    return currentCurrency >= amount;
-}
-
-function GetAmountOfCurrency(playerInventory, currencyType) {
-    var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
-    return playerCurrencies[currencyType];
-}
-
-function GetPlayerCurrenciesFromInventory(playerInventory) {    
-    var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
-
-    return playerCurrencies;
 }
 
 function GetNumberFromArgs(args, id) {
