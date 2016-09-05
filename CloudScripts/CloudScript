@@ -16,6 +16,9 @@ const CLASS = "Class";          // key used from client as to what type of data 
 const TARGET_ID = "TargetID";   // key used from client as to what specific object is involved in the call
 const CHANGE = "Change";        // key used from client to pass up a change
 
+/// starting data
+const STARTING_GOLD = 1000;
+
 // unit counting
 const LAST_UNIT_COUNT = "LastCountTime";            // key for timestamp of last unit count update (in unit's progress data)
 const UNIT_COUNT = "Count";                         // key in unit's save data for # of that unit
@@ -480,22 +483,12 @@ function ReturnDataToClient(rawData) {
 handlers.setPlayerCurrency = function(args) {
     if (!isTesting()) {
         return returnOutOfSync();
-    }
+    }    
 
     var amountToSet = args.data["Amount"];
     var currencyType = args.data["Type"];
 
-    var playerInventory = GetPlayerInventory();    
-    var currentAmount = GetAmountOfCurrency(playerInventory, currencyType);
-    var changeInCurrency = currentAmount - amountToSet;    
-
-    log.info("Setting player currency(" + currencyType + ") to " + amountToSet);
-
-    if (changeInCurrency > 0) {
-        SubtractCurrency(currencyType, changeInCurrency);        
-    } else if (changeInCurrency < 0) {
-        AddCurrency(currencyType, Math.abs(changeInCurrency));        
-    }
+    SetCurrency(currencyType, amountToSet);
 }
 
 handlers.getPlayerCurrency = function(args) {
@@ -553,6 +546,8 @@ handlers.deleteAllPlayerReadOnlyData = function(args) {
     emptyData[MISSION_PROGRESS_KEY] = "{}";
 
     SetSaveDataWithObject(emptyData, READ_ONLY);
+
+    SetCurrency(CURRENCY_GOLD, 0);
 }
 
 /// for testing adding missing player data
@@ -1521,6 +1516,7 @@ function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddUnitProgress_IfMissing(allSaveData[GetProgressKey(CLASS_UNIT)], titleData[CLASS_UNIT]);
     AddWorldProgress_IfMissing(allSaveData);
 
+    // because I don't want to make another call to get data, I am going to put *very first* stuff in here
     AddFirstMap_IfMissing(allSaveData);
 }
 
@@ -1604,6 +1600,7 @@ function AddMissionProgres_IfMissing(allSaveData) {
 }
 
 /// This sets the player's first ever map, if they have no map for the base module
+// because I don't want to make another call to get data, I am going to put *very first* stuff in here
 function AddFirstMap_IfMissing(allSaveData) {
     var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
 
@@ -1614,6 +1611,8 @@ function AddFirstMap_IfMissing(allSaveData) {
 
         var isFirstMap = true;
         SetMissionProgressForMap(firstMapData, isFirstMap);
+
+        AddStartingCurrency();
     }
 }
 
@@ -1843,6 +1842,20 @@ function SubtractCurrency(currencyType, amount) {
     server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currencyType, Amount: amount });
 }
 
+function SetCurrency(currencyType, amountToSet) {
+    var playerInventory = GetPlayerInventory();    
+    var currentAmount = GetAmountOfCurrency(playerInventory, currencyType);
+    var changeInCurrency = currentAmount - amountToSet;    
+
+    log.info("Setting player currency(" + currencyType + ") to " + amountToSet);
+
+    if (changeInCurrency > 0) {
+        SubtractCurrency(currencyType, changeInCurrency);        
+    } else if (changeInCurrency < 0) {
+        AddCurrency(currencyType, Math.abs(changeInCurrency));        
+    }
+}
+
 function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
     var currentCurrency = playerCurrencies[currencyType];    
     return currentCurrency >= amount;
@@ -1857,6 +1870,10 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
     var playerCurrencies = playerInventory[VIRTUAL_CURRENCY];
 
     return playerCurrencies;
+}
+
+function AddStartingCurrency() {
+    AddCurrency( CURRENCY_GOLD, STARTING_GOLD );
 }
 
 /////////////////////////////////////////////////

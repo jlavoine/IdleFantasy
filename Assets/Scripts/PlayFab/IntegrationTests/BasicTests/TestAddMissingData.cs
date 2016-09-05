@@ -8,6 +8,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS };        
         private const string EMPTY_SAVE_DATA = "{}";
         private const int DEFAULT_MAP_SIZE = 36;
+        private const int STARTING_GOLD = 1000;
 
         protected override IEnumerator RunAllTests() {
             yield return DeleteAllPlayerSaveData();
@@ -42,12 +43,21 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator VerifyAllSaveData() {
+            yield return FailIfStartingCurrencyNotApplied();
+
             foreach ( string keyToTest in DATA_KEYS_TO_TEST ) {
                 Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.SAVE_KEY, keyToTest } };
                 yield return mBackend.WaitForCloudCall( CloudTestMethods.getReadOnlyData.ToString(), cloudParams, ( results ) => {
                     FailIfDataNotDefault( results[BackendConstants.DATA], keyToTest );
                 } );
             }
+
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
+        private IEnumerator FailIfStartingCurrencyNotApplied() {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.TYPE, VirtualCurrencies.GOLD } };
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getPlayerCurrency.ToString(), STARTING_GOLD, cloudParams );
 
             yield return mBackend.WaitUntilNotBusy();
         }
