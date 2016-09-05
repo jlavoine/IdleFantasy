@@ -76,6 +76,18 @@ namespace IdleFantasy {
             }
         }
 
+        public UnitUnlockPlanData UnitUnlockPlan {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
+        public GameMetrics GameMetrics {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public ViewModel GetViewModel() {
             return mModel;
         }

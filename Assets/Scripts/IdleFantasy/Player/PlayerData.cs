@@ -32,6 +32,12 @@ namespace IdleFantasy {
         private ITrainerManager mTrainerManager;
         public ITrainerManager TrainerManager { get { return mTrainerManager; } }
 
+        private UnitUnlockPlanData mUnitUnlockPlan;
+        public UnitUnlockPlanData UnitUnlockPlan { get { return mUnitUnlockPlan; } }
+
+        private GameMetrics mGameMetrics;
+        public GameMetrics GameMetrics { get { return mGameMetrics; } }
+
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 
         private ViewModel mModel;
@@ -49,6 +55,8 @@ namespace IdleFantasy {
             DownloadCurrencyData();
             DownloadMapData();
             DownloadMissionProgress();
+            DownloadUnlockPlan();
+            DownloadGameMetrics();
         }
 
         private void SubscribeToMessages() {
@@ -64,8 +72,54 @@ namespace IdleFantasy {
         }
 
         private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
+            IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE  );
+            UpdateMissionProgress( i_missionWorld, i_missionIndex );
+
+            CheckForUnitUnlock();
+        }
+
+        private void IncrementMetric( string i_metric ) {
+            GameMetrics.IncrementMetric( i_metric );
+        }
+
+        private void UpdateMissionProgress( string i_missionWorld, int i_missionIndex ) {            
             WorldMissionProgress missionProgress = MissionProgress[i_missionWorld];
             missionProgress.Missions[i_missionIndex].Completed = true;
+        }
+
+        private void CheckForUnitUnlock() {
+            int totalMissionsCompleted = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
+            if ( UnitUnlockPlan.UnitsUnlockAtLevel.ContainsKey( totalMissionsCompleted ) ) {                
+                UnlockUnit( UnitUnlockPlan.UnitsUnlockAtLevel[totalMissionsCompleted] );
+            }
+        }
+
+        private void UnlockUnit( string i_unitID ) {
+            ShowUnlockPopup( i_unitID );
+            //UpdateUnitData();            
+        }
+
+        private void ShowUnlockPopup( string i_unitID ) {
+            string unlockText = StringTableManager.Get( StringKeys.UNLOCK_TEXT );
+            unlockText = DrsStringUtils.Replace( unlockText, StringKeys.CLASS_KEY, UnitKeys.GetName( i_unitID ) );
+
+            ViewModel model = new ViewModel();
+            model.SetProperty( InfoPopupProperties.MAIN_IMAGE, UnitKeys.GetIconKey( i_unitID ) );
+            model.SetProperty( InfoPopupProperties.MAIN_TEXT, unlockText );
+
+            MyMessenger.Send<string, ViewModel>( InfoPopupEvents.QUEUE, InfoPopupProperties.STANDARD_POPUP, model );
+        }
+
+        private void DownloadUnlockPlan() {
+            mBackend.GetTitleData( BackendConstants.UNIT_UNLOCKS, ( jsonData ) => {
+                mUnitUnlockPlan = JsonConvert.DeserializeObject<UnitUnlockPlanData>( jsonData );
+            } );
+        }
+
+        private void DownloadGameMetrics() {
+            mBackend.GetPlayerData( BackendConstants.GAME_METRICS, ( jsonData ) => {
+                mGameMetrics = JsonConvert.DeserializeObject<GameMetrics>( jsonData );
+            } );
         }
 
         private void DownloadMapData() {

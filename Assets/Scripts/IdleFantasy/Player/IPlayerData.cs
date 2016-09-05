@@ -18,5 +18,8 @@ namespace IdleFantasy {
         ITrainerManager TrainerManager { get; }
         Dictionary<string, MapData> Maps { get; }
         Dictionary<string, WorldMissionProgress> MissionProgress { get; }
+        GameMetrics GameMetrics { get; }
+
+        UnitUnlockPlanData UnitUnlockPlan { get; }
     }
 }
