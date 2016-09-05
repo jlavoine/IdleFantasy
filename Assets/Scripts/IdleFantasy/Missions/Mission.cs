@@ -40,10 +40,11 @@ namespace IdleFantasy {
         }
 
         public void CompleteMission() {
-            AlterLocalUnits();
-            SendMissionCompletionMessage();
+            AlterLocalUnits();            
             ApplyMissionRewards();
-            SendCompletionToServer();            
+            SendCompletionToServer();
+
+            SendMissionCompletionMessage();
         }
 
         private void AlterLocalUnits() {
