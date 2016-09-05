@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
         protected const string MISSION_WORLD = "Base";
+        protected const int MISSION_GOLD_REWARD = 1000;
         private const int MISSION_INDEX = 0;
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
@@ -14,6 +15,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected override IEnumerator RunAllTests() {
             bool completedMission = ShouldMarkMissionsComplete();
 
+            yield return IntegrationTestUtils.SetPlayerCurrencyAndWait( 0 );
             yield return SetMissionDataOnServer();
             yield return SetMissionProgressOnServer( completedMission );
             yield return ClearUnitModifierData();
@@ -78,6 +80,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             testMissionData.MissionCategory = MISSION_WORLD;
             testMissionData.Index = MISSION_INDEX;
+            testMissionData.GoldReward = MISSION_GOLD_REWARD;
 
             List<MissionTaskData> missionTasks = new List<MissionTaskData>();
             MissionTaskData taskOne = new MissionTaskData();

@@ -51,5 +51,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             setCurrencyParams[BackendConstants.AMOUNT] = i_amount.ToString();
             BackendManager.Backend.MakeCloudCall( CloudTestMethods.setPlayerCurrency.ToString(), setCurrencyParams, null );
         }
+        public static IEnumerator SetPlayerCurrencyAndWait( int i_amount ) {
+            SetPlayerCurrency( i_amount );
+            yield return BackendManager.Backend.WaitUntilNotBusy();
+        }
     }
 }

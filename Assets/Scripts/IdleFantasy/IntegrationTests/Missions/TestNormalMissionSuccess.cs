@@ -18,6 +18,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         protected override IEnumerator RunOtherFailureChecks() {
             yield return FailIfMissionNotComplete();
+            yield return FailIfMissionRewardNotApplied();
         }
 
         private IEnumerator FailIfMissionNotComplete() {
@@ -30,6 +31,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                     IntegrationTest.Fail( "Mission should be complete but it was not." );
                 }
             } );
+        }
+
+        private IEnumerator FailIfMissionRewardNotApplied() {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.TYPE, VirtualCurrencies.GOLD } };
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getPlayerCurrency.ToString(), MISSION_GOLD_REWARD, cloudParams );
+
+            yield return mBackend.WaitUntilNotBusy();
         }
     }
 }
