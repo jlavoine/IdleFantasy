@@ -20,6 +20,7 @@ namespace IdleFantasy {
         getTrainerCount,
         getProgressData,
         getUnitCount,
+        getPlayerCurrency,
         addPointsToUpgrade,
         addProgressToUpgrade,
         getTestMissions,
