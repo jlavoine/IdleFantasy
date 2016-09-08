@@ -1176,6 +1176,52 @@ function CompleteMission(mission, missionType, taskProposals, allUnitProgress) {
     MarkMissionComplete(mission, missionType);
     ApplyMissionRewards(mission);
     PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
+    UnlockTest();
+}
+
+function UnlockTest() {
+    IncrementGameMetric("TotalMissionsCompleted");
+
+    var unlock = GetUnlock();
+    if (unlock != null) {
+        var unitToUnlock = unlock["UnitID"];
+        var buildingToUnlock = unlock["BuildingID"]; 
+        log.info("Unlocking " + unitToUnlock + " and " + buildingToUnlock);
+
+        UnlockTarget(CLASS_UNIT, unitToUnlock);
+        UnlockTarget(CLASS_BUILDING, buildingToUnlock);
+    }
+}
+
+function GetUnlock() {
+    var unlockPlan = GetTitleData("UnitUnlockPlan");    
+    var totalMissionsDone = GetGameMetric("TotalMissionsCompleted");
+    log.info("****: " + totalMissionsDone);
+
+    var unlocks = unlockPlan["Unlocks"];
+    var unlock = unlocks[totalMissionsDone];
+    log.info("ANd what is this " + JSON.stringify(unlock));
+    return unlock;
+}
+
+function IncrementGameMetric(metricName) {
+    var metricsData = GetReadOnlySaveData("GameMetrics");
+    var allMetrics = metricsData[METRICS];
+    allMetrics[metricName] += 1;
+
+    SetReadOnlyData("GameMetrics", metricsData);
+}
+
+function GetGameMetric(metricName) {
+    var metricsData = GetReadOnlySaveData("GameMetrics");
+    var allMetrics = metricsData[METRICS];
+    return allMetrics[metricName];
+}
+
+function UnlockTarget(className, targetID) {
+    var allProgressData = GetProgressData(className);
+    var progressForTarget = GetProgressForTarget(allProgressData, targetID);
+    UpgradeAndSave(allProgressData, className, progressForTarget, targetID);
 }
 
 function MarkMissionComplete(mission, world) {

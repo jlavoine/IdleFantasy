@@ -89,15 +89,16 @@ namespace IdleFantasy {
 
         private void CheckForUnitUnlock() {
             int totalMissionsCompleted = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
-            if ( UnitUnlockPlan.UnitsUnlockAtLevel.ContainsKey( totalMissionsCompleted ) ) {                
-                UnlockUnit( UnitUnlockPlan.UnitsUnlockAtLevel[totalMissionsCompleted] );
+            UnityEngine.Debug.LogError( "Looking for " + totalMissionsCompleted );
+            if ( UnitUnlockPlan.Unlocks.ContainsKey( totalMissionsCompleted ) ) {                
+                UnlockUnit( UnitUnlockPlan.Unlocks[totalMissionsCompleted] );
             }
         }
 
-        private void UnlockUnit( string i_unitID ) {
-            ShowUnlockPopup( i_unitID );
-            UpdateUnitDataForUnlock( i_unitID );
-            SendUnitUnlockEvent( i_unitID );            
+        private void UnlockUnit( UnitUnlockData i_unlock ) {
+            ShowUnlockPopup( i_unlock.UnitID );
+            UpdateUnitDataForUnlock( i_unlock.UnitID );
+            SendUnitUnlockEvent( i_unlock.UnitID );            
         }
 
         private void ShowUnlockPopup( string i_unitID ) {
@@ -133,6 +134,9 @@ namespace IdleFantasy {
         private void DownloadGameMetrics() {
             mBackend.GetPlayerData( BackendConstants.GAME_METRICS, ( jsonData ) => {
                 mGameMetrics = JsonConvert.DeserializeObject<GameMetrics>( jsonData );
+
+                int wtf = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
+                UnityEngine.Debug.LogError( "wtf is this: " + wtf );
             } );
         }
 

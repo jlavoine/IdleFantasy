@@ -2,6 +2,6 @@
 
 namespace IdleFantasy {
     public class UnitUnlockPlanData {
-        public Dictionary<int, string> UnitsUnlockAtLevel;
+        public Dictionary<int, UnitUnlockData> Unlocks;
     }
 }
