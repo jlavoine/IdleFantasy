@@ -10,7 +10,7 @@ namespace IdleFantasy {
             DontDestroyOnLoad( this );
 
             MyLogger logger = new MyLogger();
-            PlayFabAnalytics playFab = new PlayFabAnalytics();
+            UnityAnalyticsManager analytics = new UnityAnalyticsManager();
             InfoPopupManager popupManager = new InfoPopupManager();
             OutOfSyncManager outOfSyncManager = new OutOfSyncManager();
         }

@@ -7,12 +7,13 @@ namespace IdleFantasy {
 
         private IBackend mBackend;
 
-        private AnalyticsTimer mLoginTimer;
+        private IAnalyticsTimer mLoginTimer;
 
-        public Login( IBackend i_backend ) {
+        public Login( IBackend i_backend, IAnalyticsTimer i_loginTimer ) {
             mBackend = i_backend;
-            
-            mLoginTimer = new AnalyticsTimer( LibraryAnalyticEvents.LOGIN_TIME );
+
+            mLoginTimer = i_loginTimer;
+            mLoginTimer.Start();
         }
 
         public void Start() {                        
@@ -31,21 +32,25 @@ namespace IdleFantasy {
         }
 
         private void OnAuthenticationSucess( IAuthenticationSuccess i_success ) {
+            mLoginTimer.StepComplete( LibraryAnalyticEvents.AUTH_TIME );
+
             MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Authenticate success", "" );
 
             mBackend.SetUpCloudServices( false );
         }
 
         private void OnCloudSetupSuccess() {
+            mLoginTimer.StepComplete( LibraryAnalyticEvents.CLOUD_SETUP_TIME );
+
             MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Cloud setup success", "" );
 
             mBackend.MakeCloudCall( "onLogin", null, OnLogin );
         }
 
         private void OnLogin( Dictionary<string, string> i_result ) {
-            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Login success", "" );
+            mLoginTimer.StepComplete( LibraryAnalyticEvents.ON_LOGIN_TIME );
 
-            mLoginTimer.StopAndSend();
+            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Login success", "" );
 
             MyMessenger.Send( BackendMessages.LOGIN_SUCCESS );
         }

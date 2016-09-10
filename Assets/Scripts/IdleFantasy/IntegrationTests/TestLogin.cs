@@ -9,7 +9,7 @@ namespace IdleFantasy.IntegrationTests {
 
             MyMessenger.AddListener( BackendMessages.LOGIN_SUCCESS, OnLogin );
 
-            Login login = new Login( playFabBackend );
+            Login login = new Login( playFabBackend, new EmptyAnalyticsTimer() );
             login.Start();
         }
 

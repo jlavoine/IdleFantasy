@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace MyLibrary {
-    public class AnalyticsTimer {
-        public const string TIMER_EVENT = "TimerEvent";
-
+    public class AnalyticsTimer : IAnalyticsTimer {
         private string mAnalyticName;
         private Stopwatch mStopwatch;
+        private long mTotalTime = 0;
+        private Dictionary<string, object> mStepData =  new Dictionary<string, object>();
 
         public AnalyticsTimer( string i_analyticName ) {
             mAnalyticName = i_analyticName;
@@ -16,14 +17,39 @@ namespace MyLibrary {
             mStopwatch.Start();
         }
 
+        public void StepComplete( string i_stepName ) {
+            AddStepToEventData( i_stepName );
+            IncrementTotalTime();
+            RestartTimer();            
+        }
+
+        private void AddStepToEventData( string i_stepName ) {
+            mStepData.Add( i_stepName, mStopwatch.ElapsedMilliseconds );
+        }
+
+        private void IncrementTotalTime() {
+            mTotalTime += mStopwatch.ElapsedMilliseconds;
+        }
+
+        private void RestartTimer() {
+            mStopwatch.Reset();
+            mStopwatch.Start();
+        }
+
         public void Stop() {
             mStopwatch.Stop();
         }
 
-        public void StopAndSend() {
+        public void StopAndSendAnalytic() {
+            IncrementTotalTime();
             mStopwatch.Stop();
+            SendAnalytic();            
+        }
 
-            MyMessenger.Send<string, long>( TIMER_EVENT, mAnalyticName, mStopwatch.ElapsedMilliseconds );
+        private void SendAnalytic() {
+            mStepData.Add( LibraryAnalyticEvents.TOTAL_TIME, mTotalTime );
+
+            MyMessenger.Send<string, IDictionary<string, object>>( LibraryAnalyticEvents.SEND_ANALYTIC_EVENT, mAnalyticName, mStepData );
         }
     }
 }

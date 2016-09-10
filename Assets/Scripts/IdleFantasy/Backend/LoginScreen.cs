@@ -22,6 +22,8 @@ namespace IdleFantasy {
 
         private Login mLogin;   // is this the best way...?
 
+        private AnalyticsTimer mLoginTimer = new AnalyticsTimer( LibraryAnalyticEvents.LOGIN_TIME );
+
         public GameObject PlayButton;
         public TextMeshProUGUI LoginStatusText;
 
@@ -34,7 +36,7 @@ namespace IdleFantasy {
 
             LoginStatusText.text = STATUS_CONNECTING;
 
-            mLogin = new Login( mBackend );
+            mLogin = new Login( mBackend, mLoginTimer );
             mLogin.Start();
         }
 
@@ -42,6 +44,7 @@ namespace IdleFantasy {
             if ( !mBackendFailure ) {
                 LoginStatusText.gameObject.SetActive( false );
                 PlayButton.SetActive( true );
+                mLoginTimer.StopAndSendAnalytic();
             }
         }
 
@@ -76,6 +79,7 @@ namespace IdleFantasy {
             while ( mBackend.IsBusy() ) {
                 yield return 0;
             }
+            mLoginTimer.StepComplete( LibraryAnalyticEvents.TITLE_DATA_TIME );
 
             yield return SetUpPlayerData();
 
@@ -96,10 +100,12 @@ namespace IdleFantasy {
 
             while ( mBackend.IsBusy() ) {
                 yield return 0;
-            }
+            }            
 
             playerData.AddDataStructures();
             playerData.CreateManagers();
+
+            mLoginTimer.StepComplete( LibraryAnalyticEvents.INIT_PLAYER_TIME );
         }
     }
 }
