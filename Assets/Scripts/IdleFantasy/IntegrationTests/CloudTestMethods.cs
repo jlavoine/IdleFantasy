@@ -21,6 +21,7 @@ namespace IdleFantasy {
         getProgressData,
         getUnitCount,
         getPlayerCurrency,
+        getGameMetric,
         addPointsToUpgrade,
         addProgressToUpgrade,
         getTestMissions,
@@ -29,6 +30,7 @@ namespace IdleFantasy {
         deleteAllPlayerReadOnlyData,
         addMissingPlayerData,
         getAllPlayerReadOnlySaveData,
-        getTitleData
+        getTitleData,
+        unitUnlockCheck
     }
 }
