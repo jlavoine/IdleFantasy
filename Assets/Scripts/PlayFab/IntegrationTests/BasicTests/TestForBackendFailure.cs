@@ -9,26 +9,9 @@ using MyLibrary;
 // So basically right now this test just checks that PlayFab is working properly.
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestForBackendFailure : MonoBehaviour {
+    public class TestForBackendFailure : IntegrationTestBase {
 
-        private IMessageService mMessenger;
-        private IBasicBackend mBackend;
-
-        void Start() {
-            MyMessenger.AddListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );            
-        }
-
-        void OnDestroy() {
-            MyMessenger.RemoveListener<IBasicBackend>( LogInAsTestUser.LOG_IN_DONE, LogInComplete );
-        }    
-
-        private void LogInComplete( IBasicBackend i_backend ) {
-            mBackend = i_backend;
-
-            StartCoroutine( RunAllTests() );
-        }
-
-        private IEnumerator RunAllTests() {
+        protected override IEnumerator RunAllTests() {
             StartTests();
 
             while ( mBackend.IsBusy() ) {
