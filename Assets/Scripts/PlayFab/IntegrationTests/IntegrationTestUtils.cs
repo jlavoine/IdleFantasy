@@ -4,7 +4,9 @@ using System.Collections.Generic;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public static class IntegrationTestUtils {
         public const string SAVE_KEY_UNITS = "UnitsProgress";
+        public const string SAVE_KEY_BUILDINGS = "BuildingsProgress";
         public const string SAVE_KEY_GUILDS = "GuildsProgress";
+        public const string SAVE_KEY_METRICS = "GameMetrics";
 
         public static IEnumerator UpgradeTarget_NoRules( string i_targetID, string i_className ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
