@@ -105,6 +105,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator SetPlayerDataOnServer() {
             SetUnitProgressData();
+            SetBuildingProgressData();
             SetGameMetricData();
 
             yield return mBackend.WaitUntilNotBusy();
@@ -113,6 +114,11 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void SetUnitProgressData() {
             string unitProgressData = GetUnitProgressData();
             IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_UNITS, unitProgressData );
+        }
+
+        private void SetBuildingProgressData() {
+            string progressData = "{\"BASE_BUILDING_1\":{\"Level\":100}}";
+            IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_BUILDINGS, progressData );
         }
 
         private void SetGameMetricData() {
