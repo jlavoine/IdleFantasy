@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using MyLibrary;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
         protected const string MISSION_WORLD = "Base";
         protected const int MISSION_GOLD_REWARD = 1000;
-        private const int MISSION_INDEX = 0;
+        protected const int MISSIONS_DONE_COUNT = 1;
+
+        private const int MISSION_INDEX = 0;        
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
         protected abstract bool IsTestExpectedToFail();
@@ -101,10 +104,23 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator SetPlayerDataOnServer() {
-            string unitProgressData = GetUnitProgressData();
-            IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_UNITS, unitProgressData );
+            SetUnitProgressData();
+            SetGameMetricData();
 
             yield return mBackend.WaitUntilNotBusy();
+        }
+
+        private void SetUnitProgressData() {
+            string unitProgressData = GetUnitProgressData();
+            IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_UNITS, unitProgressData );
+        }
+
+        private void SetGameMetricData() {
+            GameMetrics metrics = new GameMetrics();
+            metrics.Metrics = new Dictionary<string, int>();
+            metrics.Metrics.Add( GameMetricsList.TOTAL_MISSIONS_DONE, MISSIONS_DONE_COUNT );
+
+            IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_METRICS, JsonConvert.SerializeObject( metrics ) );
         }
 
         private IEnumerator InitiateMissionComplete() {
@@ -132,7 +148,16 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected virtual IEnumerator RunOtherFailureChecks() {
-            yield return null;
+            yield return FailIfMissionsCompletedMetricNotCorrect();
+        }
+
+        private IEnumerator FailIfMissionsCompletedMetricNotCorrect() {
+            int correctMetric = IsTestExpectedToFail() ? MISSIONS_DONE_COUNT : MISSIONS_DONE_COUNT + 1;
+
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.KEY, GameMetricsList.TOTAL_MISSIONS_DONE } };
+            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getGameMetric.ToString(), correctMetric, cloudParams );
+
+            yield return mBackend.WaitUntilNotBusy();
         }
         #endregion
     }

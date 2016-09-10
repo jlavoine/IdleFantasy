@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using Newtonsoft.Json;
+using System;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestNormalMissionSuccess : TestMission {
@@ -17,8 +18,10 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected override IEnumerator RunOtherFailureChecks() {
+            yield return StartCoroutine(base.RunOtherFailureChecks());
+
             yield return FailIfMissionNotComplete();
-            yield return FailIfMissionRewardNotApplied();
+            yield return FailIfMissionRewardNotApplied();            
         }
 
         private IEnumerator FailIfMissionNotComplete() {
