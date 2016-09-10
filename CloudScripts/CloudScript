@@ -32,6 +32,11 @@ const UNIT_STATS = "Stats";                         // stats object on the unit
 // unit stats
 const STAT_BASE = "Base";                           // key for the base stat on a unit
 
+/// metrics
+const GAME_METRICS = "GameMetrics";
+const METRICS = "Metrics";
+const TOTAL_MISSIONS_DONE = "TotalMissionsCompleted";
+
 // misc -- these are keys many data structures have
 const WEIGHT = "Weight";                            // weight of an object
 const LEVEL_RESTRICTION = "LevelRestriction";       // level restriction of an object
@@ -77,10 +82,6 @@ const MISC_WEIGHT = "MiscWeight";
 const MISC_MINIMUM = "MiscMinimum";
 const MISC_INDEX = 2;
 
-/// achievement related
-const GAME_METRICS = "GameMetrics";
-const METRICS = "Metrics";
-
 /// other map mod constants
 const MAP_GOLD_MOD = "BaseGoldReward";                  // affects gold earned from a mission
 
@@ -119,6 +120,12 @@ const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
 const WORLD_PROGRESS_KEY = "WorldsProgress";
 const WORLD_PROGRESS_RESTARTS = "RestartCount";
 const WORLD_PROGRESS_CUR_MAP = "CurrentMapLevel";
+
+/// unlock data related
+const UNIT_UNLOCK_PLAN = "UnitUnlockPlan";      // title data
+const UNLOCKS = "Unlocks";
+const UNLOCK_UNIT_ID = "UnitID";
+const UNLOCK_BUILDING_ID = "BuildingID";
 
 
 /// game modules
@@ -583,6 +590,24 @@ handlers.getTitleData = function(args) {
     var titleData= GetTitleData(key);
 
     return ReturnDataToClient(titleData);
+}
+
+handlers.getGameMetric = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    var metricName = args.data[KEY];
+
+    return ReturnDataToClient(GetGameMetric(metricName));
+}
+
+handlers.unitUnlockCheck = function(args) {
+    if (!isTesting()) {
+        return returnOutOfSync();
+    }
+
+    CheckForUnitUnlock();
 }
 
 /////////////////////////////////////////////////
@@ -1176,52 +1201,7 @@ function CompleteMission(mission, missionType, taskProposals, allUnitProgress) {
     MarkMissionComplete(mission, missionType);
     ApplyMissionRewards(mission);
     PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
-    UnlockTest();
-}
-
-function UnlockTest() {
-    IncrementGameMetric("TotalMissionsCompleted");
-
-    var unlock = GetUnlock();
-    if (unlock != null) {
-        var unitToUnlock = unlock["UnitID"];
-        var buildingToUnlock = unlock["BuildingID"]; 
-        log.info("Unlocking " + unitToUnlock + " and " + buildingToUnlock);
-
-        UnlockTarget(CLASS_UNIT, unitToUnlock);
-        UnlockTarget(CLASS_BUILDING, buildingToUnlock);
-    }
-}
-
-function GetUnlock() {
-    var unlockPlan = GetTitleData("UnitUnlockPlan");    
-    var totalMissionsDone = GetGameMetric("TotalMissionsCompleted");
-    log.info("****: " + totalMissionsDone);
-
-    var unlocks = unlockPlan["Unlocks"];
-    var unlock = unlocks[totalMissionsDone];
-    log.info("ANd what is this " + JSON.stringify(unlock));
-    return unlock;
-}
-
-function IncrementGameMetric(metricName) {
-    var metricsData = GetReadOnlySaveData("GameMetrics");
-    var allMetrics = metricsData[METRICS];
-    allMetrics[metricName] += 1;
-
-    SetReadOnlyData("GameMetrics", metricsData);
-}
-
-function GetGameMetric(metricName) {
-    var metricsData = GetReadOnlySaveData("GameMetrics");
-    var allMetrics = metricsData[METRICS];
-    return allMetrics[metricName];
-}
-
-function UnlockTarget(className, targetID) {
-    var allProgressData = GetProgressData(className);
-    var progressForTarget = GetProgressForTarget(allProgressData, targetID);
-    UpgradeAndSave(allProgressData, className, progressForTarget, targetID);
+    CheckForUnitUnlock();
 }
 
 function MarkMissionComplete(mission, world) {
@@ -1384,6 +1364,65 @@ function GetMissionIndex(mission) {
 
 /////////////////////////////////////////////////
 /// ~Missions
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Unlocking
+/////////////////////////////////////////////////
+
+function CheckForUnitUnlock() {
+    IncrementGameMetric(TOTAL_MISSIONS_DONE);
+
+    var unlock = GetUnlock();
+    if (unlock != null) {
+        var unitToUnlock = unlock[UNLOCK_UNIT_ID];
+        var buildingToUnlock = unlock[UNLOCK_BUILDING_ID]; 
+        log.info("Unlocking " + unitToUnlock + " and " + buildingToUnlock);
+
+        UnlockTarget(CLASS_UNIT, unitToUnlock);
+        UnlockTarget(CLASS_BUILDING, buildingToUnlock);
+    }
+}
+
+function GetUnlock() {
+    var unlockPlan = GetTitleData(UNIT_UNLOCK_PLAN);    
+    var totalMissionsDone = GetGameMetric(TOTAL_MISSIONS_DONE);
+
+    var unlocks = unlockPlan[UNLOCKS];
+    var unlock = unlocks[totalMissionsDone];
+    return unlock;
+}
+
+function UnlockTarget(className, targetID) {
+    var allProgressData = GetProgressData(className);
+    var progressForTarget = GetProgressForTarget(allProgressData, targetID);
+    UpgradeAndSave(allProgressData, className, progressForTarget, targetID);
+}
+
+/////////////////////////////////////////////////
+/// ~Unlocking
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Metrics
+/////////////////////////////////////////////////
+
+function IncrementGameMetric(metricName) {
+    var metricsData = GetReadOnlySaveData(GAME_METRICS);
+    var allMetrics = metricsData[METRICS];
+    allMetrics[metricName] += 1;
+
+    SetReadOnlyData(GAME_METRICS, metricsData);
+}
+
+function GetGameMetric(metricName) {
+    var metricsData = GetReadOnlySaveData(GAME_METRICS);
+    var allMetrics = metricsData[METRICS];
+    return allMetrics[metricName];
+}
+
+/////////////////////////////////////////////////
+/// ~Metrics
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
