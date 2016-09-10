@@ -134,9 +134,6 @@ namespace IdleFantasy {
         private void DownloadGameMetrics() {
             mBackend.GetPlayerData( BackendConstants.GAME_METRICS, ( jsonData ) => {
                 mGameMetrics = JsonConvert.DeserializeObject<GameMetrics>( jsonData );
-
-                int wtf = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
-                UnityEngine.Debug.LogError( "wtf is this: " + wtf );
             } );
         }
 
