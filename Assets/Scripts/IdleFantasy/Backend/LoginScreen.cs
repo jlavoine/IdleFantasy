@@ -22,7 +22,7 @@ namespace IdleFantasy {
 
         private Login mLogin;   // is this the best way...?
 
-        private AnalyticsTimer mLoginTimer = new AnalyticsTimer( LibraryAnalyticEvents.LOGIN_TIME );
+        private AnalyticsTimer mLoginTimer = new AnalyticsTimer( LibraryAnalyticEvents.LOGIN_TIME, new MyTimer() );
 
         public GameObject PlayButton;
         public TextMeshProUGUI LoginStatusText;

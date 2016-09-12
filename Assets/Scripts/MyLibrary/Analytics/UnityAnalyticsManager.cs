@@ -2,7 +2,7 @@
 using UnityEngine.Analytics;
 
 namespace MyLibrary {
-    public class UnityAnalyticsManager {
+    public class UnityAnalyticsManager : IUnityAnalyticsManager {
         private const string LOG_TYPE = "Analytics";
 
         private IUnityAnalytics mAnalytics;
@@ -21,7 +21,7 @@ namespace MyLibrary {
             SendCustomUnityAnalytic( i_eventName, i_eventData );
         }
 
-        private void SendCustomUnityAnalytic( string i_eventName, IDictionary<string, object> i_eventData ) {
+        public void SendCustomUnityAnalytic( string i_eventName, IDictionary<string, object> i_eventData ) {
             AnalyticsResult result = mAnalytics.SendCustomEvent( i_eventName, i_eventData );
 
             if ( result != AnalyticsResult.Ok ) {

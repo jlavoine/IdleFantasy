@@ -57,7 +57,7 @@ namespace IdleFantasy {
 
         private void OnBackendFailure( IBackendFailure i_failure ) {
             MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, i_failure.GetMessage(), "" );          
-            mLoginTimer.Stop();            
+            mLoginTimer.StopTimer();            
         }       
     }
 }
