@@ -10,7 +10,7 @@ namespace IdleFantasy {
             DontDestroyOnLoad( this );
 
             MyLogger logger = new MyLogger();
-            UnityAnalyticsManager analytics = new UnityAnalyticsManager();
+            UnityAnalyticsManager analytics = new UnityAnalyticsManager( new MyUnityAnalytics() );
             InfoPopupManager popupManager = new InfoPopupManager();
             OutOfSyncManager outOfSyncManager = new OutOfSyncManager();
         }

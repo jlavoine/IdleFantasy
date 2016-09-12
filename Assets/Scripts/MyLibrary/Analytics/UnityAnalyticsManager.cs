@@ -5,7 +5,10 @@ namespace MyLibrary {
     public class UnityAnalyticsManager {
         private const string LOG_TYPE = "Analytics";
 
-        public UnityAnalyticsManager() {
+        private IUnityAnalytics mAnalytics;
+
+        public UnityAnalyticsManager( IUnityAnalytics i_unityAnalytics ) {
+            mAnalytics = i_unityAnalytics;
             MyMessenger.AddListener<string, IDictionary<string, object>>( LibraryAnalyticEvents.SEND_ANALYTIC_EVENT, OnAnalyticEvent );
         }
 
@@ -19,11 +22,11 @@ namespace MyLibrary {
         }
 
         private void SendCustomUnityAnalytic( string i_eventName, IDictionary<string, object> i_eventData ) {
-            AnalyticsResult result = Analytics.CustomEvent( i_eventName, i_eventData );
+            AnalyticsResult result = mAnalytics.SendCustomEvent( i_eventName, i_eventData );
 
             if ( result != AnalyticsResult.Ok ) {
                 string log = "Failed to send analytic " + i_eventName + " with reason: " + result.ToString();
-                MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, log, LOG_TYPE );
+                EasyLogger.Instance.Log( LogTypes.Warn, log, LOG_TYPE );
             }
         }
 
@@ -33,7 +36,7 @@ namespace MyLibrary {
                 log += param.Key + ": " + param.Value.ToString() + "\n";
             }
 
-            MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, log, LOG_TYPE );
+            EasyLogger.Instance.Log( LogTypes.Info, log, LOG_TYPE );
         }
     }
 }

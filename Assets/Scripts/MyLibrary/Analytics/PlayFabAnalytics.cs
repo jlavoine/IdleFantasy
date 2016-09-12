@@ -6,11 +6,11 @@ namespace MyLibrary{
     public class PlayFabAnalytics {
 
        public PlayFabAnalytics() {
-            MyMessenger.AddListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
+           // MyMessenger.AddListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
         }
 
         public void Dispose() {
-            MyMessenger.RemoveListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
+            //MyMessenger.RemoveListener<string, long>( AnalyticsTimer.TIMER_EVENT, OnTimerAnalytic );
         }
 
         // currently don't have access to send custom analytics with playfab...
