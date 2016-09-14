@@ -35,8 +35,8 @@ namespace IdleFantasy {
         private UnitUnlockPlanData mUnitUnlockPlan;
         public UnitUnlockPlanData UnitUnlockPlan { get { return mUnitUnlockPlan; } }
 
-        private GameMetrics mGameMetrics;
-        public GameMetrics GameMetrics { get { return mGameMetrics; } }
+        private IGameMetrics mGameMetrics;
+        public IGameMetrics GameMetrics { get { return mGameMetrics; } }
 
         private Dictionary<string, int> mInventory = new Dictionary<string, int>();
 

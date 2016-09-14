@@ -82,7 +82,7 @@ namespace IdleFantasy {
             }
         }
 
-        public GameMetrics GameMetrics {
+        public IGameMetrics GameMetrics {
             get {
                 throw new NotImplementedException();
             }

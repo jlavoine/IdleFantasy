@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace MyLibrary {
-    public class GameMetrics {
+    public class GameMetrics : IGameMetrics {
         public Dictionary<string, int> Metrics;
 
         public int GetMetric( string i_metric ) {
