@@ -1,7 +1,7 @@
 ﻿using MyLibrary;
 
 namespace IdleFantasy {
-    public class MapName {
+    public class MapName : IMapName {
         public MapPieceData Prefix;
         public MapPieceData Terrain;
         public MapPieceData Suffix;
