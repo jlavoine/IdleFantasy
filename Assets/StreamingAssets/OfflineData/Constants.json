@@ -43,5 +43,35 @@
     "ID": "NotEnoughUnitsColor",
     "Type": "Color",
     "Value": "255.0,0.0,0.0,255.0"
+  },
+  "UpcomingMapCount": {
+    "ID": "UpcomingMapsCount",
+    "Type": "Int",
+    "Value": 4
+  },
+  "AreasPerTravelOption": {
+    "ID": "AreasPerTravelOption",
+    "Type": "Int",
+    "Value": 9
+  },
+  "BaseGoldReward": {
+    "ID": "BaseGoldReward",
+    "Type": "Int",
+    "Value": 500
+  },
+  "BaseMissionPower": {
+    "ID": "BaseMissionPower",
+    "Type": "Int",
+    "Value": 10
+  },
+  "CombatMissionStats": {
+    "ID": "CombatMissionStats",
+    "Type": "StringList",
+    "Value": "BASE_STAT_5,BASE_STAT_6,BASE_STAT_7,WIZARD_STAT_1,PRIEST_STAT_2"
+  },
+  "NonCombatMissionStats": {
+    "ID": "NonCombatMissionStats",
+    "Type": "StringList",
+    "Value": "BASE_STAT_1,BASE_STAT_2,BASE_STAT_3,BASE_STAT_4"
   }
 }
