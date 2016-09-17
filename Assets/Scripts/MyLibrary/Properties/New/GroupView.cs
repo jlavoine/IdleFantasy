@@ -26,5 +26,14 @@ namespace MyLibrary {
                 i_view.SetModel( i_model );
             }
         }
+
+        protected void CloseView() {
+            ClosableObject closable = GetComponent<ClosableObject>();
+            if ( closable ) {
+                closable.StartClose();
+            } else {
+                EasyLogger.Instance.Log( LogTypes.Error, "Went to close " + gameObject.name + " but it wasn't closable.", "UI" );
+            }
+        }
     }
 }
