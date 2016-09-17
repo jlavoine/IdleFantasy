@@ -64,6 +64,7 @@ const MAP_AREAS = "Areas";                              // key for list/array of
 const MAP_UPCOMING = "UpcomingMaps";                    // key for list/array of upcoming maps, from a map
 const MAP_ALL_MODS = "AllModifications";                // key for list/array of all modifications on a map
 const UPCOMING_MAPS_COUNT = 4;                          // standard # of upcoming maps, from a map
+const AREAS_PER_TRAVEL_OPTION = 9;                      // # of area clears per unlocked travel option
 
 // map area types
 const AREA_COMBAT = "Combat";       // 0

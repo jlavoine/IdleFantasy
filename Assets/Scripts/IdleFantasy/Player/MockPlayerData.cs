@@ -136,5 +136,9 @@ namespace IdleFantasy {
         public void Dispose() {
             throw new NotImplementedException();
         }
+
+        public IWorldMissionProgress GetMissionProgressForWorld( string i_world ) {
+            throw new NotImplementedException();
+        }
     }
 }

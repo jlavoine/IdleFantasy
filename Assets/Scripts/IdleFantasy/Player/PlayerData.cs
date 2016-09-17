@@ -89,7 +89,7 @@ namespace IdleFantasy {
 
         private void CheckForUnitUnlock() {
             int totalMissionsCompleted = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
-            UnityEngine.Debug.LogError( "Looking for " + totalMissionsCompleted );
+
             if ( UnitUnlockPlan.Unlocks.ContainsKey( totalMissionsCompleted ) ) {                
                 UnlockUnit( UnitUnlockPlan.Unlocks[totalMissionsCompleted] );
             }
@@ -255,6 +255,15 @@ namespace IdleFantasy {
         public void UpdateInventoryData() {
             foreach ( KeyValuePair<string, int> inventoryItem in mInventory ) {
                 mModel.SetProperty( inventoryItem.Key, inventoryItem.Value );
+            }
+        }
+
+        public IWorldMissionProgress GetMissionProgressForWorld( string i_world ) {
+            if ( MissionProgress.ContainsKey( i_world ) ) {
+                return MissionProgress[i_world];
+            } else {
+                EasyLogger.Instance.Log( LogTypes.Fatal, "No mission progress for world: " + i_world, "" );
+                return new WorldMissionProgress();
             }
         }
     }

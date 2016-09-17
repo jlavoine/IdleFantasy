@@ -21,5 +21,7 @@ namespace IdleFantasy {
         IGameMetrics GameMetrics { get; }
 
         UnitUnlockPlanData UnitUnlockPlan { get; }
+
+        IWorldMissionProgress GetMissionProgressForWorld( string i_world );
     }
 }
