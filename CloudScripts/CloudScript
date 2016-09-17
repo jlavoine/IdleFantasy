@@ -52,9 +52,10 @@ const NAME = "Name";
 const DESC = "DescriptionKey";
 const ID = "ID";
 const WORLD = "World";
+const MAP = "Map";
 
 // map related
-const DEFAULT_SIZE = 36;
+const DEFAULT_MAP_SIZE = 36;
 const NEW_PLAYER_MAP = "NewPlayerMap";                  // title data key for the map data that should be a new player's
 const MAP_SAVE_KEY = "Map_";                            // key used in player's save data for defining a type of map
 const MAP_WORLD = "World";                              // key in map data structure for the map's world
@@ -525,8 +526,9 @@ handlers.createMapForTesting = function(args) {
     var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
     var mapWorld = args.data[MAP_WORLD];
     var mapSize = GetNumberFromArgs(args, MAP_SIZE);
+    var mapName = GenerateMapName(mapLevel);
 
-    var map = CreateMap(mapWorld, mapLevel, mapSize);
+    var map = CreateMap(mapName, mapWorld, mapLevel, mapSize);
 
     return ReturnDataToClient(map);
 }
@@ -620,7 +622,7 @@ handlers.unitUnlockCheck = function(args) {
 /////////////////////////////////////////////////
 
 function GetMapOfWorld(world) {
-    var key = MAP_SAVE_KEY + world;
+    var key = GetMapSaveKey(world);
     return GetReadOnlySaveData(key);
 }
 
@@ -662,6 +664,10 @@ function GetUpcomingMapCount() {
     return UPCOMING_MAPS_COUNT;
 }
 
+function GetUpcomingMaps(map) {
+    return map[MAP_UPCOMING];
+}
+
 function GetAllMapModifications(map) {
     return map[MAP_ALL_MODS];
 }
@@ -678,8 +684,88 @@ function GetMapModificationAmount(map, key) {
     return 0;
 }
 
+function GetMapSaveKey(world) {
+    return MAP_SAVE_KEY + world;
+}
+
+function GetUpcomingMapNameFromMap(currentMap, index) {
+    var upcomingMaps = GetUpcomingMaps(currentMap);
+
+    if (index < 0 || index > upcomingMaps.length+1) {
+        log.info("ERROR: Illegal upcoming map get: " + index);
+        index = 0;
+    }
+
+    return upcomingMaps[index];
+}
+
 /////////////////////////////////////////////////
 /// ~Map Data
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// TravelTo
+/////////////////////////////////////////////////
+
+handlers.initiateTravelTo = function (args) { 
+    var optionIndex = GetNumberFromArgs(args, INDEX);
+    var world = args.data[WORLD];
+
+    log.info("Attempting to travel to " + optionIndex);
+
+    if (CanTravelToUpcomingMapIndex(optionIndex, world)) {
+        TravelToIndex(optionIndex, world);
+        return ReturnNewAreaData(world);
+    } else {
+        return { outOfSync : true };
+    }
+}
+
+function ReturnNewAreaData(world) {
+    RefreshMissionProgressGlobal();
+    
+    var newMap = GetMapOfWorld(world);
+    var mapAsString = JSON.stringify(newMap);
+
+    var progress = GetMissionProgressForWorld(world);
+    var progressAsString = JSON.stringify(progress);
+
+    var data = {};
+    data[MAP] = mapAsString;
+    data[MISSION_PROGRESS_KEY] = progressAsString;
+    return data;
+}
+
+function CanTravelToUpcomingMapIndex(optionIndex, world) {    
+    var clearedAreaCount = GetClearedMissionsForWorld(world);
+    var areasRequiredForIndex = GetClearedAreasRequiredForTravelOptionIndex(optionIndex);
+
+    return clearedAreaCount >= areasRequiredForIndex;
+}
+
+function GetClearedAreasRequiredForTravelOptionIndex(optionIndex) {
+    var requiredClears = AREAS_PER_TRAVEL_OPTION * (optionIndex+1);
+    return requiredClears;
+}
+
+function TravelToIndex(optionIndex, world) {
+    var currentMap = GetMapOfWorld(world);
+    var nextMapLevel = GetMapLevel(currentMap) + 1;
+    var nextMapName = GetUpcomingMapNameFromMap(currentMap, optionIndex);
+
+    var nextMap = CreateMap(nextMapName, world, nextMapLevel, DEFAULT_MAP_SIZE);    
+    CreateMissionProgressForMap(nextMap, false);
+    SaveMap(nextMap);    
+}
+
+function SaveMap(map) {
+    var world = GetMapWorld(map);
+    var mapKey = GetMapSaveKey(world);
+    SetReadOnlyData(mapKey, map);
+}
+
+/////////////////////////////////////////////////
+/// ~TravelTo
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -691,10 +777,12 @@ function GetMapModificationAmount(map, key) {
 // sets the map piece data for each piece type, used by various method
 var global_allPieces;
 function SetAllPieceData_Global() {
-    global_allPieces = {};
-    global_allPieces[MAP_PREFIX] = GetTitleDataForMapPiece(MAP_PREFIX);
-    global_allPieces[MAP_TERRAIN] = GetTitleDataForMapPiece(MAP_TERRAIN);
-    global_allPieces[MAP_SUFFIX] = GetTitleDataForMapPiece(MAP_SUFFIX);
+    if (global_allPieces == null) {
+        global_allPieces = {};
+        global_allPieces[MAP_PREFIX] = GetTitleDataForMapPiece(MAP_PREFIX);
+        global_allPieces[MAP_TERRAIN] = GetTitleDataForMapPiece(MAP_TERRAIN);
+        global_allPieces[MAP_SUFFIX] = GetTitleDataForMapPiece(MAP_SUFFIX);
+    }
 }
 
 /////////////////////////////////////////////////
@@ -706,16 +794,16 @@ function SetAllPieceData_Global() {
 /////////////////////////////////////////////////
 
 /// Creates a map for the given level and world
-function CreateMap(worldKey, mapLevel, mapSize) {    
-    SetAllPieceData_Global();    
+function CreateMap(mapName, worldKey, mapLevel, mapSize) {    
+    SetAllPieceData_Global();  
 
     var map = CreateMapObject(worldKey, mapLevel, mapSize);
     var isFirstMap = false;
 
-    SetMapName(map);
+    SetMapName(map, mapName);
     SetUpcomingMaps(map);
     SetMapAreas(map);
-    SetMissionProgressForMap(map, isFirstMap);
+    CreateMissionProgressForMap(map, isFirstMap);
 
     log.info("Returning map: " + JSON.stringify(map));
     return map;
@@ -734,12 +822,7 @@ function CreateMapObject(worldKey, mapLevel, mapSize) {
     return map;
 }
 
-function SetMapName(map) {
-    log.info("Setting map name for " + JSON.stringify(map));
-
-    var mapLevel = GetMapLevel(map);
-    var mapName = GenerateMapName(mapLevel);
-
+function SetMapName(map, mapName) {
     map[NAME] = mapName;
 }
 
@@ -1077,7 +1160,7 @@ function GetMapPieceLevelRestriction(pieceData) {
 }
 
 /// This seems like it's mission related, but it is always set in relation to a map, so I put it with the maps
-function SetMissionProgressForMap(map, isFirstMap) {
+function CreateMissionProgressForMap(map, isFirstMap) {
     var world = GetMapWorld(map);
     var size = GetMapSize(map);
 
@@ -1143,15 +1226,38 @@ function SaveMissionProgress() {
     SetReadOnlyData(MISSION_PROGRESS_KEY, global_allMissionProgress);
 }
 
-function GetMissionProgress(world, index) {
-    if (global_allMissionProgress == null) {
-        global_allMissionProgress = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
-    }
-  
-    var missionProgressForWorld = global_allMissionProgress[world];
+function GetMissionProgress(world, index) {    
+    var missionProgressForWorld = GetMissionProgressForWorld(world);
     var missionProgressList = GetMissionProgressList(missionProgressForWorld);
 
     return missionProgressList[index];
+}
+
+function GetMissionProgressForWorld(world) {
+    if (global_allMissionProgress == null) {
+        RefreshMissionProgressGlobal();
+    }
+  
+    return global_allMissionProgress[world];
+}
+
+function RefreshMissionProgressGlobal() {
+    global_allMissionProgress = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+}
+
+function GetClearedMissionsForWorld(world) {
+    var missionProgressForWorld = GetMissionProgressForWorld(world);
+    var missionProgressList = GetMissionProgressList(missionProgressForWorld);
+
+    var clearedMissions = 0;
+    for (var index in missionProgressList) {
+        var missionProgress = missionProgressList[index];
+        if (IsMissionCompleted(missionProgress)) {
+            clearedMissions++;
+        }
+    }
+
+    return clearedMissions;
 }
 
 function IsMissionCompleted(missionProgress) {
@@ -1705,8 +1811,8 @@ function AddMissionProgres_IfMissing(allSaveData) {
 
 /// This sets the player's first ever map, if they have no map for the base module
 // because I don't want to make another call to get data, I am going to put *very first* stuff in here
-function AddFirstMap_IfMissing(allSaveData) {
-    var baseMapKey = MAP_SAVE_KEY + MODULE_BASE;
+function AddFirstMap_IfMissing(allSaveData) {    
+    var baseMapKey = GetMapSaveKey(MODULE_BASE);
 
     // the || here is because I can't figure out a way to fully wipe a piece of player save data
     if (!allSaveData.hasOwnProperty(baseMapKey) || !allSaveData[baseMapKey].hasOwnProperty(WORLD)) {
@@ -1714,7 +1820,7 @@ function AddFirstMap_IfMissing(allSaveData) {
         allSaveData[baseMapKey] = firstMapData;
 
         var isFirstMap = true;
-        SetMissionProgressForMap(firstMapData, isFirstMap);
+        CreateMissionProgressForMap(firstMapData, isFirstMap);
 
         AddStartingCurrency();
     }

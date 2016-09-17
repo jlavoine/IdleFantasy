@@ -31,5 +31,9 @@ namespace IdleFantasy {
         public void MakeUpgradeCall( string i_className, string i_targetID, string i_upgradeID ) {
             throw new NotImplementedException();
         }
+
+        public void SendTravelRequest( string i_world, int i_optionIndex ) {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -8,12 +8,12 @@ namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
         public const string PROGRESS_KEY = "Progress";
         public const string TRAINER_SAVE_DATA = "TrainerSaveData";
-        
+
         public Dictionary<string, int> UnitTrainingLevels;
 
         private Hashtable mPlayerProgress = new Hashtable();
-        public Dictionary<string, UnitProgress> UnitProgress { get { return ( Dictionary<string, UnitProgress>)mPlayerProgress[GenericDataLoader.UNITS]; } }
-        public Dictionary<string, BuildingProgress> BuildingProgress { get { return ( Dictionary<string, BuildingProgress>)mPlayerProgress[GenericDataLoader.BUILDINGS]; } }
+        public Dictionary<string, UnitProgress> UnitProgress { get { return (Dictionary<string, UnitProgress>) mPlayerProgress[GenericDataLoader.UNITS]; } }
+        public Dictionary<string, BuildingProgress> BuildingProgress { get { return (Dictionary<string, BuildingProgress>) mPlayerProgress[GenericDataLoader.BUILDINGS]; } }
         public Dictionary<string, GuildProgress> GuildProgress { get { return (Dictionary<string, GuildProgress>) mPlayerProgress[GenericDataLoader.GUILDS]; } }
 
         private List<Guild> mGuilds = new List<Guild>();
@@ -22,7 +22,7 @@ namespace IdleFantasy {
         private List<Building> mBuildings = new List<Building>();
         public List<Building> Buildings { get { return mBuildings; } }
 
-        public Dictionary<string, MapData> mMaps = new Dictionary<string, MapData>();    
+        public Dictionary<string, MapData> mMaps = new Dictionary<string, MapData>();
         public Dictionary<string, MapData> Maps { get { return mMaps; } }
 
         public Dictionary<string, WorldMissionProgress> mMissionProgress = new Dictionary<string, WorldMissionProgress>();
@@ -43,7 +43,7 @@ namespace IdleFantasy {
         private ViewModel mModel;
 
         private IBasicBackend mBackend;
-        
+
         public void Init( IBasicBackend i_backend ) {
             SubscribeToMessages();
 
@@ -72,7 +72,7 @@ namespace IdleFantasy {
         }
 
         private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
-            IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE  );
+            IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
             UpdateMissionProgress( i_missionWorld, i_missionIndex );
 
             CheckForUnitUnlock();
@@ -82,7 +82,7 @@ namespace IdleFantasy {
             GameMetrics.IncrementMetric( i_metric );
         }
 
-        private void UpdateMissionProgress( string i_missionWorld, int i_missionIndex ) {            
+        private void UpdateMissionProgress( string i_missionWorld, int i_missionIndex ) {
             WorldMissionProgress missionProgress = MissionProgress[i_missionWorld];
             missionProgress.Missions[i_missionIndex].Completed = true;
         }
@@ -90,7 +90,7 @@ namespace IdleFantasy {
         private void CheckForUnitUnlock() {
             int totalMissionsCompleted = GameMetrics.GetMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
 
-            if ( UnitUnlockPlan.Unlocks.ContainsKey( totalMissionsCompleted ) ) {                
+            if ( UnitUnlockPlan.Unlocks.ContainsKey( totalMissionsCompleted ) ) {
                 UnlockUnit( UnitUnlockPlan.Unlocks[totalMissionsCompleted] );
             }
         }
@@ -98,7 +98,7 @@ namespace IdleFantasy {
         private void UnlockUnit( UnitUnlockData i_unlock ) {
             ShowUnlockPopup( i_unlock.UnitID );
             UpdateUnitDataForUnlock( i_unlock.UnitID );
-            SendUnitUnlockEvent( i_unlock.UnitID );            
+            SendUnitUnlockEvent( i_unlock.UnitID );
         }
 
         private void ShowUnlockPopup( string i_unitID ) {
@@ -139,14 +139,23 @@ namespace IdleFantasy {
 
         private void DownloadMapData() {
             mBackend.GetPlayerData( BackendConstants.MAP_BASE, ( jsonData ) => {
-                mMaps[BackendConstants.WORLD_BASE] = JsonConvert.DeserializeObject<MapData>( jsonData );
-            });
+                SetMapData( JsonConvert.DeserializeObject<MapData>( jsonData ) );
+            } );
+        }
+
+        public void SetMapData( MapData i_mapData ) {
+            string world = i_mapData.World;
+            mMaps[world] = i_mapData;
         }
 
         private void DownloadMissionProgress() {
             mBackend.GetPlayerDataDeserialized<Dictionary<string, WorldMissionProgress>>( BackendConstants.MISSION_PROGRESS, ( progress ) => {
                 mMissionProgress = progress;
             } );
+        }
+
+        public void SetMissionProgressForWorld( string i_world, WorldMissionProgress i_progress ) {
+            mMissionProgress[i_world] = i_progress;
         }
 
         private void DownloadTrainerData() {
@@ -160,7 +169,7 @@ namespace IdleFantasy {
                 Gold = numGold;
             } );
         }
-        private void DownloadAllProgressData() {            
+        private void DownloadAllProgressData() {
             DownloadProgressDataForKey<UnitProgress>( GenericDataLoader.UNITS );
             DownloadProgressDataForKey<BuildingProgress>( GenericDataLoader.BUILDINGS );
             DownloadProgressDataForKey<GuildProgress>( GenericDataLoader.GUILDS, AddGuilds );
@@ -265,6 +274,19 @@ namespace IdleFantasy {
                 EasyLogger.Instance.Log( LogTypes.Fatal, "No mission progress for world: " + i_world, "" );
                 return new WorldMissionProgress();
             }
+        }
+
+        public void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData ) {
+            MapData map = JsonConvert.DeserializeObject<MapData>( i_travelData[BackendConstants.MAP] );
+            WorldMissionProgress progress = JsonConvert.DeserializeObject<WorldMissionProgress>( i_travelData[BackendConstants.MISSION_PROGRESS] );
+
+            SetMapData( map );
+            SetMissionProgressForWorld( map.World, progress );
+            SendTravelSuccessMessage();
+        }
+
+        private void SendTravelSuccessMessage() {            
+            MyMessenger.Send( MapKeys.TRAVEL_TO_SUCCESS );
         }
     }
 }

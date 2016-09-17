@@ -38,6 +38,18 @@ namespace IdleFantasy {
             MakeCloudCall( BackendConstants.COMPLETE_MISSION, cloudParams, null );
         }  
 
+        public void SendTravelRequest( string i_world, int i_optionIndex ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( BackendConstants.MAP_WORLD, i_world );
+            cloudParams.Add( BackendConstants.INDEX, i_optionIndex.ToString() );
+
+            MakeCloudCall( BackendConstants.TRAVEL_TO, cloudParams, ( results ) => {
+                if ( !IsClientOutOfSync() ) {
+                    PlayerManager.Data.PlayerTraveledToNewArea( results );
+                }
+            } );
+        }
+
         public void MakeAddPointsToUpgradeCall( string i_className, string i_targetID, string i_upgradeID, int i_points ) {
             Dictionary<string, string> upgradeParams = new Dictionary<string, string>();
             upgradeParams.Add( BackendConstants.CLASS, i_className );

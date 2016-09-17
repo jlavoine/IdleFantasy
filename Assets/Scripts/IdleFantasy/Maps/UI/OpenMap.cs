@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using MyLibrary;
 
 namespace IdleFantasy {
     public class OpenMap : MonoBehaviour {
@@ -6,6 +7,26 @@ namespace IdleFantasy {
         public GameObject MainCanvas;
 
         private Map mMap;
+
+        public void Start() {
+            SubscribeToMessages();
+        }
+
+        public void OnDestroy() {
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener( MapKeys.TRAVEL_TO_SUCCESS, OnTravelSuccess );
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener( MapKeys.TRAVEL_TO_SUCCESS, OnTravelSuccess );
+        }
+
+        private void OnTravelSuccess() {
+            CreateMapView();
+        }
 
         public void OnClick() {
             CreateMapView();

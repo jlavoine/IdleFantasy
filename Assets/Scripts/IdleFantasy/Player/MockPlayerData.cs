@@ -140,5 +140,9 @@ namespace IdleFantasy {
         public IWorldMissionProgress GetMissionProgressForWorld( string i_world ) {
             throw new NotImplementedException();
         }
+
+        public void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData ) {
+            throw new NotImplementedException();
+        }
     }
 }

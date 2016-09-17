@@ -23,5 +23,7 @@ namespace IdleFantasy {
         UnitUnlockPlanData UnitUnlockPlan { get; }
 
         IWorldMissionProgress GetMissionProgressForWorld( string i_world );
+
+        void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData );
     }
 }

@@ -48,5 +48,18 @@ namespace IdleFantasy {
         public void SetOptionName( string i_name ) {
             ViewModel.SetProperty( NAME_PROPERTY, i_name );
         }
+
+        public void TravelToOption() {
+            SendTravelOptionSelectedMessage();
+            SendTravelRequestToServer();            
+        }
+
+        private void SendTravelOptionSelectedMessage() {
+            MyMessenger.Send( MapKeys.TRAVEL_TO_REQUEST, mOptionIndex );
+        }
+
+        private void SendTravelRequestToServer() {
+            BackendManager.Backend.SendTravelRequest( BackendConstants.WORLD_BASE, mOptionIndex );
+        }
     }
 }

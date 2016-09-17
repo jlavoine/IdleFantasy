@@ -18,7 +18,21 @@ namespace IdleFantasy {
 
             CreateMapAreas( i_missionProgress.Missions );
 
-            //SubscribeToMessages();            
+            SubscribeToMessages();            
+        }
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            MyMessenger.AddListener<int>( MapKeys.TRAVEL_TO_REQUEST, OnTravelToSelected );
+        }
+
+        private void UnsubscribeFromMessages() {
+            MyMessenger.RemoveListener<int>( MapKeys.TRAVEL_TO_REQUEST, OnTravelToSelected );
         }
 
         private void CreateMapAreas( List<SingleMissionProgress> i_missionProgress ) {
@@ -27,6 +41,10 @@ namespace IdleFantasy {
                 MapAreaView areaView = areaObject.GetComponent<MapAreaView>();
                 areaView.Init( new MapArea( areaData, i_missionProgress[areaData.Index] ) );
             }
+        }
+
+        private void OnTravelToSelected( int i_travelOptionIndex ) {
+            CloseView();
         }
     }
 }

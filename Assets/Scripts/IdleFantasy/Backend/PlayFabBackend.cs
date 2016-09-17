@@ -86,7 +86,7 @@ namespace MyLibrary {
                     string resultAsString = result.Results.ToString();
                     resultsDeserialized = JsonConvert.DeserializeObject<Dictionary<string, string>>( resultAsString );
 
-                    CheckForOutOfSyncState( resultsDeserialized );
+                    CheckForAndUpdateSyncState( resultsDeserialized );
                 }
 
                 if ( i_requestSuccessCallback != null ) {
@@ -246,7 +246,7 @@ namespace MyLibrary {
             ClientOutOfSync = false;
         }
 
-        protected void CheckForOutOfSyncState( Dictionary<string, string> results ) {
+        protected void CheckForAndUpdateSyncState( Dictionary<string, string> results ) {
             if ( results.ContainsKey(CLIENT_OUT_OF_SYNC_KEY ) ) {
                 bool outOfSync = bool.Parse( results[CLIENT_OUT_OF_SYNC_KEY] );
                 ClientOutOfSync = outOfSync;

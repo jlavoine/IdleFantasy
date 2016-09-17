@@ -21,6 +21,8 @@ namespace IdleFantasy {
         public const string MAP_WORLD = "World";
         public const string MAP_SIZE = "MapSize";
         public const string MINIMUM = "Minimum";
+        public const string INDEX = "Index";
+        public const string MAP = "Map";
         #endregion
 
         #region Cloud Methods
@@ -31,6 +33,7 @@ namespace IdleFantasy {
         public const string ADD_PROGRESS_TO_UPGRADE = "addProgressToUpgrade";
         public const string GET_MISSIONS = "getTestMissions";
         public const string COMPLETE_MISSION = "initiateCompleteMission";
+        public const string TRAVEL_TO = "initiateTravelTo";
         #endregion
 
         #region Map Piece Modifiers
