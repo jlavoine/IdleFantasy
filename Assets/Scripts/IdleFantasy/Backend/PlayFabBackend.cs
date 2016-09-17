@@ -253,7 +253,7 @@ namespace MyLibrary {
 
                 if ( outOfSync ) {
                     MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Client is out of sync", PLAYFAB );
-                    MyMessenger.Send( BackendMessages.BACKEND_OUT_OF_SYNC );                    
+                    MyMessenger.Send<string>( BackendMessages.BACKEND_OUT_OF_SYNC, "Reason incoming" );                    
                 }
             }
         }
