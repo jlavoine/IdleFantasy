@@ -280,9 +280,24 @@ namespace IdleFantasy {
             MapData map = JsonConvert.DeserializeObject<MapData>( i_travelData[BackendConstants.MAP] );
             WorldMissionProgress progress = JsonConvert.DeserializeObject<WorldMissionProgress>( i_travelData[BackendConstants.MISSION_PROGRESS] );
 
+            SendMapCompletedAnalytic( Maps[map.World] );
             SetMapData( map );
             SetMissionProgressForWorld( map.World, progress );
             SendTravelSuccessMessage();
+        }
+
+        private void SendMapCompletedAnalytic( MapData i_map ) {
+            Dictionary<string, object> analyticParams = new Dictionary<string, object>();
+            analyticParams.Add( Analytics.AREAS_COMPLETE, GetAreasCompletedForMap( i_map ) );
+            analyticParams.Add( Analytics.MAP_LEVEL, i_map.MapLevel );
+            analyticParams.Add( Analytics.MAP_WORLD, i_map.World );
+
+            MyMessenger.Send<string, IDictionary<string, object>>( LibraryAnalyticEvents.SEND_ANALYTIC_EVENT, Analytics.MAP_COMPLETE_EVENT, analyticParams );
+        }
+
+        public int GetAreasCompletedForMap( MapData i_map ) {
+            WorldMissionProgress progress = MissionProgress[i_map.World];
+            return progress.GetCompletedMissionCount();
         }
 
         private void SendTravelSuccessMessage() {            

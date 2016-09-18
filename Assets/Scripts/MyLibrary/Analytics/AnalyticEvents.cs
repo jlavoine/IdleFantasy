@@ -19,7 +19,7 @@ namespace MyLibrary {
         public const string CLOUD_SETUP_TIME = "CloudSetup";
         public const string ON_LOGIN_TIME = "OnLogin";
         public const string TITLE_DATA_TIME = "GetTitleData";
-        public const string INIT_PLAYER_TIME = "InitPlayer";       
+        public const string INIT_PLAYER_TIME = "InitPlayer";
         #endregion
     }
 }
