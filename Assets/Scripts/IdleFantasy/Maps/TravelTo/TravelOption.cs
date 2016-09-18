@@ -5,13 +5,15 @@ namespace IdleFantasy {
     public class TravelOption : GenericViewModel {
         private int mOptionIndex;
 
-        public const string NAME_PROPERTY = "Name";       
+        public const string NAME_PROPERTY = "Name";
+        public const string AVAILABLE_PROPERTY = "IsAvailable";    
 
         public TravelOption( IMapName i_mapName, int i_optionIndex, IWorldMissionProgress i_missionProgress ) : base() {
             mOptionIndex = i_optionIndex;
 
             string name = GetOptionName( i_mapName, i_missionProgress, mOptionIndex );
             SetOptionName( name );
+            SetOptionAvailability( i_missionProgress, mOptionIndex );
         }
 
         public string GetOptionName( IMapName i_mapName, IWorldMissionProgress i_missionProgress, int i_optionIndex ) {
@@ -47,6 +49,10 @@ namespace IdleFantasy {
 
         public void SetOptionName( string i_name ) {
             ViewModel.SetProperty( NAME_PROPERTY, i_name );
+        }
+
+        private void SetOptionAvailability( IWorldMissionProgress i_missionProgress, int i_optionIndex ) {
+            ViewModel.SetProperty( AVAILABLE_PROPERTY, IsOptionAvailable( i_missionProgress, i_optionIndex ) );
         }
 
         public void TravelToOption() {

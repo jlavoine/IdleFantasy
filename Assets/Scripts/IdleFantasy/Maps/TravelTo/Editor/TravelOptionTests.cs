@@ -87,6 +87,22 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( testName, name );
         }
 
+        [Test]
+        public void WithGoodMissionProgress_AvailablePropertyIsTrue() {
+            TravelOption optionUnderTest = new TravelOption( Substitute.For<IMapName>(), 0, GetGoodMissionProgress() );
+
+            bool availableProperty = optionUnderTest.ViewModel.GetPropertyValue<bool>( TravelOption.AVAILABLE_PROPERTY );
+            Assert.IsTrue( availableProperty );
+        }
+
+        [Test]
+        public void WithBadMissionProgress_AvailablePropertyIsFalse() {
+            TravelOption optionUnderTest = new TravelOption( Substitute.For<IMapName>(), 0, GetBadMissionProgress() );
+
+            bool availableProperty = optionUnderTest.ViewModel.GetPropertyValue<bool>( TravelOption.AVAILABLE_PROPERTY );
+            Assert.IsFalse( availableProperty );
+        }
+
         private IWorldMissionProgress GetGoodMissionProgress() {
             IWorldMissionProgress missionProgress = Substitute.For<IWorldMissionProgress>();
             missionProgress.GetCompletedMissionCount().Returns( 1000 );
