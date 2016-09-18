@@ -28,7 +28,14 @@ namespace IdleFantasy {
 
                 mUnit = value;
                 mUnit.Level.UpgradeCompleteEvent += OnUnitUpgraded;
+
+                UnitID = mUnit.GetID();
             }
+        }
+
+        public string UnitID {
+            get { return mModel.GetPropertyValue<string>( "UnitID" ); }
+            set { mModel.SetProperty( "UnitID", value ); }
         }
 
         public float NextUnitProgress {
