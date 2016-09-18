@@ -61,7 +61,7 @@ namespace IdleFantasy {
         }
 
         private void SendTravelOptionSelectedMessage() {
-            MyMessenger.Send( MapKeys.TRAVEL_TO_REQUEST, mOptionIndex );
+            EasyMessenger.Instance.Send( MapKeys.TRAVEL_TO_REQUEST, mOptionIndex );
         }
 
         private void SendTravelRequestToServer() {

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using NSubstitute;
+using MyLibrary;
 
 #pragma warning disable 0414
 namespace IdleFantasy.UnitTests {
@@ -9,6 +10,17 @@ namespace IdleFantasy.UnitTests {
         [SetUp]
         public void BeforeTest() {
             UnitTestUtils.LoadOfflineData();
+
+            ReplaceMessageServiceWithMock();
+            ReplaceBackendWithMock();
+        }
+
+        private void ReplaceMessageServiceWithMock() {
+            EasyMessenger.Instance = Substitute.For<IMessageService>();
+        }
+
+        private void ReplaceBackendWithMock() {
+            BackendManager.Backend = Substitute.For<IIdleFantasyBackend>();
         }
 
         [Test]
@@ -101,6 +113,24 @@ namespace IdleFantasy.UnitTests {
 
             bool availableProperty = optionUnderTest.ViewModel.GetPropertyValue<bool>( TravelOption.AVAILABLE_PROPERTY );
             Assert.IsFalse( availableProperty );
+        }
+
+        [Test]
+        public void WhenTravelToInvoked_ServerRequestSent() {
+            TravelOption optionUnderTest = GetBasicTravelOptionForTest();
+
+            optionUnderTest.TravelToOption();
+
+            BackendManager.Backend.Received().SendTravelRequest( Arg.Any<string>(), Arg.Any<int>() );
+        }
+
+        [Test]
+        public void WhenTravelToInvoked_TravelMessageIsSent() {
+            TravelOption optionUnderTest = GetBasicTravelOptionForTest();
+
+            optionUnderTest.TravelToOption();
+
+            EasyMessenger.Instance.Received().Send( MapKeys.TRAVEL_TO_REQUEST, Arg.Any<int>() );
         }
 
         private IWorldMissionProgress GetGoodMissionProgress() {
