@@ -523,6 +523,8 @@ handlers.createMapForTesting = function(args) {
         return returnOutOfSync();
     }
 
+    SetAllPieceData_Global();
+
     var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
     var mapWorld = args.data[MAP_WORLD];
     var mapSize = GetNumberFromArgs(args, MAP_SIZE);
@@ -740,6 +742,7 @@ function CanTravelToUpcomingMapIndex(optionIndex, world) {
     var clearedAreaCount = GetClearedMissionsForWorld(world);
     var areasRequiredForIndex = GetClearedAreasRequiredForTravelOptionIndex(optionIndex);
 
+    log.info("Checking if can travel to upcoming map index, cleared count is " + clearedAreaCount + " and required is " + areasRequiredForIndex);
     return clearedAreaCount >= areasRequiredForIndex;
 }
 

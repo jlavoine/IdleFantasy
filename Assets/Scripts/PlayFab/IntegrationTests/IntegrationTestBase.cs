@@ -123,5 +123,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 }
             } );
         }
+
+        protected virtual bool IsTestExpectedToFail() {
+            return false;
+        }
     }
 }

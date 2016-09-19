@@ -12,7 +12,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private const int MISSION_INDEX = 0;        
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
-        protected abstract bool IsTestExpectedToFail();
         protected abstract string GetUnitProgressData();
 
         protected override IEnumerator RunAllTests() {
