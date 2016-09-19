@@ -23,7 +23,14 @@ namespace MyLibrary {
         private bool mClientOutOfSync;
         public bool ClientOutOfSync {
             get { return mClientOutOfSync; }
-            set { mClientOutOfSync = value; }
+            set {
+                mClientOutOfSync = value;
+
+                if ( mClientOutOfSync ) {
+                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Client is out of sync", PLAYFAB );
+                    MyMessenger.Send<string>( BackendMessages.BACKEND_OUT_OF_SYNC, "Reason incoming" );
+                }
+            }
         }
 
         private bool mCloudServicesSetUp = false;
@@ -221,6 +228,8 @@ namespace MyLibrary {
         }
 
         protected void HandleError( PlayFabError i_error, string i_messageType ) {
+            ClientOutOfSync = true;
+
             RequestComplete( "Backend failure(" + i_messageType + "): " + i_error.ErrorMessage, LogTypes.Error );
 
             IBackendFailure failure = new BackendFailure( i_error.ErrorMessage );
@@ -250,11 +259,6 @@ namespace MyLibrary {
             if ( results.ContainsKey(CLIENT_OUT_OF_SYNC_KEY ) ) {
                 bool outOfSync = bool.Parse( results[CLIENT_OUT_OF_SYNC_KEY] );
                 ClientOutOfSync = outOfSync;
-
-                if ( outOfSync ) {
-                    MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Warn, "Client is out of sync", PLAYFAB );
-                    MyMessenger.Send<string>( BackendMessages.BACKEND_OUT_OF_SYNC, "Reason incoming" );                    
-                }
             }
         }
 
