@@ -57,7 +57,7 @@ namespace IdleFantasy {
         private void OnBackendFailure( IBackendFailure i_failure ) {            
             if ( !mBackendFailure ) {
                 mBackendFailure = true;
-                gameObject.InstantiateUI( LoginFailurePopup );
+                //gameObject.InstantiateUI( LoginFailurePopup );    // right now this conflicts with OutOfSync popup
                 LoginStatusText.text = STATUS_FAILED;
             }
         }

@@ -38,7 +38,7 @@ namespace MyLibrary {
         }
 
         private void RestartClient() {
-            GameObject mainCanvas = GameObject.Find( "MainCanvas" );
+            GameObject mainCanvas = GameObject.FindGameObjectWithTag( "MainCanvas" );
             mainCanvas.InstantiateUI( "RestartClientPopup" );
         }
     }
