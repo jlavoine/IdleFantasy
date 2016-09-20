@@ -1687,9 +1687,9 @@ function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modi
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    UpdateAllUnitCounts(Date.now());
-
     AddMissingPlayerData();
+
+    UpdateAllUnitCounts(Date.now());    
 }
 
 /// This method looks through all the player's data and makes sure that the default values get added
@@ -1718,7 +1718,7 @@ function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddWorldProgress_IfMissing(allSaveData);
 
     // because I don't want to make another call to get data, I am going to put *very first* stuff in here
-    AddFirstMap_IfMissing(allSaveData);
+    AddNewPlayerData_IfMissing(allSaveData);
 }
 
 /// This method will add any save data keys as empty objects
@@ -1746,10 +1746,18 @@ function AddBuildingProgress_IfMissing(buildingProgress, titleData) {
         if (!buildingProgress.hasOwnProperty(buildingKey)) {
             var missingProgress = {};
             missingProgress[ID] = buildingKey;
-            missingProgress[UPGRADE_LEVEL] = 0;
+            missingProgress[UPGRADE_LEVEL] = GetDefaultBuildingLevel(buildingKey);
 
             buildingProgress[buildingKey] = missingProgress;
         }
+    }
+}
+
+function GetDefaultBuildingLevel(buildingKey) {
+    if (buildingKey == "BASE_WARRIOR_BUILDING_1") {
+        return 1;
+    } else {
+        return 0;
     }
 }
 
@@ -1771,7 +1779,7 @@ function AddUnitProgress_IfMissing(unitProgress, titleData) {
         if (!unitProgress.hasOwnProperty(key)) {
             var missingProgress = {};
             missingProgress[ID] = key;
-            missingProgress[UPGRADE_LEVEL] = 0;
+            missingProgress[UPGRADE_LEVEL] = GetDefaultUnitLevel(key);
             missingProgress[TRAINERS_ASSIGNED] = 0;
             missingProgress[UNIT_COUNT] = 0;
             missingProgress[LAST_UNIT_COUNT] = 0;
@@ -1779,6 +1787,14 @@ function AddUnitProgress_IfMissing(unitProgress, titleData) {
             unitProgress[key] = missingProgress;
         }
     }    
+}
+
+function GetDefaultUnitLevel(key) {
+    if (key == "BASE_WARRIOR_1") {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 function AddTrainerProgress_IfMissing(allSaveData) {
@@ -1814,7 +1830,7 @@ function AddMissionProgres_IfMissing(allSaveData) {
 
 /// This sets the player's first ever map, if they have no map for the base module
 // because I don't want to make another call to get data, I am going to put *very first* stuff in here
-function AddFirstMap_IfMissing(allSaveData) {    
+function AddNewPlayerData_IfMissing(allSaveData) {    
     var baseMapKey = GetMapSaveKey(MODULE_BASE);
 
     // the || here is because I can't figure out a way to fully wipe a piece of player save data
