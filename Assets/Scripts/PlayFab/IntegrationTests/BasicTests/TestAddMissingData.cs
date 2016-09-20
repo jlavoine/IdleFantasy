@@ -10,6 +10,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private const int DEFAULT_MAP_SIZE = 36;
         private const int STARTING_GOLD = 1000;
 
+        private const string STARTING_BUILDING = "BASE_WARRIOR_BUILDING_1";
+        private const string STARTING_UNIT = "BASE_WARRIOR_1";
+
         protected override IEnumerator RunAllTests() {
             yield return DeleteAllPlayerSaveData();
             yield return VerifyPlayerSaveDataIsEmpty();
@@ -98,9 +101,18 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void VerifyProgressIsDefault<T>( string i_saveData, string i_saveKey ) where T : ProgressBase {
             Dictionary<string, T> progressData = JsonConvert.DeserializeObject<Dictionary<string, T>>( i_saveData );
             foreach ( KeyValuePair<string, T> progress in progressData ) {
-                if ( progress.Value.Level != 0 ) {
+                int defaultValue = GetDefaultValueForProgress( progress.Value.ID );
+                if ( progress.Value.Level != defaultValue ) {
                     IntegrationTest.Fail( "Progress data level not default for " + i_saveKey + ": " + progress.Value.ID );
                 }
+            }
+        }
+
+        private int GetDefaultValueForProgress(string i_ID ) {
+            if ( i_ID == STARTING_BUILDING || i_ID == STARTING_UNIT ) {
+                return 1;
+            } else {
+                return 0;
             }
         }
 

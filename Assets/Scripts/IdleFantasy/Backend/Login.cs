@@ -22,7 +22,9 @@ namespace IdleFantasy {
             MyMessenger.AddListener<IBackendFailure>( BackendMessages.BACKEND_REQUEST_FAIL, OnBackendFailure );
 
             mLoginTimer.Start();
-            mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
+
+            //mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
+            mBackend.Authenticate( TestUsers.TWO );
         }
 
         public void OnDestroy() {
