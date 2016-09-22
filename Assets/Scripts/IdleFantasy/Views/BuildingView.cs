@@ -2,20 +2,12 @@
 
 namespace IdleFantasy {
     public class BuildingView : GroupView {
-        private Building mBuilding;
 
-        public void Init( Building i_building ) {
-            mBuilding = i_building;
+        public void Init( Building i_building ) {        
             SetModel( i_building.GetViewModel() );
 
             InitBuildingController( i_building );
             InitTrainingController( i_building.Unit );            
-        }
-
-        protected override void OnDestroy() {
-            base.OnDestroy();
-
-            mBuilding.Dispose();
         }
 
         private void InitBuildingController( Building i_building ) {
