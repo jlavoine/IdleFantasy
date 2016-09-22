@@ -31,14 +31,46 @@ namespace IdleFantasy {
             }
         }
 
+        public bool CanAddTrainer {
+            get { return mModel.GetPropertyValue<bool>( "CanAddTrainer" ); }
+            set { mModel.SetProperty( "CanAddTrainer", value ); }
+        }
+
+        public bool CanRemoveTrainer {
+            get { return mModel.GetPropertyValue<bool>( "CanRemoveTrainer" ); }
+            set { mModel.SetProperty( "CanRemoveTrainer", value ); }
+        }
+
         public Unit( UnitData i_data, UnitProgress i_progress, ViewModel i_model ) {
             mModel = i_model;
             mData = i_data;
             mProgress = i_progress;
 
             SetUnitLevel();
+            SetUnitTraining();
 
-            SetUnitTraining();            
+            SubscribeToMessages();
+        }
+
+        public void Dispose() {
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            EasyMessenger.Instance.AddListener<ITrainerManager>( TrainerManager.AVAILABLE_TRAINERS_EVENT, OnTrainersChanged );
+        }
+
+        private void UnsubscribeFromMessages() {
+            EasyMessenger.Instance.RemoveListener<ITrainerManager>( TrainerManager.AVAILABLE_TRAINERS_EVENT, OnTrainersChanged );
+        }
+
+        private void OnTrainersChanged( ITrainerManager i_trainerManager ) {
+            UpdateTrainerProperties( i_trainerManager );
+        }
+
+        private void UpdateTrainerProperties( ITrainerManager i_trainerManager ) {
+            CanAddTrainer = i_trainerManager.CanChangeUnitTraining( this, true );
+            CanRemoveTrainer = i_trainerManager.CanChangeUnitTraining( this, false );
         }
 
         private void SetUnitTraining() {

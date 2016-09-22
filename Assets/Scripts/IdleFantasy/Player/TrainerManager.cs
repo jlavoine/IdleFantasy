@@ -11,6 +11,8 @@ namespace IdleFantasy {
         public const string CAN_AFFORD_TRAINER = "CanAffordNextTrainer";
         public const string NORMAL_TRAINERS = "Normal";
 
+        public const string AVAILABLE_TRAINERS_EVENT = "AvailableTrainersChanged";
+
         public const string STARTING_COST_KEY = "TrainerStartingCost";
 
         private Dictionary<string, int> mTrainers = new Dictionary<string, int>();
@@ -27,8 +29,9 @@ namespace IdleFantasy {
                 else if ( value > TotalTrainers ) {
                     value = TotalTrainers;
                 }
-
+                
                 mPlayerModel.SetProperty( CURRENT_TRAINERS, value );
+                EasyMessenger.Instance.Send( AVAILABLE_TRAINERS_EVENT, (ITrainerManager) this );
             }
         }
 
@@ -184,9 +187,8 @@ namespace IdleFantasy {
 
         public void InitiateChangeInTraining( IUnit i_unit, bool i_isTraining ) {
             if ( CanChangeUnitTraining( i_unit, i_isTraining ) ) {
-                ChangeAvailableTrainers( i_unit, i_isTraining );
-
                 ChangeUnitTrainingLevel( i_unit, i_isTraining );
+                ChangeAvailableTrainers( i_unit, i_isTraining );                
             }
         }
 
