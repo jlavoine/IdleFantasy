@@ -49,10 +49,13 @@ namespace IdleFantasy {
             SetUnitLevel();
             SetUnitTraining();
 
+            Level.UpgradeCompleteEvent += OnUpgraded;
+
             SubscribeToMessages();
         }
 
         public void Dispose() {
+            Level.UpgradeCompleteEvent -= OnUpgraded;
             UnsubscribeFromMessages();
         }
 
@@ -123,6 +126,10 @@ namespace IdleFantasy {
 
         private int GetMaxTrainingLevel() {
             return Level.Value;
+        }
+
+        public void OnUpgraded() {
+            UpdateTrainerProperties( PlayerManager.Data.TrainerManager );
         }
     }
 }
