@@ -43,6 +43,26 @@ namespace IdleFantasy {
             set { mModel.SetProperty( "NextUnitProgress", value ); }
         }
 
+        public int NextUnitUpgradeCost {
+            get { return mModel.GetPropertyValue<int>( "NextUnitUpgradeCost" ); }
+            set { mModel.SetProperty( "NextUnitUpgradeCost", value ); }
+        }
+
+        public int NextBuildingUpgradeCost {
+            get { return mModel.GetPropertyValue<int>( "NextBuildingUpgradeCost" ); }
+            set { mModel.SetProperty( "NextBuildingUpgradeCost", value ); }
+        }
+
+        public bool CanUpgradeUnit {            
+            get { return mModel.GetPropertyValue<bool>( "CanUpgradeUnit" ); }
+            set { mModel.SetProperty( "CanUpgradeUnit", value ); }
+        }
+
+        public bool CanUpgradeBuilding {
+            get { return mModel.GetPropertyValue<bool>( "CanUpgradeBuilding" ); }
+            set { mModel.SetProperty( "CanUpgradeBuilding", value ); }
+        }
+
         public int Capacity {
             get { return mModel.GetPropertyValue<int>( "Capacity" ); }
             set { mModel.SetProperty( "Capacity", value ); }
@@ -72,13 +92,47 @@ namespace IdleFantasy {
 
             UnitData unitData = GenericDataLoader.GetData<UnitData>( i_unitProgress.ID );
             Unit = new Unit( unitData, i_unitProgress, mModel );
+            
+            UpdateViewProperties();
 
+            SubscribeToMessages();
+        }
+
+        public void Dispose() {
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            EasyMessenger.Instance.AddListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+        }
+
+        private void UnsubscribeFromMessages() {
+            EasyMessenger.Instance.RemoveListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+        }
+
+        private void OnInventoryChanged( string i_resource, int i_newValue ) {
+            UpdateViewProperties();
+        }
+
+        private void UpdateViewProperties() {
             UpdateCapacity();
+            UpdateUpgradeCostProperties();
+            UpdateAllowedUpgradeProperties();
+        }
+
+        private void UpdateUpgradeCostProperties() {
+            NextUnitUpgradeCost = Unit.Level.GetUpgradeCostForResource( VirtualCurrencies.GOLD );
+            NextBuildingUpgradeCost = Level.GetUpgradeCostForResource( VirtualCurrencies.GOLD );
+        }
+
+        private void UpdateAllowedUpgradeProperties() {
+            CanUpgradeUnit = Unit.Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data );
+            CanUpgradeBuilding = Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data );
         }
 
         #region Capacity
-        private void OnUpgraded() {
-            UpdateCapacity();
+        private void OnUpgraded() {            
+            UpdateViewProperties();
         }    
 
         public void UpdateCapacity() {
@@ -122,6 +176,7 @@ namespace IdleFantasy {
         public void OnUnitUpgraded() {
             NumUnits = 0;
             NextUnitProgress = 0;
+            UpdateViewProperties();
         }
         #endregion
 
