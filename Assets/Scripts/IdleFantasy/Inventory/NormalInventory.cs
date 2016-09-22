@@ -38,5 +38,9 @@ namespace IdleFantasy {
 
             //UpdateInventoryData();
         }
+
+        public void GainResources( string i_resource, int i_value ) {
+            throw new NotImplementedException();
+        }
     }
 }

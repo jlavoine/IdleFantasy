@@ -8,6 +8,7 @@ namespace IdleFantasy {
     public class PlayerData : IPlayerData, IResourceInventory {
         public const string PROGRESS_KEY = "Progress";
         public const string TRAINER_SAVE_DATA = "TrainerSaveData";
+        public const string INVENTORY_CHANGED_EVENT = "InventoryChanged";
 
         public Dictionary<string, int> UnitTrainingLevels;
 
@@ -60,7 +61,7 @@ namespace IdleFantasy {
         }
 
         private void SubscribeToMessages() {
-            MyMessenger.AddListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.AddListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
         }
 
         public void Dispose() {
@@ -68,18 +69,23 @@ namespace IdleFantasy {
         }
 
         private void UnsubscribeFromMessages() {
-            MyMessenger.RemoveListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.RemoveListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
         }
 
-        private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
+        private void OnMissionCompleted( MissionData i_missionData ) {
             IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
-            UpdateMissionProgress( i_missionWorld, i_missionIndex );
+            ApplyMissionRewards( i_missionData );
+            UpdateMissionProgress( i_missionData.MissionCategory, i_missionData.Index );
 
             CheckForUnitUnlock();
         }
 
         private void IncrementMetric( string i_metric ) {
             GameMetrics.IncrementMetric( i_metric );
+        }
+
+        private void ApplyMissionRewards( MissionData i_missionData ) {
+            GainResources( VirtualCurrencies.GOLD, i_missionData.GoldReward );
         }
 
         private void UpdateMissionProgress( string i_missionWorld, int i_missionIndex ) {
@@ -221,7 +227,7 @@ namespace IdleFantasy {
 
         public int Gold {
             get { return mModel.GetPropertyValue<int>( VirtualCurrencies.GOLD ); }
-            set {
+            private set {
                 mModel.SetProperty( VirtualCurrencies.GOLD, value );
 
                 if ( !mInventory.ContainsKey( VirtualCurrencies.GOLD ) ) {
@@ -261,9 +267,15 @@ namespace IdleFantasy {
             UpdateInventoryData();
         }
 
+        public void GainResources( string i_resource, int i_value ) {
+            mInventory[i_resource] += i_value;
+            UpdateInventoryData();
+        }
+
         public void UpdateInventoryData() {
             foreach ( KeyValuePair<string, int> inventoryItem in mInventory ) {
                 mModel.SetProperty( inventoryItem.Key, inventoryItem.Value );
+                EasyMessenger.Instance.Send( INVENTORY_CHANGED_EVENT, inventoryItem.Key, inventoryItem.Value );
             }
         }
 

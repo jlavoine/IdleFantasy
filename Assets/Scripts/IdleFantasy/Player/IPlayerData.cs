@@ -9,7 +9,6 @@ namespace IdleFantasy {
 
         int Gold {
             get;
-            set;
         }
         //object GetData( string i_key );
 

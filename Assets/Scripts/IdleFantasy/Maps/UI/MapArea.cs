@@ -21,7 +21,7 @@ namespace IdleFantasy {
         }
 
         private void SubscribeToMessages() {
-            MyMessenger.AddListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.AddListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
         }
 
         public void Dispose() {
@@ -29,11 +29,11 @@ namespace IdleFantasy {
         }
 
         private void UnsubscribeFromMessages() {
-            MyMessenger.RemoveListener<string, int>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.RemoveListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
         }
 
-        private void OnMissionCompleted( string i_missionWorld, int i_missionIndex ) {
-            if ( i_missionIndex == mData.Index ) {
+        private void OnMissionCompleted( MissionData i_missionData ) {
+            if ( i_missionData.Index == mData.Index ) {
                 SetCompletedState( true );
                 SetAreaAccessibility( false );
             }

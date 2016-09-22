@@ -7,6 +7,8 @@ namespace IdleFantasy {
     public class TrainerManager : ITrainerManager {
         public const string TOTAL_TRAINERS = "TotalTrainers";
         public const string CURRENT_TRAINERS = "CurrentTrainers";
+        public const string NEXT_TRAINER_COST = "NextTrainerCost";
+        public const string CAN_AFFORD_TRAINER = "CanAffordNextTrainer";
         public const string NORMAL_TRAINERS = "Normal";
 
         public const string STARTING_COST_KEY = "TrainerStartingCost";
@@ -30,6 +32,16 @@ namespace IdleFantasy {
             }
         }
 
+        public int NextTrainerCost {
+            get { return mPlayerModel.GetPropertyValue<int>( NEXT_TRAINER_COST ); }
+            set { mPlayerModel.SetProperty( NEXT_TRAINER_COST, value ); }
+        }
+
+        public bool CanAfford {
+            get { return mPlayerModel.GetPropertyValue<bool>( CAN_AFFORD_TRAINER ); }
+            set { mPlayerModel.SetProperty( CAN_AFFORD_TRAINER, value ); }
+        }
+
         public int TotalTrainers {
             get { return mPlayerModel.GetPropertyValue<int>( TOTAL_TRAINERS ); }
             set {
@@ -47,7 +59,30 @@ namespace IdleFantasy {
 
             TotalTrainers = GetTotalTrainers();
             AvailableTrainers = GetAvailableTrainers( i_unitProgress );
-            // TODO: need to use save data somewhere here
+            UpdateNextTrainerCost();
+            UpdateCanAffordNextTrainer();
+
+            SubscribeToMessages();       
+        }
+
+        public void Dispose() {
+            UnsubscribeFromMessages();
+        }
+
+        private void SubscribeToMessages() {
+            EasyMessenger.Instance.AddListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+        }
+
+        private void UnsubscribeFromMessages() {
+            EasyMessenger.Instance.RemoveListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+        }
+
+        private void OnInventoryChanged( string i_resourceType, int i_newValue ) {
+            UpdateCanAffordNextTrainer();
+        }
+
+        private void UpdateCanAffordNextTrainer() {
+            CanAfford = CanAffordTrainerPurchase( (IResourceInventory) PlayerManager.Data );
         }
 
         private int GetTotalTrainers() {
@@ -113,11 +148,16 @@ namespace IdleFantasy {
             return nextCost;
         }
 
+        private void UpdateNextTrainerCost() {
+            NextTrainerCost = GetNextTrainerCost();
+        }
+
         public void InitiateTrainerPurchase( IResourceInventory i_inventory ) {
             if ( CanAffordTrainerPurchase( i_inventory ) ) {
                 ChargeForTrainerPurchase( i_inventory );
-
                 AddTrainer( NORMAL_TRAINERS, 1 );
+                UpdateNextTrainerCost();
+                UpdateCanAffordNextTrainer();
             }
         }
 

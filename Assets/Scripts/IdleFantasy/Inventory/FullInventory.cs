@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace IdleFantasy {
     public class FullInventory : IResourceInventory {
         int IResourceInventory.GetResourceCount( string i_resource ) {
@@ -10,5 +12,9 @@ namespace IdleFantasy {
         }
 
         public void SpendResources( string i_resource, int i_count ) { }
+
+        public void GainResources( string i_resource, int i_value ) {
+            throw new NotImplementedException();
+        }
     }
 }

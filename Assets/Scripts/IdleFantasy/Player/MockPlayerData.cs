@@ -144,5 +144,9 @@ namespace IdleFantasy {
         public void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData ) {
             throw new NotImplementedException();
         }
+
+        public void GainResources( string i_resource, int i_value ) {
+            throw new NotImplementedException();
+        }
     }
 }

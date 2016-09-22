@@ -1,6 +1,12 @@
 ﻿
+using System;
+
 namespace IdleFantasy {
     public class EmptyInventory : IResourceInventory {
+        public void GainResources( string i_resource, int i_value ) {
+            throw new NotImplementedException();
+        }
+
         public int GetResourceCount( string i_resource ) {
             return 0;
         }
