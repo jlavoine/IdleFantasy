@@ -25,8 +25,7 @@ namespace IdleFantasy {
         }
 
         private void SetUpModel() {
-            // not using this at the moment
-            //mModel.SetProperty( MissionKeys.DESCRIPTION, StringTableManager.Get( Data.DescriptionKey ) );
+            mModel.SetProperty( MissionKeys.GOLD_REWARD, mData.GoldReward );
         }
 
         private void CreateMissionTasks() {
