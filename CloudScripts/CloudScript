@@ -18,7 +18,7 @@ const TARGET_ID = "TargetID";   // key used from client as to what specific obje
 const CHANGE = "Change";        // key used from client to pass up a change
 
 /// starting data
-const STARTING_GOLD = 1000;
+const STARTING_GOLD = 2000;
 
 // unit counting
 const LAST_UNIT_COUNT = "LastCountTime";            // key for timestamp of last unit count update (in unit's progress data)
