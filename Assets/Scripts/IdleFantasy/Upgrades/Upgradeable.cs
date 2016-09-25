@@ -93,7 +93,7 @@ namespace IdleFantasy {
 
         public int GetUpgradeCostForResource( string i_resource ) {            
             if ( mData.ResourcesToUpgrade.ContainsKey( i_resource ) ) {
-                int cost = (int) Math.Ceiling( (mData.ResourcesToUpgrade[i_resource] * Math.Pow( mData.Coefficient, Value ) ) );
+                int cost = (int) Math.Ceiling( (mData.ResourcesToUpgrade[i_resource] * Math.Pow( mData.Coefficient, Value-1 ) ) );
                 return cost;
             }
             else {

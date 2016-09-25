@@ -2680,7 +2680,7 @@ function GetUpgradeCost(resourcesToUpgrade, resource, progressData) {
     var level = progressData[UPGRADE_LEVEL];
     var coefficient = progressData[COEFFICIENT];
     var costPerLevel = resourcesToUpgrade[resource];
-    var cost = Math.ceil(costPerLevel * Math.pow(coefficient, level));
+    var cost = Math.ceil(costPerLevel * Math.pow(coefficient, level-1));
 
     return cost;
 }

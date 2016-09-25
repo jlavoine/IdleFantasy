@@ -19,7 +19,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testData.TestClass = "Buildings";
             testData.TestUpgradeID = "BuildingLevel";
             testData.MaxLevel = 50;
-            testData.Cost = 1000;
+            testData.Cost = 500;
             mUpgradeTests.Add( testData );
         }
 
@@ -31,7 +31,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testData.TestClass = "Units";
             testData.TestUpgradeID = "UnitLevel";
             testData.MaxLevel = 50;
-            testData.Cost = 1000;
+            testData.Cost = 500;
             mUpgradeTests.Add( testData );
         }
 

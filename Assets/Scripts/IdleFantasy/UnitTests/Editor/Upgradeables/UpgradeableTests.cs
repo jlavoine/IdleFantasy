@@ -65,7 +65,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
 
             NormalInventory inventory = new NormalInventory();
             foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
-                int amount = (int)Math.Ceiling(cost.Value * Math.Pow(mUpgrade.UpgradeData.Coefficient, mUpgrade.Value));
+                int amount = (int)Math.Ceiling(cost.Value * Math.Pow(mUpgrade.UpgradeData.Coefficient, mUpgrade.Value-1));
                 inventory.SetResource( cost.Key, amount );
             }
 
