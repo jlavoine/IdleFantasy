@@ -163,7 +163,7 @@ const MISSION_GOLD_REWARD = "GoldReward";
 const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how much power a mission task requires. scales with map level.
 
 /// mission constants
-const BASE_GOLD_REWARD = 500;
+const BASE_GOLD_REWARD = 100;
 const GOLD_REWARD_COEFFICIENT = 1.09;
 
 /// mission progress
