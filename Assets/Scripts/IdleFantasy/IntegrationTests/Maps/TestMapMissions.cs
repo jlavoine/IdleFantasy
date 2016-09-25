@@ -56,7 +56,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private void TestMissionReward( int i_goldReward ) {
             int baseGold = Constants.GetConstant<int>( ConstantKeys.BASE_GOLD_REWARD );
-            float goldCoefficient = Constants.GetConstant<float>( ConstantKeys.GOLD_REWARD_COEFFICIENT );
+            double goldCoefficient = Constants.GetConstant<double>( ConstantKeys.GOLD_REWARD_COEFFICIENT );
             int expectedGold = (int)Math.Ceiling(baseGold * Math.Pow( goldCoefficient, 0));
             expectedGold += expectedGold * (int)Math.Ceiling( expectedGold * mGoldModAmount );
 

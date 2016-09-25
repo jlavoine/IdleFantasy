@@ -150,7 +150,7 @@ namespace IdleFantasy {
         public int GetNextTrainerCost() {
             int totalNormalTrainers = GetTotalTrainersOfType( NORMAL_TRAINERS );
             int trainerStartingCost = Constants.GetConstant<int>( STARTING_COST_KEY );
-            float trainerUpgradeCoefficient = Constants.GetConstant<float>( TRAINER_UPGRADE_COEFFICIENT );
+            double trainerUpgradeCoefficient = Constants.GetConstant<double>( TRAINER_UPGRADE_COEFFICIENT );
             int nextCost = (int)Math.Ceiling( (trainerStartingCost * Math.Pow( trainerUpgradeCoefficient, totalNormalTrainers ) ) );
             
             return nextCost;

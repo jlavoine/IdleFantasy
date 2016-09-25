@@ -5,7 +5,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected string SAVE_KEY = "TrainerSaveData";
         protected string SAVE_VALUE = "{\"TrainerCounts\":{\"Normal\":$NUM$}}";        
 
-        protected int COST = 2000;
+        protected int COST = 560;
 
         protected IEnumerator MakePurchaseCall() {
             mBackend.MakeTrainerPurchase();

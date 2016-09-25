@@ -13,7 +13,7 @@ namespace IdleFantasy.UnitTests {
             new object[] { 0, 500 },
             new object[] { -1, 500 },
             new object[] { 10, 1553 },
-            new object[] { 1, 561 },
+            new object[] { 1, 560 },
             new object[] { 20, 4824 }
         };
 

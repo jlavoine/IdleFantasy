@@ -44,7 +44,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected void FailTestIfCurrencyDoesNotEqual( int i_amount ) {
             mBackend.GetVirtualCurrency( VirtualCurrencies.GOLD, ( numGold ) => {
                 if ( numGold != i_amount ) {
-                    IntegrationTest.Fail( "Currency did not equal " + i_amount );
+                    IntegrationTest.Fail( "Currency expected to be " + i_amount + " but was " + numGold );
                 }
             } );
         }

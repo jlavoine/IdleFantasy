@@ -13,6 +13,7 @@ namespace MyLibrary {
         private const string STRING_KEY = "String";
         private const string INT_KEY = "Int";
         private const string FLOAT_KEY = "Float";
+        private const string DOUBLE_KEY = "Double";
         private const string VECTOR3_KEY = "Vector3";
         private const string COLOR_KEY = "Color";
         private const string BOOL_KEY = "Bool";
@@ -52,6 +53,9 @@ namespace MyLibrary {
                     break;
                 case FLOAT_KEY:
                     mConstants[i_entry.ID] = float.Parse( i_entry.Value );
+                    break;
+                case DOUBLE_KEY:
+                    mConstants[i_entry.ID] = double.Parse( i_entry.Value );
                     break;
                 case COLOR_KEY:
                     mConstants[i_entry.ID] = ParseColor( i_entry.Value );

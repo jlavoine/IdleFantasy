@@ -36,7 +36,7 @@
   },
   "TrainerUpgradeCoefficient": {
     "ID": "TrainerUpgradeCoefficient",
-    "Type": "Float",
+    "Type": "Double",
     "Value": 1.12
   },
   "EnoughUnits": {
@@ -63,6 +63,11 @@
     "ID": "BaseGoldReward",
     "Type": "Int",
     "Value": 100
+  },
+  "GoldRewardCoefficient": {
+    "ID": "GoldRewardCoefficient",
+    "Type": "Double",
+    "Value": 1.09
   },
   "BaseMissionPower": {
     "ID": "BaseMissionPower",
