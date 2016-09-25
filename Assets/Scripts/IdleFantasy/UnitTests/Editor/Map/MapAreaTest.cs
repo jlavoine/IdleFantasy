@@ -71,7 +71,9 @@ namespace IdleFantasy.UnitTests {
             mMissionProgress.Completed = false;
             RecreateArea();
 
-            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, "", mAreaUnderTest.Data.Index );
+            MissionData testData = new MissionData();
+            testData.Index = mAreaUnderTest.Data.Index;
+            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, testData );
 
             bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
             bool isComplete = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_COMPLETED );
@@ -85,7 +87,9 @@ namespace IdleFantasy.UnitTests {
             mMissionProgress.Completed = false;
             RecreateArea();
 
-            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, "", mAreaUnderTest.Data.Index+1 );
+            MissionData testData = new MissionData();
+            testData.Index = mAreaUnderTest.Data.Index+1;
+            MyMessenger.Send( MissionKeys.MISSION_COMPLETED, testData );
 
             bool isAccessible = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_ACCESS );
             bool isComplete = mAreaUnderTest.ViewModel.GetPropertyValue<bool>( MapViewProperties.AREA_COMPLETED );

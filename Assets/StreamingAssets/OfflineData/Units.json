@@ -1,1 +1,65 @@
-{   "BASE_MELEE_1" : {     "ID" : "BASE_MELEE_1",     "BaseProgressPerSecond" : 1,     "UnitLevel" : "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"ResourcesToUpgrade\": { \"G1\": 1000 } }",     "Stats" : "{ \"TEST_STAT_1\": { \"Stat\": \"TEST_STAT_1\", \"Base\": 1.25 }, \"TEST_STAT_2\": { \"Stat\": \"TEST_STAT_2\", \"Base\": 2.4 } }"   },   "BASE_MELEE_2" : {     "ID" : "BASE_MELEE_2",     "BaseProgressPerSecond" : 1,     "UnitLevel" : "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"ResourcesToUpgrade\": { \"G1\": 1000 } }",     "Stats" : "{ \"TEST_STAT_1\": { \"Stat\": \"TEST_STAT_1\", \"Base\": 1.25 }, \"TEST_STAT_2\": { \"Stat\": \"TEST_STAT_2\", \"Base\": 2.4 } }"   }, "BASE_MAGIC_1" : {     "ID" : "BASE_MAGIC_1",     "BaseProgressPerSecond" : 1,     "UnitLevel" : "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"ResourcesToUpgrade\": { \"G1\": 1000 } }",     "Stats" : "{ \"TEST_STAT_3\": { \"Stat\": \"TEST_STAT_3\", \"Base\": 1.25 } }"   } }
+{
+  "BASE_MELEE_1": {
+    "ID": "BASE_MELEE_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"TEST_STAT_1\": { \"Stat\": \"TEST_STAT_1\", \"Base\": 1.25 }, \"TEST_STAT_2\": { \"Stat\": \"TEST_STAT_2\", \"Base\": 2.4 } }"
+  },
+  "BASE_MELEE_2": {
+    "ID": "BASE_MELEE_2",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"TEST_STAT_1\": { \"Stat\": \"TEST_STAT_1\", \"Base\": 1.25 }, \"TEST_STAT_2\": { \"Stat\": \"TEST_STAT_2\", \"Base\": 2.4 } }"
+  },
+  "BASE_WARRIOR_1": {
+    "ID": "BASE_WARRIOR_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"BASE_STAT_1\": { \"Stat\": \"BASE_STAT_1\", \"Base\": 1 }, \"BASE_STAT_2\": { \"Stat\": \"BASE_STAT_2\", \"Base\": 1 }, \"BASE_STAT_3\": { \"Stat\": \"BASE_STAT_3\", \"Base\": 1 }, \"BASE_STAT_4\": { \"Stat\": \"BASE_STAT_4\", \"Base\": 1 }, \"BASE_STAT_5\": { \"Stat\": \"BASE_STAT_5\", \"Base\": 1 }, \"BASE_STAT_6\": { \"Stat\": \"BASE_STAT_6\", \"Base\": 1 }, \"BASE_STAT_7\": { \"Stat\": \"BASE_STAT_7\", \"Base\": 1 }, \"WARRIOR_STAT_1\": { \"Stat\": \"WARRIOR_STAT_1\", \"Base\": 1 }, \"WARRIOR_STAT_2\": { \"Stat\": \"WARRIOR_STAT_2\", \"Base\": 1 } }"
+  },
+  "BASE_ARCHER_1": {
+    "ID": "BASE_ARCHER_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"BASE_STAT_1\": { \"Stat\": \"BASE_STAT_1\", \"Base\": 1 }, \"BASE_STAT_2\": { \"Stat\": \"BASE_STAT_2\", \"Base\": 1 }, \"BASE_STAT_3\": { \"Stat\": \"BASE_STAT_3\", \"Base\": 1 }, \"BASE_STAT_4\": { \"Stat\": \"BASE_STAT_4\", \"Base\": 1 }, \"BASE_STAT_5\": { \"Stat\": \"BASE_STAT_5\", \"Base\": 1 }, \"BASE_STAT_6\": { \"Stat\": \"BASE_STAT_6\", \"Base\": 1 }, \"BASE_STAT_7\": { \"Stat\": \"BASE_STAT_7\", \"Base\": 2 }, \"ARCHER_STAT_1\": { \"Stat\": \"ARCHER_STAT_1\", \"Base\": 1 }, \"ARCHER_STAT_2\": { \"Stat\": \"ARCHER_STAT_2\", \"Base\": 1 } }"
+  },
+  "BASE_WIZARD_1": {
+    "ID": "BASE_WIZARD_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"BASE_STAT_1\": { \"Stat\": \"BASE_STAT_1\", \"Base\": 1 }, \"BASE_STAT_2\": { \"Stat\": \"BASE_STAT_2\", \"Base\": 1 }, \"BASE_STAT_3\": { \"Stat\": \"BASE_STAT_3\", \"Base\": 1 }, \"BASE_STAT_4\": { \"Stat\": \"BASE_STAT_4\", \"Base\": 1 }, \"BASE_STAT_5\": { \"Stat\": \"BASE_STAT_5\", \"Base\": 1 }, \"BASE_STAT_6\": { \"Stat\": \"BASE_STAT_6\", \"Base\": 1 }, \"BASE_STAT_7\": { \"Stat\": \"BASE_STAT_7\", \"Base\": 1 }, \"WIZARD_STAT_1\": { \"Stat\": \"WIZARD_STAT_1\", \"Base\": 1 }, \"WIZARD_STAT_2\": { \"Stat\": \"WIZARD_STAT_2\", \"Base\": 1 } }"
+  },
+  "BASE_PRIEST_1": {
+    "ID": "BASE_PRIEST_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"BASE_STAT_1\": { \"Stat\": \"BASE_STAT_1\", \"Base\": 1 }, \"BASE_STAT_2\": { \"Stat\": \"BASE_STAT_2\", \"Base\": 1 }, \"BASE_STAT_3\": { \"Stat\": \"BASE_STAT_3\", \"Base\": 1 }, \"BASE_STAT_4\": { \"Stat\": \"BASE_STAT_4\", \"Base\": 1 }, \"BASE_STAT_5\": { \"Stat\": \"BASE_STAT_5\", \"Base\": 1 }, \"BASE_STAT_6\": { \"Stat\": \"BASE_STAT_6\", \"Base\": 1 }, \"BASE_STAT_7\": { \"Stat\": \"BASE_STAT_7\", \"Base\": 1 }, \"PRIEST_STAT_1\": { \"Stat\": \"PRIEST_STAT_1\", \"Base\": 1 }, \"PRIEST_STAT_2\": { \"Stat\": \"PRIEST_STAT_2\", \"Base\": 1 } }"
+  },
+  "BASE_THIEF_1": {
+    "ID": "BASE_THIEF_1",
+    "Worlds": [
+      "Base"
+    ],
+    "BaseProgressPerSecond": 1,
+    "UnitLevel": "{ \"PropertyName\": \"UnitLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.09, \"ResourcesToUpgrade\": { \"G1\": 500 } }",
+    "Stats": "{ \"BASE_STAT_1\": { \"Stat\": \"BASE_STAT_1\", \"Base\": 1 }, \"BASE_STAT_2\": { \"Stat\": \"BASE_STAT_2\", \"Base\": 1 }, \"BASE_STAT_3\": { \"Stat\": \"BASE_STAT_3\", \"Base\": 1 }, \"BASE_STAT_4\": { \"Stat\": \"BASE_STAT_4\", \"Base\": 1 }, \"BASE_STAT_5\": { \"Stat\": \"BASE_STAT_5\", \"Base\": 1 }, \"BASE_STAT_6\": { \"Stat\": \"BASE_STAT_6\", \"Base\": 1 }, \"BASE_STAT_7\": { \"Stat\": \"BASE_STAT_7\", \"Base\": 1 }, \"THIEF_STAT_1\": { \"Stat\": \"THIEF_STAT_1\", \"Base\": 1 }, \"THIEF_STAT_2\": { \"Stat\": \"THIEF_STAT_2\", \"Base\": 1 } }"
+  }
+}

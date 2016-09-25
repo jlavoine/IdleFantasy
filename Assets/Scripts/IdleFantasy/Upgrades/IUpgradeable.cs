@@ -6,7 +6,7 @@ namespace IdleFantasy {
         UpgradeData UpgradeData { get; }
 
         int MaxLevel { get; }
-        int Value { get; set; }        
+        int Value { get; set; }    
 
         Dictionary<string, int> ResourcesToUpgrade { get; }
 

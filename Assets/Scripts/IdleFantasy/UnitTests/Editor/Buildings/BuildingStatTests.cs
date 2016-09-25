@@ -11,6 +11,7 @@ namespace IdleFantasy.UnitTests.Buildings {
         [SetUp]
         public void BeforeTest() {
             UnitTestUtils.LoadOfflineData();
+            UnitTestUtils.LoadMockPlayerData();
 
             mBuilding = BuildingUpgradeTests.GetTestBuilding();
         }

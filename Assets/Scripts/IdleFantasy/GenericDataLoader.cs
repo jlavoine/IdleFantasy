@@ -15,7 +15,7 @@ namespace IdleFantasy {
         public const string TEST_BUILDING_2 = "BASE_BUILDING_2";
         public const string TEST_UNIT = "BASE_MELEE_1";
         public const string TEST_UNIT_2 = "BASE_MELEE_2";
-        public const string TEST_UNIT_3 = "BASE_MAGIC_1";
+        public const string TEST_UNIT_3 = "BASE_MELEE_2";
 
         private static IBasicBackend mBackend;
 

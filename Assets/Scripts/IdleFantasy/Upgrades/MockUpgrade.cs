@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class MockUpgrade : IUpgradeable {
+        public float Coefficient {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public int MaxLevel {
             get {
                 throw new NotImplementedException();

@@ -12,6 +12,7 @@
 
 /// game specific
 const UPGRADE_LEVEL = "Level";  // key for a level upgrade
+const COEFFICIENT = "Coefficient";
 const CLASS = "Class";          // key used from client as to what type of data (building, unit, etc) is involved in the call
 const TARGET_ID = "TargetID";   // key used from client as to what specific object is involved in the call
 const CHANGE = "Change";        // key used from client to pass up a change
@@ -116,7 +117,8 @@ const TRAINER_SAVE_DATA = "TrainerSaveData";    // key for player's trainer save
 const TRAINER_COUNTS = "TrainerCounts";         // key for trainer counts within the trainer save data object
 const NORMAL_TRAINER = "Normal";                // the normal trainers a player can purchase
 const TRAINERS_ASSIGNED = "Trainers";           // key in unit progress data for the # of trainers assigned to the unit
-const BASE_TRAINER_COST = 1000;                 // base gold cost for a trainer
+const BASE_TRAINER_COST = 500;                 // base gold cost for a trainer
+const TRAINER_UPGRADE_COEFFICIENT = 1.12;
 
 // World progress
 const WORLD_PROGRESS_KEY = "WorldsProgress";
@@ -162,6 +164,7 @@ const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how muc
 
 /// mission constants
 const BASE_GOLD_REWARD = 500;
+const GOLD_REWARD_COEFFICIENT = 1.09;
 
 /// mission progress
 const MISSION_PROGRESS_LIST = "Missions";
@@ -989,7 +992,8 @@ function GetRandomExploreStat() {
 
 function GetMissionGoldReward(map) {
     var mapLevel = GetMapLevel(map);
-    var goldReward = mapLevel * BASE_GOLD_REWARD;
+    var coefficient = GOLD_REWARD_COEFFICIENT;
+    var goldReward = Math.ceil(BASE_GOLD_REWARD * Math.pow(coefficient, mapLevel-1));
     
     var goldModAmount = GetMapModificationAmount(map, MAP_GOLD_MOD);
     goldReward = goldReward + Math.ceil(goldReward * goldModAmount);
@@ -2553,7 +2557,7 @@ function CanPurchaseTrainer(trainerSaveData, playerInventory) {
 function GetNextTrainerCost(trainerSaveData) {
     var trainerCounts = trainerSaveData[TRAINER_COUNTS];
     var normalTrainers = trainerCounts[NORMAL_TRAINER];
-    var cost = (normalTrainers + 1) * BASE_TRAINER_COST;
+    var cost = Math.ceil(BASE_TRAINER_COST * Math.pow(TRAINER_UPGRADE_COEFFICIENT, normalTrainers));
 
     log.info("Cost for a new normal trainer: " + cost);
     return cost;
@@ -2674,8 +2678,9 @@ function Upgrade(readOnlyData, className, progressData, targetID) {
 /// returns the cost in currency to upgrade that resource
 function GetUpgradeCost(resourcesToUpgrade, resource, progressData) {
     var level = progressData[UPGRADE_LEVEL];
+    var coefficient = progressData[COEFFICIENT];
     var costPerLevel = resourcesToUpgrade[resource];
-    var cost = costPerLevel * level;
+    var cost = Math.ceil(costPerLevel * Math.pow(coefficient, level));
 
     return cost;
 }

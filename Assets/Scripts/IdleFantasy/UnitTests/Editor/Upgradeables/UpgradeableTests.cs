@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using MyLibrary;
 
@@ -64,7 +65,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
 
             NormalInventory inventory = new NormalInventory();
             foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
-                int amount = cost.Value * mUpgrade.Value;
+                int amount = (int)Math.Ceiling(cost.Value * Math.Pow(mUpgrade.UpgradeData.Coefficient, mUpgrade.Value));
                 inventory.SetResource( cost.Key, amount );
             }
 
@@ -80,7 +81,7 @@ namespace IdleFantasy.UnitTests.Upgradeables {
 
             NormalInventory inventory = new NormalInventory();
             foreach ( KeyValuePair<string, int> cost in mUpgrade.ResourcesToUpgrade ) {
-                int amount = cost.Value * mUpgrade.Value;
+                int amount = (int)Math.Ceiling( cost.Value * Math.Pow(mUpgrade.UpgradeData.Coefficient, mUpgrade.Value));
                 inventory.SetResource( cost.Key, amount );
             }
 

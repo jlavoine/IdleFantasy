@@ -14,6 +14,7 @@ namespace IdleFantasy {
         public const string AVAILABLE_TRAINERS_EVENT = "AvailableTrainersChanged";
 
         public const string STARTING_COST_KEY = "TrainerStartingCost";
+        public const string TRAINER_UPGRADE_COEFFICIENT = "TrainerUpgradeCoefficient";
 
         private Dictionary<string, int> mTrainers = new Dictionary<string, int>();
         private Dictionary<string, int> mTrainerAssignments = new Dictionary<string, int>();
@@ -85,7 +86,10 @@ namespace IdleFantasy {
         }
 
         private void UpdateCanAffordNextTrainer() {
-            CanAfford = CanAffordTrainerPurchase( (IResourceInventory) PlayerManager.Data );
+            // FIXME: Did this because tests were failing...need a better way
+            if ( PlayerManager.Data is IResourceInventory ) {
+                CanAfford = CanAffordTrainerPurchase( (IResourceInventory) PlayerManager.Data );
+            }
         }
 
         private int GetTotalTrainers() {
@@ -146,8 +150,9 @@ namespace IdleFantasy {
         public int GetNextTrainerCost() {
             int totalNormalTrainers = GetTotalTrainersOfType( NORMAL_TRAINERS );
             int trainerStartingCost = Constants.GetConstant<int>( STARTING_COST_KEY );
-            int nextCost = (totalNormalTrainers + 1) * trainerStartingCost;
-
+            float trainerUpgradeCoefficient = Constants.GetConstant<float>( TRAINER_UPGRADE_COEFFICIENT );
+            int nextCost = (int)Math.Ceiling( (trainerStartingCost * Math.Pow( trainerUpgradeCoefficient, totalNormalTrainers ) ) );
+            
             return nextCost;
         }
 

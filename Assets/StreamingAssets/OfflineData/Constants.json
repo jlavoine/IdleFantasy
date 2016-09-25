@@ -32,7 +32,12 @@
   "TrainerStartingCost": {
     "ID": "TrainerStartingCost",
     "Type": "Int",
-    "Value": 1000
+    "Value": 500
+  },
+  "TrainerUpgradeCoefficient": {
+    "ID": "TrainerUpgradeCoefficient",
+    "Type": "Float",
+    "Value": 1.12
   },
   "EnoughUnits": {
     "ID": "EnoughUnitsColor",
@@ -57,7 +62,7 @@
   "BaseGoldReward": {
     "ID": "BaseGoldReward",
     "Type": "Int",
-    "Value": 500
+    "Value": 100
   },
   "BaseMissionPower": {
     "ID": "BaseMissionPower",

@@ -10,11 +10,11 @@ namespace IdleFantasy.UnitTests {
         private ITrainerManager mTrainerData;
 
         static object[] NewTrainerCostTests = {
-            new object[] { 0, 1000 },
-            new object[] { -1, 1000 },
-            new object[] { 10, 11000 },
-            new object[] { 1, 2000 },
-            new object[] { 20, 21000 }
+            new object[] { 0, 500 },
+            new object[] { -1, 500 },
+            new object[] { 10, 1553 },
+            new object[] { 1, 561 },
+            new object[] { 20, 4824 }
         };
 
         [SetUp]

@@ -1,1 +1,79 @@
-{   "BASE_BUILDING_1" : {     "ID" : "BASE_BUILDING_1",     "Categories" : "[\"TEST_CATEGORY\", \"CAT_2\"]",     "Unit" : "BASE_MELEE_1",     "StartingSize" : 10,     "MaxLevel" : 50,     "StartingUpgradeCost" : 1000,     "BuildingLevel" : "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"ResourcesToUpgrade\": { \"G1\": 1000 } }"   },   "BASE_BUILDING_2" : {     "ID" : "BASE_BUILDING_2",     "Categories" : "[\"CAT_3\"]",     "Unit" : "BASE_MELEE_2",     "StartingSize" : 5,     "MaxLevel" : 50,     "StartingUpgradeCost" : 2000,     "BuildingLevel" : "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"ResourcesToUpgrade\": { \"G1\": 1000 } }"   } }
+{
+  "BASE_BUILDING_1": {
+    "ID": "BASE_BUILDING_1",
+    "Categories": "[\"TEST_CATEGORY\"]",
+    "Worlds": [
+      "Base"
+    ],
+    "Unit": "BASE_MELEE_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_BUILDING_2": {
+    "ID": "BASE_BUILDING_2",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"TEST_CATEGORY\"]",
+    "Unit": "BASE_MELEE_2",
+    "StartingSize": 200,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_WARRIOR_BUILDING_1": {
+    "ID": "BASE_WARRIOR_BUILDING_1",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"CAT_1\"]",
+    "Unit": "BASE_WARRIOR_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_ARCHER_BUILDING_1": {
+    "ID": "BASE_ARCHER_BUILDING_1",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"CAT_1\"]",
+    "Unit": "BASE_ARCHER_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_WIZARD_BUILDING_1": {
+    "ID": "BASE_WIZARD_BUILDING_1",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"CAT_1\"]",
+    "Unit": "BASE_WIZARD_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_PRIEST_BUILDING_1": {
+    "ID": "BASE_PRIEST_BUILDING_1",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"CAT_1\"]",
+    "Unit": "BASE_PRIEST_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  },
+  "BASE_THIEF_BUILDING_1": {
+    "ID": "BASE_THIEF_BUILDING_1",
+    "Worlds": [
+      "Base"
+    ],
+    "Categories": "[\"CAT_1\"]",
+    "Unit": "BASE_THIEF_1",
+    "StartingSize": 100,
+    "MaxLevel": 50,
+    "BuildingLevel": "{ \"PropertyName\": \"BuildingLevel\", \"MaxLevel\": 50, \"Coefficient\": 1.08, \"ResourcesToUpgrade\": { \"G1\": 500 } }"
+  }
+}

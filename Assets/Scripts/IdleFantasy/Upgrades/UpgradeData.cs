@@ -6,6 +6,7 @@ namespace IdleFantasy {
 
         public int MaxLevel;
         public int BaseXpToLevel;
+        public float Coefficient;
 
         public Dictionary<string, int> ResourcesToUpgrade;
     }

@@ -29,15 +29,14 @@ namespace IdleFantasy.UnitTests {
             IPlayerData mockPlayerData = CreateMockPlayer();
             PlayerManager.Init( mockPlayerData );
 
+            SetPlayerGuilds( mockPlayerData );
+            SetPlayerBuildings( mockPlayerData );
+
             return mockPlayerData;
         }
 
         private static IPlayerData CreateMockPlayer() {
             IPlayerData mockPlayerData = NSubstitute.Substitute.For<IPlayerData>();
-
-            SetPlayerGuilds( mockPlayerData );
-            SetPlayerBuildings( mockPlayerData );
-
             return mockPlayerData;
         }
 
@@ -50,7 +49,7 @@ namespace IdleFantasy.UnitTests {
             List<Building> buildings = new List<Building>();
 
             buildings.Add( new Building( new BuildingProgress() { ID = GenericDataLoader.TEST_BUILDING, Level = 1 }, new UnitProgress() { ID = GenericDataLoader.TEST_UNIT, Level = 1, Trainers = 1 } ) );
-            buildings.Add( new Building( new BuildingProgress() { ID = GenericDataLoader.TEST_BUILDING_2, Level = 1 }, new UnitProgress() { ID = GenericDataLoader.TEST_UNIT_3, Level = 1, Trainers = 1 } ) );
+            buildings.Add( new Building( new BuildingProgress() { ID = GenericDataLoader.TEST_BUILDING_2, Level = 1 }, new UnitProgress() { ID = GenericDataLoader.TEST_UNIT_2, Level = 1, Trainers = 1 } ) );
 
             return buildings;
         }

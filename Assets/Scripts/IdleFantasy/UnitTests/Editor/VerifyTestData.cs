@@ -18,11 +18,11 @@ namespace IdleFantasy.UnitTests {
             BuildingData testBuildingData = GenericDataLoader.GetData<BuildingData>( GenericDataLoader.TEST_BUILDING );
 
             Assert.AreEqual( testBuildingData.ID, "BASE_BUILDING_1" );            
-            Assert.AreEqual( testBuildingData.StartingSize, 10 );            
+            Assert.AreEqual( testBuildingData.StartingSize, 100 );            
             Assert.Contains( "TEST_CATEGORY", testBuildingData.Categories );
 
             Assert.AreEqual( testBuildingData.BuildingLevel.MaxLevel, 50 );
-            Assert.Contains( new KeyValuePair<string, int>( "G1", 1000 ), testBuildingData.BuildingLevel.ResourcesToUpgrade );
+            Assert.Contains( new KeyValuePair<string, int>( "G1", 500 ), testBuildingData.BuildingLevel.ResourcesToUpgrade );
             Assert.AreEqual( "BuildingLevel", testBuildingData.BuildingLevel.PropertyName );            
         }
 

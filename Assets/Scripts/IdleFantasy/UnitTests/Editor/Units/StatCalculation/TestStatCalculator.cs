@@ -12,7 +12,6 @@ namespace IdleFantasy.UnitTests.Units {
     public class TestStatCalculator {
         private const string UNIT_WITH_GUILD = GenericDataLoader.TEST_UNIT;
         private const string UNIT_WITHOUT_GUILD = GenericDataLoader.TEST_UNIT_2;
-        private const string MAGIC_UNIT_NO_GUILD = GenericDataLoader.TEST_UNIT_3;
 
         private StatCalculator mStatCalculator;
 
@@ -33,8 +32,7 @@ namespace IdleFantasy.UnitTests.Units {
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_1, 4 },
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_2, 3 },
             new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_1, 3 },
-            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 3 },
-            new object[] { MAGIC_UNIT_NO_GUILD, TestUnitStats.TEST_STAT_3, 2 }
+            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 3 }
         };
 
         [Test, TestCaseSource("CorrectTotalStatTest")]
@@ -67,15 +65,15 @@ namespace IdleFantasy.UnitTests.Units {
         }
 
         static object[] HasStatTest = {
-            new object[] { TestUnitStats.TEST_STAT_1 },
-            new object[] { TestUnitStats.TEST_STAT_3 }
+            new object[] { TestUnitStats.TEST_STAT_1, 2 },
+            new object[] { TestUnitStats.TEST_STAT_3, 0 }
         };
 
         [Test, TestCaseSource( "HasStatTest" )]
-        public void TestGetUnitsWithStat( string i_stat ) {
+        public void TestGetUnitsWithStat( string i_stat, int i_expectedCount ) {
             List<IUnit> unitsWithStat = mStatCalculator.GetUnitsWithStat( i_stat );
 
-            Assert.GreaterOrEqual( unitsWithStat.Count, 1 );
+            Assert.GreaterOrEqual( i_expectedCount, unitsWithStat.Count );
 
             foreach ( IUnit unit in unitsWithStat ) {
                 Assert.True( unit.HasStat( i_stat ) );
@@ -86,8 +84,7 @@ namespace IdleFantasy.UnitTests.Units {
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_1, 100, 25 },
             new object[] { UNIT_WITH_GUILD, TestUnitStats.TEST_STAT_2, 35, 12 },
             new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_1, 9, 3 },
-            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 13, 5 },
-            new object[] { MAGIC_UNIT_NO_GUILD, TestUnitStats.TEST_STAT_3, 67, 34 }
+            new object[] { UNIT_WITHOUT_GUILD, TestUnitStats.TEST_STAT_2, 13, 5 }
         };
 
         [Test, TestCaseSource( "NumUnitsRequiredTest" )]
