@@ -6,7 +6,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected override int GetTotalMissionsCompleted() {
-            return 2;
+            return 1;
         }
     }
 }
