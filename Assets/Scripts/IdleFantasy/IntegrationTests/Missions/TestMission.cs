@@ -7,7 +7,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
         protected const string MISSION_WORLD = "Base";
         protected const int MISSION_GOLD_REWARD = 1000;
-        protected const int MISSIONS_DONE_COUNT = 1;
+        protected const int MISSIONS_DONE_COUNT = 0;
 
         private const int MISSION_INDEX = 0;        
 
