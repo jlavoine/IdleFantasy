@@ -99,6 +99,14 @@ const MAP_TERRAIN = "Terrain";
 const MAP_SUFFIX = "Suffix";
 const MAP_PIECE_ID = "ID";                              // key in map piece data for the piece's ID               
 
+// terrain related
+const TERRAIN_FOREST = 1;
+const TERRAIN_GRASS = 0;
+const TERRAIN_MOUNTAIN = 2;
+const FOREST_MOD = "ForestWeight";
+const GRASS_MOD = "GrassWeight";
+const MOUNTAIN_MOD = "MountainWeight";
+
 // buildings
 const BUILDING_START_SIZE = "StartingSize";         // key for building title data: the building's starting size
 const BUILDING_UNIT = "Unit";                       // key for building title data: the building's unit
@@ -526,8 +534,6 @@ handlers.createMapForTesting = function(args) {
         return returnOutOfSync();
     }
 
-    SetAllPieceData_Global();
-
     var mapLevel = GetNumberFromArgs(args, MAP_LEVEL);  
     var mapWorld = args.data[MAP_WORLD];
     var mapSize = GetNumberFromArgs(args, MAP_SIZE);
@@ -726,9 +732,7 @@ handlers.initiateTravelTo = function (args) {
     }
 }
 
-function ReturnNewAreaData(world) {
-    RefreshMissionProgressGlobal();
-    
+function ReturnNewAreaData(world) {    
     var newMap = GetMapOfWorld(world);
     var mapAsString = JSON.stringify(newMap);
 
@@ -780,15 +784,13 @@ function SaveMap(map) {
 /// only make so many API calls per cloud call.
 /////////////////////////////////////////////////
 
-// sets the map piece data for each piece type, used by various method
-var global_allPieces;
-function SetAllPieceData_Global() {
-    if (global_allPieces == null) {
-        global_allPieces = {};
-        global_allPieces[MAP_PREFIX] = GetTitleDataForMapPiece(MAP_PREFIX);
-        global_allPieces[MAP_TERRAIN] = GetTitleDataForMapPiece(MAP_TERRAIN);
-        global_allPieces[MAP_SUFFIX] = GetTitleDataForMapPiece(MAP_SUFFIX);
-    }
+function GetAllMapPieceData() {
+    var allPieces = {};
+    allPieces[MAP_PREFIX] = GetTitleDataForMapPiece(MAP_PREFIX);
+    allPieces[MAP_TERRAIN] = GetTitleDataForMapPiece(MAP_TERRAIN);
+    allPieces[MAP_SUFFIX] = GetTitleDataForMapPiece(MAP_SUFFIX);
+
+    return allPieces;
 }
 
 /////////////////////////////////////////////////
@@ -801,8 +803,6 @@ function SetAllPieceData_Global() {
 
 /// Creates a map for the given level and world
 function CreateMap(mapName, worldKey, mapLevel, mapSize) {    
-    SetAllPieceData_Global();  
-
     var map = CreateMapObject(worldKey, mapLevel, mapSize);
     var isFirstMap = false;
 
@@ -833,10 +833,13 @@ function SetMapName(map, mapName) {
 }
 
 function GenerateMapName(mapLevel) {
+    var allPieces = GetAllMapPieceData();
+    //log.info("what is this: " + JSON.stringify(allPieces));
+
     var mapName = {};
-    mapName[MAP_PREFIX] = GetMapPiece(mapLevel, MAP_PREFIX);
-    mapName[MAP_TERRAIN] = GetMapPiece(mapLevel, MAP_TERRAIN);
-    mapName[MAP_SUFFIX] = GetMapPiece(mapLevel, MAP_SUFFIX);
+    mapName[MAP_PREFIX] = GetMapPiece(mapLevel, MAP_PREFIX, allPieces);
+    mapName[MAP_TERRAIN] = GetMapPiece(mapLevel, MAP_TERRAIN, allPieces);
+    mapName[MAP_SUFFIX] = GetMapPiece(mapLevel, MAP_SUFFIX, allPieces);
 
     return mapName;
 }
@@ -935,7 +938,7 @@ function CreateMapArea(map, areaIndex, weightedAreaList, defaultMission) {
     area[INDEX] = areaIndex;
     area[MAP_AREA_TYPE] = GenerateMapAreaTypeFromWeights(map, weightedAreaList);
     area[MAP_AREA_MISSION] = GenerateMapMission(map, areaIndex, area[MAP_AREA_TYPE]);
-    area[MAP_TERRAIN] = GenerateMapAreaTerrain();
+    area[MAP_TERRAIN] = GenerateMapAreaTerrain(map);
 
     return area;
 }
@@ -1002,12 +1005,26 @@ function GetMissionGoldReward(map) {
     return goldReward;
 }
 
-/// this needs to be improved!
-function GenerateMapAreaTerrain() {
+function GenerateMapAreaTerrain(map) {
     var terrains = [ 0, 1, 2 ];
-    var selectedTerrain = GetRandomArrayElement(terrains);
 
+    AddTerrainsFromMapModificationsToList(terrains, map);    
+
+    var selectedTerrain = GetRandomArrayElement(terrains);
     return selectedTerrain;
+}
+
+function AddTerrainsFromMapModificationsToList(terrains, map) {
+    AddToTerrainList(terrains, map, FOREST_MOD, TERRAIN_FOREST);
+    AddToTerrainList(terrains, map, GRASS_MOD, TERRAIN_GRASS);
+    AddToTerrainList(terrains, map, MOUNTAIN_MOD, TERRAIN_MOUNTAIN);
+}
+
+function AddToTerrainList(terrainList, map, modificationName, terrainIndex) {
+    var additionalCount = GetMapModificationAmount(map, modificationName);
+    for (var i = 0; i < additionalCount; ++i) {
+        terrainList.push(terrainIndex);
+    }
 }
 
 function GenerateMapAreaTypeFromWeights(map, weightedAreaList) {
@@ -1121,12 +1138,12 @@ function CreateMapIndexArray(map) {
     return indexArray;
 }
 
-function GetMapPiece(level, pieceKey) {  
-    var allPieces = global_allPieces[pieceKey];  
+function GetMapPiece(level, pieceKey, allPieces) {  
+    var allPiecesOfType = allPieces[pieceKey];      
     var validPieces = [];
 
-    for (var index in allPieces) {
-        var pieceData = allPieces[index];
+    for (var index in allPiecesOfType) {
+        var pieceData = allPiecesOfType[index];
         //log.info("Processing piece: " + JSON.stringify(pieceData));
 
         var levelRestriction = GetMapPieceLevelRestriction(pieceData);
@@ -1227,10 +1244,12 @@ function DoesPassNumberRestriction(restriction, value) {
 /// Mission Progress
 /////////////////////////////////////////////////
 
-var global_allMissionProgress;
-
-function SaveMissionProgress() {
-    SetReadOnlyData(MISSION_PROGRESS_KEY, global_allMissionProgress);
+function SaveMissionProgress(missionProgress, world, missionIndex) {
+    var allMissionProgress = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+    var missionProgressForWorld = allMissionProgress[world];
+    var missionProgressList = GetMissionProgressList(missionProgressForWorld);
+    missionProgressList[missionIndex] = missionProgress;
+    SetReadOnlyData(MISSION_PROGRESS_KEY, allMissionProgress);
 }
 
 function GetMissionProgress(world, index) {    
@@ -1241,20 +1260,16 @@ function GetMissionProgress(world, index) {
 }
 
 function GetMissionProgressForWorld(world) {
-    if (global_allMissionProgress == null) {
-        RefreshMissionProgressGlobal();
-    }
-  
-    return global_allMissionProgress[world];
-}
-
-function RefreshMissionProgressGlobal() {
-    global_allMissionProgress = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+    var allMissionProgress = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
+    return allMissionProgress[world];
 }
 
 function GetClearedMissionsForWorld(world) {
+    log.info("Getting cleared missions for world: " + world);
     var missionProgressForWorld = GetMissionProgressForWorld(world);
     var missionProgressList = GetMissionProgressList(missionProgressForWorld);
+
+    log.info("What is the cleared missions: " + JSON.stringify(missionProgressList));
 
     var clearedMissions = 0;
     for (var index in missionProgressList) {
@@ -1285,8 +1300,6 @@ function GetMissionProgressList(missionProgressForWorld) {
 
 handlers.initiateCompleteMission = function (args) { 
     UpdateAllUnitCounts(Date.now());
-
-    global_allMissionProgress = null;
        
     var missionType = args.data[MISSION_TYPE_KEY];
     var missionIndex = GetNumberFromArgs(args, MISSION_INDEX_KEY);    
@@ -1324,7 +1337,7 @@ function MarkMissionComplete(mission, world) {
 
     missionProgress[MISSION_PROGRESS_DONE] = true;
 
-    SaveMissionProgress();
+    SaveMissionProgress(missionProgress, world, missionIndex);
 }
 
 function ApplyMissionRewards(mission) {
