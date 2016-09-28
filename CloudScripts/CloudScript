@@ -72,6 +72,8 @@ const AREAS_PER_TRAVEL_OPTION = 9;                      // # of area clears per 
 const AREA_COMBAT = "Combat";       // 0
 const AREA_EXPLORE = "Explore";     // 1
 const AREA_MISC = "Misc";           // 2
+const COMBAT_KEY = "COMBAT";
+const MISC_KEY = "MISC";
 
 // constants for parsing map modification data in terms of area types
 const DEFAULT_MAP_WEIGHTS = "DefaultMapWeights";    // title data field holding the default map weights
@@ -139,6 +141,15 @@ const UNLOCKS = "Unlocks";
 const UNLOCK_UNIT_ID = "UnitID";
 const UNLOCK_BUILDING_ID = "BuildingID";
 
+const BASE_STAT_1_UP = "Base_Stat_1_Up";
+const BASE_STAT_2_UP = "Base_Stat_2_Up";
+const BASE_STAT_3_UP = "Base_Stat_3_Up";
+const BASE_STAT_4_UP = "Base_Stat_4_Up";
+const BASE_STAT_5_UP = "Base_Stat_5_Up";
+const BASE_STAT_6_UP = "Base_Stat_6_Up";
+const BASE_STAT_7_UP = "Base_Stat_7_Up";
+const WIZARD_STAT_1_UP = "Wizard_Stat_1_Up";
+const PRIEST_STAT_1_UP = "Priest_Stat_1_Up";
 
 /// game modules
 const MODULE_BASE = "Base";    // the base game!
@@ -169,10 +180,12 @@ const MISSION_REQUIRED_POWER = "PowerRequirement";  // key in a mission task hol
 const MISSION_BASE_TITLE_KEY = "MissionBase_"   // key for title data that holds the basis for missions of a type (combat, explore, etc)
 const MISSION_GOLD_REWARD = "GoldReward";
 const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how much power a mission task requires. scales with map level.
+const COMBAT_POWER_MODIFIER = 1.5;              // power requirement is multiplied by this for combat missions
 
 /// mission constants
 const BASE_GOLD_REWARD = 100;
 const GOLD_REWARD_COEFFICIENT = 1.09;
+const COMBAT_GOLD_MODIFIER = 0.4;
 
 /// mission progress
 const MISSION_PROGRESS_LIST = "Missions";
@@ -948,7 +961,7 @@ function GenerateMapMission(map, areaIndex, areaType) {
 
     mission[MISSION_TYPE_KEY] = MODULE_BASE;
     mission[MISSION_INDEX_KEY] = areaIndex;
-    mission[MISSION_GOLD_REWARD] = GetMissionGoldReward(map);
+    mission[MISSION_GOLD_REWARD] = GetMissionGoldReward(map, areaType);
     mission[MISSION_TASKS_KEY] = GenerateMissionTasks(map, areaIndex, areaType);
 
     return mission;
@@ -960,49 +973,82 @@ function GenerateMissionTasks(map, areaIndex, areaType) {
     
     var task = {};
     task[MISSION_INDEX_KEY] = 0;
-    task[MISSION_REQUIRED_STAT] = GetMissionStat(areaType);
-    task[DESC] = GetMissionTaskDescription(task);
-    task[MISSION_REQUIRED_POWER] = MISSION_TASK_BASE_POWER * (GetMapLevel(map) + 1);
+    task[MISSION_REQUIRED_STAT] = GetMissionStat(map);
+    task[DESC] = GetMissionTaskDescription(task, areaType);
+    task[MISSION_REQUIRED_POWER] = GetMissionPowerRequirement(map, areaType);
 
     tasks.push(task);
     return tasks;
 }
 
-function GetMissionTaskDescription(task) {
+function GetMissionPowerRequirement(map, areaType) {
+    var areaModifier = GetPowerRequirementModifierFromAreaType(areaType);
+    var powerRequirement = MISSION_TASK_BASE_POWER * (GetMapLevel(map) + 1);
+    powerRequirement = Math.ceil(powerRequirement * areaModifier);
+
+    return powerRequirement;
+}
+
+function GetMissionTaskDescription(task, areaType) {
     var stat = task[MISSION_REQUIRED_STAT];
-    var key = stat + "_MISSION_DESC";
+    var key = stat + "_MISSION_DESC_";
+
+    if (areaType == COMBAT_INDEX) {
+        key += COMBAT_KEY;
+    } else {
+        key += MISC_KEY;
+    }
 
     return key;
 }
 
-function GetMissionStat(areaType) {
-    if (areaType == COMBAT_INDEX) {
-        return GetRandomCombatStat();
-    } else {
-        return GetRandomExploreStat();
-    }
+function GetMissionStat(map) {
+    return GetRandomStat(map);
 }
 
-function GetRandomCombatStat() {
-    var stats = ["BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+function GetRandomStat(map) {
+    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4", "BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+
+    AddToListFromModification(stats, map, BASE_STAT_1_UP, "BASE_STAT_1");
+    AddToListFromModification(stats, map, BASE_STAT_2_UP, "BASE_STAT_2");
+    AddToListFromModification(stats, map, BASE_STAT_3_UP, "BASE_STAT_3");
+    AddToListFromModification(stats, map, BASE_STAT_4_UP, "BASE_STAT_4");
+    AddToListFromModification(stats, map, BASE_STAT_5_UP, "BASE_STAT_5");
+    AddToListFromModification(stats, map, BASE_STAT_6_UP, "BASE_STAT_6");
+    AddToListFromModification(stats, map, BASE_STAT_7_UP, "BASE_STAT_7");
+    AddToListFromModification(stats, map, WIZARD_STAT_1_UP, "WIZARD_STAT_1");
+    AddToListFromModification(stats, map, PRIEST_STAT_1_UP, "PRIEST_STAT_1");
+
     return GetRandomArrayElement(stats);
 }
 
-function GetRandomExploreStat() {
-    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4"];
-    return GetRandomArrayElement(stats);   
-}
-
-function GetMissionGoldReward(map) {
+function GetMissionGoldReward(map, areaType) {
     var mapLevel = GetMapLevel(map);
     var coefficient = GOLD_REWARD_COEFFICIENT;
-    var goldReward = Math.ceil(BASE_GOLD_REWARD * Math.pow(coefficient, mapLevel-1));
-    
+    var baseGoldReward = Math.ceil(BASE_GOLD_REWARD * Math.pow(coefficient, mapLevel-1));    
     var goldModAmount = GetMapModificationAmount(map, MAP_GOLD_MOD);
-    goldReward = goldReward + Math.ceil(goldReward * goldModAmount);
+    var areaGoldModifier = GetGoldModifierForAreaType(areaType);
+
+    var goldReward = baseGoldReward + Math.ceil(baseGoldReward * goldModAmount) + Math.ceil(baseGoldReward * areaGoldModifier);
 
     //log.info("Gold reward: " + goldReward);
     return goldReward;
+}
+
+function GetPowerRequirementModifierFromAreaType(areaType) {
+    if (areaType == COMBAT_INDEX) {
+        return COMBAT_POWER_MODIFIER;
+    } else {
+        return 1;
+    }
+}
+
+function GetGoldModifierForAreaType(areaType) {
+    if (areaType == COMBAT_INDEX) {
+        return COMBAT_GOLD_MODIFIER;
+    } else {
+        return 0;
+    }
 }
 
 function GenerateMapAreaTerrain(map) {
@@ -1015,15 +1061,15 @@ function GenerateMapAreaTerrain(map) {
 }
 
 function AddTerrainsFromMapModificationsToList(terrains, map) {
-    AddToTerrainList(terrains, map, FOREST_MOD, TERRAIN_FOREST);
-    AddToTerrainList(terrains, map, GRASS_MOD, TERRAIN_GRASS);
-    AddToTerrainList(terrains, map, MOUNTAIN_MOD, TERRAIN_MOUNTAIN);
+    AddToListFromModification(terrains, map, FOREST_MOD, TERRAIN_FOREST);
+    AddToListFromModification(terrains, map, GRASS_MOD, TERRAIN_GRASS);
+    AddToListFromModification(terrains, map, MOUNTAIN_MOD, TERRAIN_MOUNTAIN);
 }
 
-function AddToTerrainList(terrainList, map, modificationName, terrainIndex) {
+function AddToListFromModification(list, map, modificationName, item) {
     var additionalCount = GetMapModificationAmount(map, modificationName);
     for (var i = 0; i < additionalCount; ++i) {
-        terrainList.push(terrainIndex);
+        list.push(item);
     }
 }
 
