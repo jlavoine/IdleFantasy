@@ -20,6 +20,9 @@ const CHANGE = "Change";        // key used from client to pass up a change
 /// starting data
 const STARTING_GOLD = 2000;
 
+// tutorials
+const TUTORIAL_INTRO = "IntroTutorial";
+
 // unit counting
 const LAST_UNIT_COUNT = "LastCountTime";            // key for timestamp of last unit count update (in unit's progress data)
 const UNIT_COUNT = "Count";                         // key in unit's save data for # of that unit
@@ -574,19 +577,7 @@ handlers.deleteAllPlayerReadOnlyData = function(args) {
         return returnOutOfSync();
     }    
 
-    var emptyData = {};
-    emptyData[GetProgressKey(CLASS_BUILDING)] = "{}";
-    emptyData[GetProgressKey(CLASS_UNIT)] = "{}";
-    emptyData[GetProgressKey(CLASS_GUILD)] = "{}";
-    emptyData[TRAINER_SAVE_DATA] = "{}";
-    emptyData[WORLD_PROGRESS_KEY] = "{}";
-    emptyData[MAP_SAVE_KEY + MODULE_BASE] = "{}";
-    emptyData[MISSION_PROGRESS_KEY] = "{}";
-    emptyData[GAME_METRICS] = "{}";
-
-    SetSaveDataWithObject(emptyData, READ_ONLY);
-
-    SetCurrency(CURRENCY_GOLD, 0);
+    WipePlayerData();
 }
 
 /// for testing adding missing player data
@@ -1239,8 +1230,7 @@ function CreateMissionProgressForMap(map, isFirstMap) {
         missionProgressSaveData = GetReadOnlySaveData(MISSION_PROGRESS_KEY);
     }
     var missionProgressForMap = CreateMissionProgress(world, size);
-
-    log.info("Setting thing for " + world + ": " + JSON.stringify(missionProgressForMap));
+    
     missionProgressSaveData[world] = missionProgressForMap;
 
     SetReadOnlyData(MISSION_PROGRESS_KEY, missionProgressSaveData);
@@ -1591,7 +1581,12 @@ function IncrementGameMetric(metricName) {
 function GetGameMetric(metricName) {
     var metricsData = GetReadOnlySaveData(GAME_METRICS);
     var allMetrics = metricsData[METRICS];
-    return allMetrics[metricName];
+
+    if (allMetrics.hasOwnProperty(metricName)) {
+        return allMetrics[metricName];
+    } else {
+        return 0;
+    }
 }
 
 /////////////////////////////////////////////////
@@ -1762,12 +1757,29 @@ function AddMissingPlayerData() {
     var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, GAME_METRICS];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
+    if (WipePlayerDataIfIntroTutorialIncomplete(allSaveData)) {
+        allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
+    }
+
     var arraySaveKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
     var titleData = GetMultipleTitleData(arraySaveKeys); // iterate through this structure in the method and parse everything
 
     AddMissingSaveData(allSaveData, arraySaveKeys, titleData);
     StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
+}
+
+function WipePlayerDataIfIntroTutorialIncomplete(allSaveData) {
+    if (allSaveData.hasOwnProperty(GAME_METRICS)) {
+        var introTutorialMetric = GetGameMetric(TUTORIAL_INTRO);
+        if (introTutorialMetric == 0) {
+            log.info("Intro tutorial incomplete, wiping player data.");
+            WipePlayerData();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
@@ -2052,7 +2064,7 @@ function SetSaveData(dataKey, dataAsString, dataType) {
 }
 
 function SetSaveDataWithObject(dataObject, dataType) {
-    log.info("Setting save data of " + dataType + ": " + JSON.stringify(dataObject));
+    //log.info("Setting save data of " + dataType + ": " + JSON.stringify(dataObject));
 
     if (dataType == READ_ONLY) {
         server.UpdateUserReadOnlyData({ PlayFabId: currentPlayerId, Data: dataObject, Permission: "Public"});
@@ -2180,6 +2192,22 @@ function AddStartingCurrency() {
 
 function returnOutOfSync() {
     return { outOfSync : true };
+}
+
+function WipePlayerData() {
+    var emptyData = {};
+    emptyData[GetProgressKey(CLASS_BUILDING)] = "{}";
+    emptyData[GetProgressKey(CLASS_UNIT)] = "{}";
+    emptyData[GetProgressKey(CLASS_GUILD)] = "{}";
+    emptyData[TRAINER_SAVE_DATA] = "{}";
+    emptyData[WORLD_PROGRESS_KEY] = "{}";
+    emptyData[MAP_SAVE_KEY + MODULE_BASE] = "{}";
+    emptyData[MISSION_PROGRESS_KEY] = "{}";
+    emptyData[GAME_METRICS] = "{}";
+
+    SetSaveDataWithObject(emptyData, READ_ONLY);
+
+    SetCurrency(CURRENCY_GOLD, 0);
 }
 
 function GetRandomArrayElement(array) {
