@@ -1582,7 +1582,7 @@ function GetGameMetric(metricName) {
     var metricsData = GetReadOnlySaveData(GAME_METRICS);
     var allMetrics = metricsData[METRICS];
 
-    if (allMetrics.hasOwnProperty(metricName)) {
+    if (allMetrics != null && allMetrics.hasOwnProperty(metricName)) {
         return allMetrics[metricName];
     } else {
         return 0;
