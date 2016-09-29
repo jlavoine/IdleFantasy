@@ -93,6 +93,15 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        public void OnSelection_ChangesColor() {
+            Color expectedColor = Constants.GetConstant<Color>( ConstantKeys.SELECTED_UNITS_COLOR );
+
+            mTestSelection.UnitSelected( true );
+
+            Assert.AreEqual( expectedColor, mTestSelection.ViewModel.GetPropertyValue<Color>( MissionKeys.NUM_UNITS_FOR_TASK_COLOR ) );
+        }
+
+        [Test]
         public void OnSelection_AddsProposal() {
             mTestSelection.UnitSelected( true );
 

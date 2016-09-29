@@ -54,7 +54,7 @@ namespace IdleFantasy {
         private void SetUpModel() {
             SetUnitRequiredProperty();
             SetNumUnitsRequiredProperty();
-            SetNumUnitsRequiredColorProperty();
+            UpdateColorProperty();
             SetInteractableProperty(); 
         }
 
@@ -67,12 +67,19 @@ namespace IdleFantasy {
             mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK, unitsRequired );
         }
 
-        private void SetNumUnitsRequiredColorProperty() {
-            bool hasEnoughUnits = HasEnoughUnits();
-            string colorConstantKey = hasEnoughUnits ? ConstantKeys.ENOUGH_UNITS_COLOR : ConstantKeys.NOT_ENOUGH_UNITS_COLOR;
-            Color unitTextColor = Constants.GetConstant<Color>( colorConstantKey );
+        private void UpdateColorProperty() {
+            string constantKey = GetColorConstant();
+            Color unitTextColor = Constants.GetConstant<Color>( constantKey );
+            mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK_COLOR, unitTextColor );            
+        }
 
-            mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK_COLOR, unitTextColor );
+        private string GetColorConstant() {
+            if ( Selected ) {
+                return ConstantKeys.SELECTED_UNITS_COLOR;
+            } else {
+                bool hasEnoughUnits = HasEnoughUnits();
+                return hasEnoughUnits ? ConstantKeys.ENOUGH_UNITS_COLOR : ConstantKeys.NOT_ENOUGH_UNITS_COLOR;
+            }
         }
 
         private void SetInteractableProperty() {
@@ -93,6 +100,8 @@ namespace IdleFantasy {
 
         public void UnitSelected( bool i_selected ) {
             mSelected = i_selected;
+
+            UpdateColorProperty();
 
             if ( i_selected ) {
                 mMissionProposal.AddProposal( TaskIndex, mTaskProposal );

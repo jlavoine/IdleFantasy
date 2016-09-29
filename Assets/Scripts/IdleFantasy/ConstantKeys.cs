@@ -3,7 +3,8 @@ namespace IdleFantasy {
     public static class ConstantKeys {
 
         public const string ENOUGH_UNITS_COLOR = "EnoughUnitsColor";
-        public const string NOT_ENOUGH_UNITS_COLOR = "NotEnoughUnitsColor";        
+        public const string NOT_ENOUGH_UNITS_COLOR = "NotEnoughUnitsColor";
+        public const string SELECTED_UNITS_COLOR = "SelectedUnitsColor";       
         public const string BASE_GOLD_REWARD = "BaseGoldReward";
         public const string GOLD_REWARD_COEFFICIENT = "GoldRewardCoefficient";
         public const string BASE_MISSION_STAT_POWER = "BaseMissionPower";

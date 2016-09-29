@@ -49,6 +49,11 @@
     "Type": "Color",
     "Value": "255.0,0.0,0.0,255.0"
   },
+  "SelectedUnitsColor": {
+    "ID": "SelectedUnitsColor",
+    "Type": "Color",
+    "Value": "255.0,255.0,0.0,255.0"
+  },
   "UpcomingMapCount": {
     "ID": "UpcomingMapsCount",
     "Type": "Int",
