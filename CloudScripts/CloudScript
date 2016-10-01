@@ -2767,10 +2767,6 @@ function UpgradeAndSave(readOnlyData, className, progressData, targetID) {
 /// increases the upgrade level of the incoming progress data
 function Upgrade(readOnlyData, className, progressData, targetID) {    
     progressData[UPGRADE_LEVEL] += 1;
-
-    if (className == CLASS_UNIT) {
-        ResetUnitCount(progressData);        
-    }
 }
 
 /// given the resources to upgrade a target, a given resource, and the progress data for the target,

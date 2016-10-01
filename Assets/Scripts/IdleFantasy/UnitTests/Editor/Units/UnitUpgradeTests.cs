@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using MyLibrary;
+using NSubstitute;
 
 #pragma warning disable 0414
 
@@ -13,6 +14,7 @@ namespace IdleFantasy.UnitTests {
         [SetUp]
         public void BeforeTest() {
             UnitTestUtils.LoadOfflineData();
+            UnitTestUtils.LoadMockPlayerData();
 
             UnitData data = GenericDataLoader.GetData<UnitData>( GenericDataLoader.TEST_UNIT );
             mUnit = new Unit( data,
@@ -25,21 +27,21 @@ namespace IdleFantasy.UnitTests {
 
 
         [Test]
-        public void UpgradeResetsNextUnitProgress() {
+        public void UpgradeKeepsUnitProgress() {
             mBuilding.NextUnitProgress = .5f;
 
             mUnit.Level.Upgrade();
 
-            Assert.AreEqual( 0, mBuilding.NextUnitProgress );
+            Assert.AreEqual( .5f, mBuilding.NextUnitProgress );
         }
 
         [Test]
-        public void UpgradeResetsNumUnits() {
+        public void UpgradeKeepsNumUnits() {
             mBuilding.NumUnits = 1;
 
             mUnit.Level.Upgrade();
 
-            Assert.AreEqual( 0, mBuilding.NumUnits );
+            Assert.AreEqual( 1, mBuilding.NumUnits );
         }
 
         [Test]

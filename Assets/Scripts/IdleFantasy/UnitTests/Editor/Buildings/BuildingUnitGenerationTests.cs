@@ -56,20 +56,6 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
-        public void UpgradingUnitResetsCount() {
-            Building testBuilding = BuildingUpgradeTests.GetTestBuilding();
-            IUnit unit = new Unit( GenericDataLoader.GetData<UnitData>( GenericDataLoader.TEST_UNIT ),
-                new UnitProgress() { Level = 1, Trainers = 1 },
-                new ViewModel() );  // using a real Unit here is not great...should really use NSubstitute or something? But this was complex
-            testBuilding.Unit = unit;
-            testBuilding.Tick( new TimeSpan( 1, 0, 0 ) );
-            
-            unit.Level.Upgrade();
-
-            Assert.AreEqual( 0, testBuilding.NumUnits );
-        }
-
-        [Test]
         public void ZeroProgressAtMaxCapacity() {
             Building testBuilding = BuildingUpgradeTests.GetTestBuilding();
             IUnit unit = new MockUnit( .111f );

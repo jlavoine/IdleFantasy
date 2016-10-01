@@ -177,8 +177,6 @@ namespace IdleFantasy {
         }
 
         public void OnUnitUpgraded() {
-            NumUnits = 0;
-            NextUnitProgress = 0;
             UpdateViewProperties();
         }
         #endregion
