@@ -23,8 +23,8 @@ namespace IdleFantasy {
 
             mLoginTimer.Start();
 
-            //mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
-            mBackend.Authenticate( TestUsers.TWO );
+            mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
+            //mBackend.Authenticate( TestUsers.THREE );
         }
 
         public void OnDestroy() {
