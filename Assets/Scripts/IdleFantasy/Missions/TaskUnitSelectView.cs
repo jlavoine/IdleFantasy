@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 namespace IdleFantasy {
     public class TaskUnitSelectView : GroupView {
+        public const string UNIT_SELECTED = "UnitSelected"; // for tutorials
+
         #region Inspector
         public Toggle Toggle;
         #endregion
@@ -30,6 +32,8 @@ namespace IdleFantasy {
         }
 
         public void OnUnitSelected( bool i_selected ) {
+            MyMessenger.Send( UNIT_SELECTED );
+
             // this effectively blocks selection of a unit that is already selected. Why Unity, WHY???
             if ( mIsOn && i_selected ) {
                 return;

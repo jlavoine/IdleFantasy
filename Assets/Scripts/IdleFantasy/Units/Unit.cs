@@ -61,10 +61,12 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             EasyMessenger.Instance.AddListener<ITrainerManager>( TrainerManager.AVAILABLE_TRAINERS_EVENT, OnTrainersChanged );
+            MyMessenger.AddListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
         }
 
         private void UnsubscribeFromMessages() {
             EasyMessenger.Instance.RemoveListener<ITrainerManager>( TrainerManager.AVAILABLE_TRAINERS_EVENT, OnTrainersChanged );
+            MyMessenger.RemoveListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
         }
 
         private void OnTrainersChanged( ITrainerManager i_trainerManager ) {
@@ -129,7 +131,15 @@ namespace IdleFantasy {
         }
 
         public void OnUpgraded() {
+            UpdateTrainerPropertiesFromPlayerManager();            
+        }
+
+        private void UpdateTrainerPropertiesFromPlayerManager() {
             UpdateTrainerProperties( PlayerManager.Data.TrainerManager );
+        }
+
+        private void OnTutorialFinished( string i_tutorialName ) {
+            UpdateTrainerPropertiesFromPlayerManager();
         }
     }
 }

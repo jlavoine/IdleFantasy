@@ -62,6 +62,7 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             MyMessenger.AddListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.AddListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
         }
 
         public void Dispose() {
@@ -70,6 +71,7 @@ namespace IdleFantasy {
 
         private void UnsubscribeFromMessages() {
             MyMessenger.RemoveListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
+            MyMessenger.RemoveListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
         }
 
         private void OnMissionCompleted( MissionData i_missionData ) {
@@ -78,6 +80,19 @@ namespace IdleFantasy {
             UpdateMissionProgress( i_missionData.MissionCategory, i_missionData.Index );
 
             CheckForUnitUnlock();
+        }
+
+        private void OnTutorialFinished( string i_tutorialName ) {
+            IncrementMetric( i_tutorialName );
+
+            SendTutorialCompleteMessageToServer( i_tutorialName );
+        }
+
+        private void SendTutorialCompleteMessageToServer( string i_tutorialName ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( BackendConstants.VALUE, i_tutorialName );
+
+            BackendManager.Backend.MakeCloudCall( BackendConstants.TUTORIAL_COMPLETE, cloudParams, null );
         }
 
         private void IncrementMetric( string i_metric ) {

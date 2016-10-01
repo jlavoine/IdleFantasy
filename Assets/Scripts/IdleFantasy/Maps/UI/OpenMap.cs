@@ -3,6 +3,8 @@ using MyLibrary;
 
 namespace IdleFantasy {
     public class OpenMap : MonoBehaviour {
+        public const string OPEN_MAP_MESSAGE = "OpenMapViaMessage";
+
         public GameObject MapPrefab;
         public GameObject MainCanvas;
 
@@ -18,10 +20,12 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             MyMessenger.AddListener( MapKeys.TRAVEL_TO_SUCCESS, OnTravelSuccess );
+            MyMessenger.AddListener( OPEN_MAP_MESSAGE, CreateMapView );
         }
 
         private void UnsubscribeFromMessages() {
             MyMessenger.RemoveListener( MapKeys.TRAVEL_TO_SUCCESS, OnTravelSuccess );
+            MyMessenger.RemoveListener( OPEN_MAP_MESSAGE, CreateMapView );
         }
 
         private void OnTravelSuccess() {

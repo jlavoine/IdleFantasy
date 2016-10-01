@@ -17,8 +17,9 @@ public static class GameObjectHelper
     }
     public static GameObject InstantiateUI( this GameObject go, GameObject i_goPrefab, GameObject i_goParent = null ) {
         GameObject goNew = GameObject.Instantiate<GameObject>( i_goPrefab );
-        if ( i_goParent == null )
-            i_goParent = go;
+        if ( i_goParent == null ) {
+            i_goParent = GameObject.FindGameObjectWithTag( "MainCanvas" );
+        }
 
         goNew.transform.SetParent( i_goParent.transform, false );
 

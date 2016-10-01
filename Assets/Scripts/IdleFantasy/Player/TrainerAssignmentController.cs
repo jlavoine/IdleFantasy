@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using MyLibrary;
 
 namespace IdleFantasy {
     public class TrainerAssignmentController : MonoBehaviour {
+        public const string ADD_TRAINER_MESSAGE = "TrainerAdded"; // for tutorial
 
         private IUnit mUnit;
 
@@ -10,6 +12,8 @@ namespace IdleFantasy {
         }
 
         public void IncreaseTrainingLevel() {
+            MyMessenger.Send( ADD_TRAINER_MESSAGE );
+
             PlayerManager.Data.TrainerManager.InitiateChangeInTraining( mUnit, true );
 
             BackendManager.Backend.ChangeAssignedTrainers( mUnit.GetID(), 1 );

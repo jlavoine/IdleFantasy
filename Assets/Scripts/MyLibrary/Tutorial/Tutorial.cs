@@ -11,7 +11,7 @@ using System.Collections.Generic;
 /// all other projects.
 //////////////////////////////////////////
 
-public abstract class Tutorial : MonoBehaviour {
+public abstract class OldTut : MonoBehaviour {
 	// pure abstract functions
 	protected abstract void SetKey();						// the tutorial key is used to mark a lot of lists
 	protected abstract void SetMaxSteps();					// set the max steps of the tutorial

@@ -34,6 +34,7 @@ namespace IdleFantasy {
         public const string GET_MISSIONS = "getTestMissions";
         public const string COMPLETE_MISSION = "initiateCompleteMission";
         public const string TRAVEL_TO = "initiateTravelTo";
+        public const string TUTORIAL_COMPLETE = "tutorialComplete";
         #endregion
 
         #region Map Piece Modifiers

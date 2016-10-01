@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace IdleFantasy {
     public class MissionView : GroupView {
+        public const string COMPLETE_MESSAGE = "MissionComplete"; // for tutorial
+
         public GameObject MissionTaskPrefab;
         public GameObject MissionTaskContent;
 
@@ -48,6 +50,7 @@ namespace IdleFantasy {
         }
 
         public void CompleteMission() {
+            MyMessenger.Send( COMPLETE_MESSAGE );
             mMission.CompleteMission();
         }
 

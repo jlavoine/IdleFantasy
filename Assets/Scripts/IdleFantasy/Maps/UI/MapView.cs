@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class MapView : GroupView {
+        public const string CLOSE_MAP_MESSAGE = "CloseMap";     // used by tutorial
+
         public GameObject MapAreaPrefab;
         public GameObject MapAreaContent;
 
@@ -29,10 +31,17 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             MyMessenger.AddListener<int>( MapKeys.TRAVEL_TO_REQUEST, OnTravelToSelected );
+            MyMessenger.AddListener( CLOSE_MAP_MESSAGE, CloseMap );
         }
 
         private void UnsubscribeFromMessages() {
             MyMessenger.RemoveListener<int>( MapKeys.TRAVEL_TO_REQUEST, OnTravelToSelected );
+            MyMessenger.RemoveListener( CLOSE_MAP_MESSAGE, CloseMap );
+        }
+
+        private void CloseMap() {
+            ClosableObject closable = GetComponent<ClosableObject>();
+            closable.StartClose();
         }
 
         private void CreateMapAreas( List<SingleMissionProgress> i_missionProgress ) {

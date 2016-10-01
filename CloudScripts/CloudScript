@@ -1573,7 +1573,12 @@ function UnlockTarget(className, targetID) {
 function IncrementGameMetric(metricName) {
     var metricsData = GetReadOnlySaveData(GAME_METRICS);
     var allMetrics = metricsData[METRICS];
-    allMetrics[metricName] += 1;
+
+    if (allMetrics.hasOwnProperty(metricName)) {
+        allMetrics[metricName] += 1;
+    } else {
+        allMetrics[metricName] = 1;
+    }
 
     SetReadOnlyData(GAME_METRICS, metricsData);
 }
@@ -2160,8 +2165,9 @@ function SetCurrency(currencyType, amountToSet) {
     }
 }
 
-function HasEnoughCurrency(playerCurrencies, currencyType, amount) {
+function HasEnoughCurrency(playerCurrencies, currencyType, amount) {    
     var currentCurrency = playerCurrencies[currencyType];    
+    log.info("Looking for has enough " + amount + " and " + currentCurrency);
     return currentCurrency >= amount;
 }
 
@@ -2277,6 +2283,10 @@ function GetNumberFromObject(object, key) {
     var num = parseInt(object[key], 10);
 
     return num;
+}
+
+handlers.tutorialComplete = function (args) {
+    IncrementGameMetric(TUTORIAL_INTRO);
 }
 
 /////////////////////////////////////////////////
@@ -2722,9 +2732,10 @@ function IsAtMaxLevel(upgradeData, progressData) {
 function CanAffordUpgrade(upgradeData, progressData, playerInventory) {
     var playerCurrencies = GetPlayerCurrenciesFromInventory(playerInventory);
     var resourcesToUpgrade = upgradeData[UPGRADE_RESOURCES];
+    var coefficient = upgradeData[COEFFICIENT];
 
     for (var resource in resourcesToUpgrade) {
-        var cost = GetUpgradeCost(resourcesToUpgrade, resource, progressData);
+        var cost = GetUpgradeCost(resourcesToUpgrade, coefficient, resource, progressData);
         
         if(!HasEnoughCurrency(playerCurrencies, resource, cost)) {
             return false;
@@ -2736,10 +2747,11 @@ function CanAffordUpgrade(upgradeData, progressData, playerInventory) {
 
 /// deducts the cost of an upgrade from the player
 function PayForUpgrade(upgradeData, progressData, playerInventory) {
-    var resourcesToUpgrade = upgradeData[UPGRADE_RESOURCES];    
+    var resourcesToUpgrade = upgradeData[UPGRADE_RESOURCES];  
+    var coefficient = upgradeData[COEFFICIENT];  
 
     for (var resource in resourcesToUpgrade) {        
-        var cost = GetUpgradeCost(resourcesToUpgrade, resource, progressData);
+        var cost = GetUpgradeCost(resourcesToUpgrade, coefficient, resource, progressData);
                 
         server.SubtractUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: resource, Amount: cost });
     }
@@ -2763,12 +2775,11 @@ function Upgrade(readOnlyData, className, progressData, targetID) {
 
 /// given the resources to upgrade a target, a given resource, and the progress data for the target,
 /// returns the cost in currency to upgrade that resource
-function GetUpgradeCost(resourcesToUpgrade, resource, progressData) {
+function GetUpgradeCost(resourcesToUpgrade, coefficient, resource, progressData) {
     var level = progressData[UPGRADE_LEVEL];
-    var coefficient = progressData[COEFFICIENT];
     var costPerLevel = resourcesToUpgrade[resource];
     var cost = Math.ceil(costPerLevel * Math.pow(coefficient, level-1));
-
+    
     return cost;
 }
 
