@@ -58,8 +58,23 @@ namespace IdleFantasy {
         }
 
         private void CreateTestMission_FromBackend() {
-            BackendManager.Backend.GetMission( "Test", OnGotMission );
+            //BackendManager.Backend.GetMission( "Test", OnGotMission );
         }
+
+        /*
+                // right now this is just for testing
+        public void GetMission(string i_missionType, Callback<MissionData> i_callback ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( BackendConstants.MISSION_TYPE, i_missionType );
+
+            MakeCloudCall( BackendConstants.GET_MISSIONS, cloudParams, ( results ) => {
+                if ( results.ContainsKey( BackendConstants.DATA ) ) {
+                    List<MissionData> listMissions = JsonConvert.DeserializeObject<List<MissionData>>( results[BackendConstants.DATA] );
+                    i_callback( listMissions[0] );
+                }
+            } );
+        }
+        */
 
         private void OnGotMission( MissionData i_data ) {
             mTestMission = new Mission( i_data );

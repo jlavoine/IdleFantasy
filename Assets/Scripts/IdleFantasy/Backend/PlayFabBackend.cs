@@ -14,6 +14,10 @@ namespace MyLibrary {
         public const string PLAYFAB = "PlayFab";
         public const string CLIENT_OUT_OF_SYNC_KEY = "outOfSync";
 
+        // some game cloud calls need to be queued so they don't try and edit the same data at once
+        private Queue<QueuedCloudCall> mCloudCallQueue = new Queue<QueuedCloudCall>();
+        private bool mWaitingForQueuedCall = false;
+
         private int mCloudRequestCount = 0;
         public int CloudRequestCount {
             get { return mCloudRequestCount; }
@@ -75,6 +79,30 @@ namespace MyLibrary {
                 MyMessenger.Send( BackendMessages.CLOUD_SETUP_SUCCESS );
             },
             ( error ) => { HandleError( error, BackendMessages.CLOUD_SETUP_FAIL ); } );
+        }    
+
+        public void QueueCloudCall( string i_methodName, Dictionary<string, string> i_params, Callback<Dictionary<string,string>> i_requestSuccessCallback ) {
+            mCloudCallQueue.Enqueue( new QueuedCloudCall( i_methodName, i_params, i_requestSuccessCallback ) );
+
+            if ( !mWaitingForQueuedCall ) {
+                SendNextQueuedCloudCall();
+            }
+        }
+
+        private void SendNextQueuedCloudCall() {
+            if ( mCloudCallQueue.Count > 0 ) {
+                QueuedCloudCall call = mCloudCallQueue.Dequeue();
+                mWaitingForQueuedCall = true;
+
+                MakeCloudCall( call.MethodName, call.Params, ( result ) => {
+                    if ( call.SuccessCallback != null ) {
+                        call.SuccessCallback( result );
+                    }
+
+                    mWaitingForQueuedCall = false;
+                    SendNextQueuedCloudCall();
+                } );
+            }
         }
 
         public void MakeCloudCall( string i_methodName, Dictionary<string,string> i_params, Callback<Dictionary<string, string>> i_requestSuccessCallback ) {
@@ -86,9 +114,10 @@ namespace MyLibrary {
                 Params = new { data = i_params }
             };
 
-            PlayFabClientAPI.RunCloudScript( request, ( result ) => {                
-                Dictionary<string, string> resultsDeserialized = new Dictionary<string, string>();
+            PlayFabClientAPI.RunCloudScript( request, ( result ) => {
+                RequestComplete( "Cloud logs for " + i_methodName + "(" + result.ExecutionTime + ") call " + ": " + result.ActionLog, LogTypes.Info );
 
+                Dictionary<string, string> resultsDeserialized = new Dictionary<string, string>();
                 if ( result.Results != null ) {
                     string resultAsString = result.Results.ToString();
                     resultsDeserialized = JsonConvert.DeserializeObject<Dictionary<string, string>>( resultAsString );
@@ -98,9 +127,7 @@ namespace MyLibrary {
 
                 if ( i_requestSuccessCallback != null ) {
                     i_requestSuccessCallback( resultsDeserialized );
-                }
-
-                RequestComplete( "Cloud logs for " + i_methodName + "(" + result.ExecutionTime + ") call " + ": " + result.ActionLog, LogTypes.Info );
+                }                
             }, ( error ) => { HandleError( error, i_methodName ); } );
         }
 
