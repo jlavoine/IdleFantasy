@@ -15,6 +15,7 @@ namespace IdleFantasy {
         public const string POINTS = "Points";
         public const string PROGRESS = "Progress";
         public const string MISSION_TYPE = "MissionCategory";
+        public const string MISSION_WORLD = "MissionWorld";
         public const string MISSION_INDEX = "Index";
         public const string MISSION_PROPOSALS = "TaskProposals";
         public const string MAP_LEVEL = "MapLevel";
@@ -31,7 +32,6 @@ namespace IdleFantasy {
         public const string INIT_TRAINING_CHANGE = "initiateChangeInTraining";
         public const string ADD_POINTS_TO_UPGRADE = "addPointsToUpgrade";
         public const string ADD_PROGRESS_TO_UPGRADE = "addProgressToUpgrade";
-        public const string GET_MISSIONS = "getTestMissions";
         public const string COMPLETE_MISSION = "initiateCompleteMission";
         public const string TRAVEL_TO = "initiateTravelTo";
         public const string TUTORIAL_COMPLETE = "tutorialComplete";
@@ -56,6 +56,7 @@ namespace IdleFantasy {
         public const string MISSION_PROGRESS = "MissionProgress";
         public const string MAP_BASE = "Map_Base";
         public const string GAME_METRICS = "GameMetrics";
+        public const string REPEATABLE_QUEST_PROGRESS = "RepeatableQuestProgress";
         #endregion
 
         #region Title data keys

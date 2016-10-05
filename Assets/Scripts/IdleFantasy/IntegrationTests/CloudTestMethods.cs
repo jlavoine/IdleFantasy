@@ -24,7 +24,6 @@ namespace IdleFantasy {
         getGameMetric,
         addPointsToUpgrade,
         addProgressToUpgrade,
-        getTestMissions,
         createMapForTesting,
         getDefaultMapAreaWeights,
         deleteAllPlayerReadOnlyData,
