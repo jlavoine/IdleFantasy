@@ -6,6 +6,7 @@ using MyLibrary;
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
         protected const string MISSION_WORLD = "Base";
+        protected const string MISSION_CATEGORY = "Map";
         protected const int MISSION_GOLD_REWARD = 1000;
         protected const int MISSIONS_DONE_COUNT = 0;
 
@@ -80,7 +81,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private MissionData CreateMissionData() {           
             MissionData testMissionData = new MissionData();
 
-            testMissionData.MissionCategory = MISSION_WORLD;
+            testMissionData.MissionCategory = MISSION_CATEGORY;
+            testMissionData.MissionWorld = MISSION_WORLD;
             testMissionData.Index = MISSION_INDEX;
             testMissionData.GoldReward = MISSION_GOLD_REWARD;
 
@@ -130,7 +132,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private IEnumerator InitiateMissionComplete() {
             Dictionary<int, MissionTaskProposal> taskProposals = GetTaskProposals();
-            BackendManager.Backend.CompleteMission( MISSION_WORLD, MISSION_INDEX, taskProposals );
+            BackendManager.Backend.CompleteMission( CreateMissionData(), taskProposals );
 
             yield return mBackend.WaitUntilNotBusy();
         }

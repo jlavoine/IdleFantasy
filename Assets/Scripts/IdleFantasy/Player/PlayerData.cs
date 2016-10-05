@@ -29,6 +29,9 @@ namespace IdleFantasy {
         public Dictionary<string, WorldMissionProgress> mMissionProgress = new Dictionary<string, WorldMissionProgress>();
         public Dictionary<string, WorldMissionProgress> MissionProgress { get { return mMissionProgress; } }
 
+        public Dictionary<string, RepeatableQuestProgress> mRepeatableQuestProgress = new Dictionary<string, RepeatableQuestProgress>();
+        public Dictionary<string, RepeatableQuestProgress> RepeatableQuestProgress { get { return mRepeatableQuestProgress; } }
+
         private TrainerSaveData mTrainerSaveData;
         private ITrainerManager mTrainerManager;
         public ITrainerManager TrainerManager { get { return mTrainerManager; } }
@@ -58,6 +61,7 @@ namespace IdleFantasy {
             DownloadMissionProgress();
             DownloadUnlockPlan();
             DownloadGameMetrics();
+            DownloadRepeatableQuestProgress();
         }
 
         private void SubscribeToMessages() {
@@ -77,7 +81,7 @@ namespace IdleFantasy {
         private void OnMissionCompleted( MissionData i_missionData ) {
             IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
             ApplyMissionRewards( i_missionData );
-            UpdateMissionProgress( i_missionData.MissionCategory, i_missionData.Index );
+            UpdateMissionProgress( i_missionData.MissionWorld, i_missionData.Index );
 
             CheckForUnitUnlock();
         }
@@ -156,6 +160,12 @@ namespace IdleFantasy {
             mBackend.GetPlayerData( BackendConstants.GAME_METRICS, ( jsonData ) => {
                 mGameMetrics = JsonConvert.DeserializeObject<GameMetrics>( jsonData );
             } );
+        }
+
+        private void DownloadRepeatableQuestProgress() {
+            mBackend.GetPlayerData( BackendConstants.REPEATABLE_QUEST_PROGRESS, (jsonData) => {
+                mRepeatableQuestProgress = JsonConvert.DeserializeObject<Dictionary<string, RepeatableQuestProgress>>( jsonData );
+            });
         }
 
         private void DownloadMapData() {

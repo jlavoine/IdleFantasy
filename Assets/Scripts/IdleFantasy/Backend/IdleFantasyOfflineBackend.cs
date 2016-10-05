@@ -8,7 +8,7 @@ namespace IdleFantasy {
             throw new NotImplementedException();
         }
 
-        public void CompleteMission( string i_missionType, int i_missionIndex, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
+        public void CompleteMission( MissionData i_mission, Dictionary<int, MissionTaskProposal> i_taskProposals ) {
             throw new NotImplementedException();
         }
 

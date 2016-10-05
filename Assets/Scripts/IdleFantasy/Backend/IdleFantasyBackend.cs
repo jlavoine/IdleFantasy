@@ -20,10 +20,11 @@ namespace IdleFantasy {
             QueueCloudCall( BackendConstants.INIT_UPGRADE, upgradeParams, null );
         }
 
-        public void CompleteMission(string i_missionType, int i_missionIndex, Dictionary<int, MissionTaskProposal> i_taskProposals ) {            
+        public void CompleteMission( MissionData i_mission, Dictionary<int, MissionTaskProposal> i_taskProposals ) {            
             Dictionary<string, string> cloudParams = new Dictionary<string, string>();
-            cloudParams.Add( BackendConstants.MISSION_TYPE, i_missionType );
-            cloudParams.Add( BackendConstants.MISSION_INDEX, i_missionIndex.ToString() );
+            cloudParams.Add( BackendConstants.MISSION_TYPE, i_mission.MissionCategory );
+            cloudParams.Add( BackendConstants.MISSION_WORLD, i_mission.MissionWorld );
+            cloudParams.Add( BackendConstants.MISSION_INDEX, i_mission.Index.ToString() );
             cloudParams.Add( BackendConstants.MISSION_PROPOSALS, JsonConvert.SerializeObject( i_taskProposals ) );
 
             QueueCloudCall( BackendConstants.COMPLETE_MISSION, cloudParams, null );

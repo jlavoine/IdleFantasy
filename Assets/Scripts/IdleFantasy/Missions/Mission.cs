@@ -56,7 +56,7 @@ namespace IdleFantasy {
         }
 
         private void SendCompletionToServer() {
-            BackendManager.Backend.CompleteMission( mData.MissionCategory, mData.Index, MissionProposal.TaskProposals );
+            BackendManager.Backend.CompleteMission( mData, MissionProposal.TaskProposals );
         }    
     }
 }

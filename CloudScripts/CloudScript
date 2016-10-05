@@ -23,6 +23,11 @@ const STARTING_GOLD = 2000;
 // tutorials
 const TUTORIAL_INTRO = "IntroTutorial";
 
+// repeatable quests
+const REPEATABLE_QUEST_PROGRESS = "RepeatableQuestProgress";
+const REPEATABLE_QUEST_INDEX = 3; // adding this type of index in for repeatable quests so missions generated with it can function
+const REPEATABLE_QUEST_KEY = "REPEATABLE_QUEST"; // see above
+
 // unit counting
 const LAST_UNIT_COUNT = "LastCountTime";            // key for timestamp of last unit count update (in unit's progress data)
 const UNIT_COUNT = "Count";                         // key in unit's save data for # of that unit
@@ -57,6 +62,9 @@ const DESC = "DescriptionKey";
 const ID = "ID";
 const WORLD = "World";
 const MAP = "Map";
+const COMPLETED_COUNT = "CompletedCount";
+const CURRENTLY_AVAILABLE = "CurrentlyAvailable";
+const MISSION = "Mission";
 
 // map related
 const DEFAULT_MAP_SIZE = 36;
@@ -172,6 +180,7 @@ const MODIFIER_PERCENT = 1;     // percentage bonus
 /// missions
 const MISSION_PROGRESS_KEY = "MissionProgress"; // player save data for mission progress
 const MISSION_TYPE_KEY = "MissionCategory";     // the key holding the mission type of the mission or complete call
+const MISSION_WORLD_KEY = "MissionWorld";       // world the mission belongs to
 const MISSION_SAVE_KEY = "Missions_";           // the save key that all missions are saved with in internal data, i.e. Key_(type)
 const MISSION_INDEX_KEY = "Index";              // used when specifying a particular mission within a type
 const MISSION_PROPOSALS_KEY = "TaskProposals"; // key for the client to send task proposals for a mission
@@ -185,10 +194,15 @@ const MISSION_GOLD_REWARD = "GoldReward";
 const MISSION_TASK_BASE_POWER = 10;             // for alpha; determines how much power a mission task requires. scales with map level.
 const COMBAT_POWER_MODIFIER = 1.5;              // power requirement is multiplied by this for combat missions
 
+/// mission types
+const MISSION_MAP = "Map";
+const MISSION_REPEATABLE_QUEST = "RepeatableQuest";
+
 /// mission constants
 const BASE_GOLD_REWARD = 100;
 const GOLD_REWARD_COEFFICIENT = 1.09;
 const COMBAT_GOLD_MODIFIER = 0.4;
+const REPEATABLE_GOLD_MODIFIER = .5;
 
 /// mission progress
 const MISSION_PROGRESS_LIST = "Missions";
@@ -288,19 +302,6 @@ handlers.addProgressToUpgrade = function(args) {
     var totalProgressToAdd = GetFloatFromArgs(args, UPGRADE_PROGRESS);
 
     AddProgressToUpgrade(className, targetID, upgradeID, totalProgressToAdd, args);
-}
-
-/// Gets the test missions, used when I was creating the mission format
-handlers.getTestMissions = function (args) {
-    if (!isTesting()) {
-         return returnOutOfSync();  
-    }
-
-   var missionType = args.data[MISSION_TYPE_KEY];
-
-   var missions = GetMissionsOfType(missionType);
-
-   return ReturnDataToClient(missions);
 }
 
 /// use this method to test if unit counts are updating properly
@@ -950,7 +951,8 @@ function CreateMapArea(map, areaIndex, weightedAreaList, defaultMission) {
 function GenerateMapMission(map, areaIndex, areaType) {
     var mission = {};
 
-    mission[MISSION_TYPE_KEY] = MODULE_BASE;
+    mission[MISSION_TYPE_KEY] = MISSION_MAP;
+    mission[MISSION_WORLD_KEY] = MODULE_BASE;
     mission[MISSION_INDEX_KEY] = areaIndex;
     mission[MISSION_GOLD_REWARD] = GetMissionGoldReward(map, areaType);
     mission[MISSION_TASKS_KEY] = GenerateMissionTasks(map, areaIndex, areaType);
@@ -964,17 +966,17 @@ function GenerateMissionTasks(map, areaIndex, areaType) {
     
     var task = {};
     task[MISSION_INDEX_KEY] = 0;
-    task[MISSION_REQUIRED_STAT] = GetMissionStat(map);
+    task[MISSION_REQUIRED_STAT] = GetRandomStatForMap(map);
     task[DESC] = GetMissionTaskDescription(task, areaType);
-    task[MISSION_REQUIRED_POWER] = GetMissionPowerRequirement(map, areaType);
+    task[MISSION_REQUIRED_POWER] = GetMissionPowerRequirement(GetMapLevel(map), areaType);
 
     tasks.push(task);
     return tasks;
 }
 
-function GetMissionPowerRequirement(map, areaType) {
+function GetMissionPowerRequirement(level, areaType) {
     var areaModifier = GetPowerRequirementModifierFromAreaType(areaType);
-    var powerRequirement = MISSION_TASK_BASE_POWER * (GetMapLevel(map) + 1);
+    var powerRequirement = MISSION_TASK_BASE_POWER * (level + 1);
     powerRequirement = Math.ceil(powerRequirement * areaModifier);
 
     return powerRequirement;
@@ -986,6 +988,8 @@ function GetMissionTaskDescription(task, areaType) {
 
     if (areaType == COMBAT_INDEX) {
         key += COMBAT_KEY;
+    } else if (areaType == REPEATABLE_QUEST_INDEX ) {
+        key += REPEATABLE_QUEST_KEY;
     } else {
         key += MISC_KEY;
     }
@@ -993,12 +997,20 @@ function GetMissionTaskDescription(task, areaType) {
     return key;
 }
 
-function GetMissionStat(map) {
-    return GetRandomStat(map);
+function GetStatsList() {
+    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4", "BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+
+    return stats;   
 }
 
-function GetRandomStat(map) {
-    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4", "BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+function GetRandomStat() {
+    var stats = GetStatsList();
+
+    return GetRandomArrayElement(stats);
+}
+
+function GetRandomStatForMap(map) {
+    var stats = GetStatsList();
 
     AddToListFromModification(stats, map, BASE_STAT_1_UP, "BASE_STAT_1");
     AddToListFromModification(stats, map, BASE_STAT_2_UP, "BASE_STAT_2");
@@ -1338,30 +1350,31 @@ handlers.initiateCompleteMission = function (args) {
     UpdateAllUnitCounts(Date.now());
        
     var missionType = args.data[MISSION_TYPE_KEY];
+    var missionWorld = args.data[MISSION_WORLD_KEY];
     var missionIndex = GetNumberFromArgs(args, MISSION_INDEX_KEY);    
     var taskProposalsJSON = args.data[MISSION_PROPOSALS_KEY];
 
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
     var allUnitProgress = GetProgressData(CLASS_UNIT);    
 
-    log.info("Trying to complete mission # " + missionIndex + " for type " + missionType);
+    log.info("Trying to complete mission # " + missionIndex + " for type " + missionType + " in world " + missionWorld);
     log.info("Trying to complete the mission with proposal: " + taskProposalsJSON);
 
-    var mission = GetMission(missionType, missionIndex);
+    var mission = GetMission(missionWorld, missionType, missionIndex);
     var tasks = GetMissionTasks(mission);
     var taskProposals = JSON.parse(taskProposalsJSON);
 
-    if (IsValidMission(missionType, missionIndex) && AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress)) {
-        CompleteMission(mission, missionType, taskProposals, allUnitProgress);
+    if (IsValidMission(missionWorld, missionIndex) && AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress)) {
+        CompleteMission(mission, missionWorld, taskProposals, allUnitProgress);
     } else {
         return { outOfSync : true };
     }
 }
 
-function CompleteMission(mission, missionType, taskProposals, allUnitProgress) {
+function CompleteMission(mission, missionWorld, taskProposals, allUnitProgress) {
     log.info("Successfully completed mission: " + GetMissionType(mission) + " #" + GetMissionIndex(mission) );
 
-    MarkMissionComplete(mission, missionType);
+    MarkMissionComplete(mission, missionWorld);
     ApplyMissionRewards(mission);
     PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
     CheckForUnitUnlock();
@@ -1500,25 +1513,37 @@ function GetMissionTasks(mission) {
     return tasks;
 }
 
-function GetMission(type, index) {
-    log.info("Getting mission " + index + " of type " + type);
+function GetMission(world, type, index) {
+    log.info("Getting mission " + index + " of type " + type + " in world " + world);
 
-    var map = GetMapOfWorld(type);
+    if (type == MISSION_MAP) {
+        return GetMissionOfMapType(world, index);
+    } else { //if (type == MISSION_REPEATABLE_QUEST)
+        return GetMissionOfRepeatableQuestType(world);
+    }
+}
+
+function GetMissionOfMapType(world, index) {
+    var map = GetMapOfWorld(world);
     var mission = GetMissionFromMap(map, index);
 
-    log.info("Got mission: " + JSON.stringify(mission));
+    //log.info("Got mission: " + JSON.stringify(mission));
     return mission;
 }
 
-function GetMissionsOfType(type) {
-    log.info("Getting all missions with type: " + type);
-    var saveKey = MISSION_SAVE_KEY + type;
+function GetMissionOfRepeatableQuestType(world) {
+    var questData = GetRepeatableQuestOfWorld(world);
+    var mission = GetMissionFromRepeatableQuest(questData);
 
-    return GetReadOnlySaveData(saveKey);
+    return mission;
 }
 
 function GetMissionType(mission) {
     return mission[MISSION_TYPE_KEY];
+}
+
+function GetMissionWorld(mission) {
+    return mission[MISSION_WORLD_KEY];
 }
 
 function GetMissionIndex(mission) {
@@ -1527,6 +1552,55 @@ function GetMissionIndex(mission) {
 
 /////////////////////////////////////////////////
 /// ~Missions
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Repeatable Quests
+/////////////////////////////////////////////////
+
+function GenerateRepeatableQuestMission(world, level) {
+    var mission = {};
+
+    mission[MISSION_TYPE_KEY] = MISSION_REPEATABLE_QUEST;
+    mission[MISSION_WORLD_KEY] = world;
+    mission[MISSION_INDEX_KEY] = 0;
+    mission[MISSION_GOLD_REWARD] = GetGoldRewardForRepeatableQuest(level);
+    mission[MISSION_TASKS_KEY] = GenerateMissionTasksForRepeatableQuest(level);
+
+    return mission;
+}
+
+function GetGoldRewardForRepeatableQuest(level) {
+    var baseGoldReward = Math.ceil(BASE_GOLD_REWARD * Math.pow(GOLD_REWARD_COEFFICIENT, level-1));    
+    var goldReward = baseGoldReward + Math.ceil(baseGoldReward * REPEATABLE_GOLD_MODIFIER);
+
+    return goldReward;
+}
+
+function GenerateMissionTasksForRepeatableQuest(level) {
+    var tasks = [];
+    
+    var task = {};
+    task[MISSION_INDEX_KEY] = 0;
+    task[MISSION_REQUIRED_STAT] = GetRandomStat();
+    task[DESC] = GetMissionTaskDescription(task, COMBAT_INDEX); // just use combat index for now
+    task[MISSION_REQUIRED_POWER] = GetMissionPowerRequirement(level, COMBAT_INDEX);
+
+    tasks.push(task);
+    return tasks;
+}
+
+function GetRepeatableQuestOfWorld(world) {
+    var repeatableQuestProgress = GetReadOnlySaveData(REPEATABLE_QUEST_PROGRESS);
+    return repeatableQuestProgress[world];
+}
+
+function GetMissionFromRepeatableQuest(questData) {
+    return questData[MISSION];
+}
+
+/////////////////////////////////////////////////
+/// ~Repeatable Quests
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -1790,6 +1864,7 @@ function WipePlayerDataIfIntroTutorialIncomplete(allSaveData) {
 function AddMissingSaveData(allSaveData, arraySaveKeys, titleData) {
     AddMissingSaveObjects(arraySaveKeys, allSaveData);
 
+    AddRepeatableQuestProgress_IfMissing(allSaveData);
     AddBuildingProgress_IfMissing(allSaveData[GetProgressKey(CLASS_BUILDING)], titleData[CLASS_BUILDING]);
     AddGuildProgress_IfMissing(allSaveData[GetProgressKey(CLASS_GUILD)], titleData[CLASS_GUILD]);
     AddTrainerProgress_IfMissing(allSaveData);
@@ -1902,7 +1977,8 @@ function AddGameMetrics_IfMissing(allSaveData) {
     }
 }
 
-function AddMissionProgres_IfMissing(allSaveData) {
+/// this is never called...?????
+function AddMissionProgress_IfMissing(allSaveData) {
     if (!allSaveData.hasOwnProperty(MISSION_PROGRESS_KEY)) {
         allSaveData[MISSION_PROGRESS_KEY] = {};
     }
@@ -1944,6 +2020,29 @@ function AddWorldProgress_IfMissing(allSaveData, allModules) {
             worldProgressData[module] = worldProgress;
         }
     }        
+}
+
+function AddRepeatableQuestProgress_IfMissing(allSaveData) {
+    if (!allSaveData.hasOwnProperty(REPEATABLE_QUEST_PROGRESS)) {
+        allSaveData[REPEATABLE_QUEST_PROGRESS] = {};
+    }      
+
+    var allModules = GetAllModules();
+    var allProgress = allSaveData[REPEATABLE_QUEST_PROGRESS];
+    for (var i = 0; i < allModules.length; i++) {
+        var module = allModules[i];
+        if (!allProgress.hasOwnProperty(module)) {
+            var progressForModule = {};
+
+            progressForModule[WORLD] = module;
+            progressForModule[COMPLETED_COUNT] = 0;
+
+            progressForModule[CURRENTLY_AVAILABLE] = false;
+            progressForModule[MISSION] = GenerateRepeatableQuestMission(module, 0);
+
+            allProgress[module] = progressForModule;
+        }
+    }
 }
 
 /////////////////////////////////////////////////
@@ -2210,6 +2309,7 @@ function WipePlayerData() {
     emptyData[MAP_SAVE_KEY + MODULE_BASE] = "{}";
     emptyData[MISSION_PROGRESS_KEY] = "{}";
     emptyData[GAME_METRICS] = "{}";
+    emptyData[REPEATABLE_QUEST_PROGRESS] = "{}";
 
     SetSaveDataWithObject(emptyData, READ_ONLY);
 
