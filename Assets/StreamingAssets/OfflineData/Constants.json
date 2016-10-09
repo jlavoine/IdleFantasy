@@ -39,12 +39,12 @@
     "Type": "Double",
     "Value": 1.12
   },
-  "EnoughUnits": {
+  "EnoughUnitsColor": {
     "ID": "EnoughUnitsColor",
     "Type": "Color",
     "Value": "0.0,255.0,0.0,255.0"
   },
-  "NotEnoughUnits": {
+  "NotEnoughUnitsColor": {
     "ID": "NotEnoughUnitsColor",
     "Type": "Color",
     "Value": "255.0,0.0,0.0,255.0"
@@ -88,5 +88,10 @@
     "ID": "NonCombatMissionStats",
     "Type": "StringList",
     "Value": "BASE_STAT_1,BASE_STAT_2,BASE_STAT_3,BASE_STAT_4"
+  },
+  "MaxRepeatableQuests": {
+    "ID": "MaxRepeatableQuests",
+    "Type": "Int",
+    "Value": 1000
   }
 }

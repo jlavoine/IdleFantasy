@@ -13,5 +13,7 @@ namespace IdleFantasy {
 
         public const string UPCOMING_MAPS_COUNT = "UpcomingMapsCount";
         public const string AREAS_PER_TRAVEL_OPTION = "AreasPerTravelOption";
+
+        public const string MAX_REPEATABLE_QUESTS = "MaxRepeatableQuests";
     }
 }

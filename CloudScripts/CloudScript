@@ -1364,20 +1364,31 @@ handlers.initiateCompleteMission = function (args) {
     var tasks = GetMissionTasks(mission);
     var taskProposals = JSON.parse(taskProposalsJSON);
 
-    if (IsValidMission(missionWorld, missionIndex) && AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress)) {
-        CompleteMission(mission, missionWorld, taskProposals, allUnitProgress);
+    if (IsValidMission(missionType, missionWorld, missionIndex) && AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress)) {
+        CompleteMission(mission, taskProposals, allUnitProgress);
     } else {
         return { outOfSync : true };
     }
 }
 
-function CompleteMission(mission, missionWorld, taskProposals, allUnitProgress) {
+function CompleteMission(mission, taskProposals, allUnitProgress) {
     log.info("Successfully completed mission: " + GetMissionType(mission) + " #" + GetMissionIndex(mission) );
+    var missionType = GetMissionType(mission);
 
-    MarkMissionComplete(mission, missionWorld);
+    if (missionType == MISSION_MAP) {
+        CompleteMapMission(mission);
+        CheckForUnitUnlock();
+    } else if (missionType == MISSION_REPEATABLE_QUEST) {
+        CompleteRepeatableQuestMission(mission);
+    }
+    
     ApplyMissionRewards(mission);
-    PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
-    CheckForUnitUnlock();
+    PayUnitsFromTaskProposals(taskProposals, allUnitProgress);    
+}
+
+function CompleteMapMission(mission) {
+    var world = GetMissionWorld(mission);
+    MarkMissionComplete(mission, world);
 }
 
 function MarkMissionComplete(mission, world) {
@@ -1410,15 +1421,26 @@ function PayUnitsFromTaskProposals(taskProposals, allUnitProgress) {
     UpdateUnitSaveData(allUnitProgress);
 }
 
-function IsValidMission(missionWorld, missionIndex) {
-    log.info("Checking mission validity for " + missionWorld + " and " + missionIndex);
+function IsValidMission(missionType, missionWorld, missionIndex) {
+    log.info("Checking mission validity for " + missionType + " of " + missionWorld + " and #" + missionIndex);
 
+    if (missionType == MISSION_MAP) {
+        return IsValidMapMission(missionWorld, missionIndex);
+    } else if (missionType == MISSION_REPEATABLE_QUEST) {
+        return IsValidRepeatableQuestMission(missionWorld);
+    } else {
+        return false;
+    }
+}
+
+function IsValidMapMission(missionWorld, missionIndex) {
+    log.info("Checking map mission validity");
     var missionProgress = GetMissionProgress(missionWorld, missionIndex);
     var completed = IsMissionCompleted(missionProgress);
 
     log.info("Completed: " + completed);
 
-    return !completed;
+    return !completed;  
 }
 
 function AreTaskProposalsVerified(tasks, taskProposals, allUnitData, allUnitProgress) {
@@ -1559,6 +1581,7 @@ function GetMissionIndex(mission) {
 /////////////////////////////////////////////////
 
 function GenerateRepeatableQuestMission(world, level) {
+    log.info("Generating a repeatable quest mission for " + world + " and level " + level);
     var mission = {};
 
     mission[MISSION_TYPE_KEY] = MISSION_REPEATABLE_QUEST;
@@ -1573,6 +1596,8 @@ function GenerateRepeatableQuestMission(world, level) {
 function GetGoldRewardForRepeatableQuest(level) {
     var baseGoldReward = Math.ceil(BASE_GOLD_REWARD * Math.pow(GOLD_REWARD_COEFFICIENT, level-1));    
     var goldReward = baseGoldReward + Math.ceil(baseGoldReward * REPEATABLE_GOLD_MODIFIER);
+
+    log.info("Base gold: " + baseGoldReward + " and reward " + goldReward);
 
     return goldReward;
 }
@@ -1595,8 +1620,48 @@ function GetRepeatableQuestOfWorld(world) {
     return repeatableQuestProgress[world];
 }
 
+function SaveRepeatableQuestProgressForWorld(progress, world) {
+    var allProgress = GetReadOnlySaveData(REPEATABLE_QUEST_PROGRESS);
+    allProgress[world] = progress;
+
+    SetReadOnlyData(REPEATABLE_QUEST_PROGRESS, allProgress);
+}
+
 function GetMissionFromRepeatableQuest(questData) {
     return questData[MISSION];
+}
+
+function IsRepeatableQuestAvailable(repeatableQuest) {
+    return repeatableQuest[CURRENTLY_AVAILABLE];
+}
+
+function IsValidRepeatableQuestMission(missionWorld) {
+    var repeatableQuest = GetRepeatableQuestOfWorld(missionWorld);
+    var isValid = IsRepeatableQuestAvailable(repeatableQuest);
+
+    log.info("Checking validity of repeatable quest for " + missionWorld + ":" + isValid);
+    return isValid;
+}
+
+function CompleteRepeatableQuestMission(mission) {
+    var world = GetMissionWorld(mission);
+    var repeatableQuestProgress = GetRepeatableQuestOfWorld(world);
+    var currentMap = GetMapOfWorld(world);
+
+    repeatableQuestProgress[COMPLETED_COUNT] += 1;
+    repeatableQuestProgress[CURRENTLY_AVAILABLE] = false;
+    repeatableQuestProgress[MISSION] = GenerateRepeatableQuestMission(world, GetMapLevel(currentMap));
+
+    SaveRepeatableQuestProgressForWorld(repeatableQuestProgress, world);
+}
+
+handlers.watchedAdForRepeatableQuest = function (args) {    
+    var world = args.data[WORLD];
+    var repeatableQuest = GetRepeatableQuestOfWorld(world);
+    repeatableQuest[CURRENTLY_AVAILABLE] = true;
+
+    log.info("watchedAdForRepeatableQuest for world " + world);
+    SaveRepeatableQuestProgressForWorld(repeatableQuest, world);
 }
 
 /////////////////////////////////////////////////
@@ -1833,7 +1898,7 @@ handlers.onLogin = function (args) {
 /// if there were no values there.
 function AddMissingPlayerData() {
     var baseMapSaveKey = MAP_SAVE_KEY + MODULE_BASE;
-    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, GAME_METRICS];
+    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, GAME_METRICS, REPEATABLE_QUEST_PROGRESS];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
     if (WipePlayerDataIfIntroTutorialIncomplete(allSaveData)) {
@@ -2038,7 +2103,7 @@ function AddRepeatableQuestProgress_IfMissing(allSaveData) {
             progressForModule[COMPLETED_COUNT] = 0;
 
             progressForModule[CURRENTLY_AVAILABLE] = false;
-            progressForModule[MISSION] = GenerateRepeatableQuestMission(module, 0);
+            progressForModule[MISSION] = GenerateRepeatableQuestMission(module, 1);
 
             allProgress[module] = progressForModule;
         }

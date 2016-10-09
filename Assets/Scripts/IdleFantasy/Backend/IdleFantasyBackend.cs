@@ -6,6 +6,8 @@ namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IIdleFantasyBackend {
         public IdleFantasyBackend() : base() {}
 
+        public const string MISSION_COMPLETED_ON_SERVER_MESSAGE = "MissionCompleteOnServer";
+
         #region Game cloud calls
         // these cloud calls must be made ONE AT A TIME to avoid the server processing them too closely together.
         // if this happens, the server may increment the wrong values at the wrong times. i.e. two upgrade calls to
@@ -27,7 +29,9 @@ namespace IdleFantasy {
             cloudParams.Add( BackendConstants.MISSION_INDEX, i_mission.Index.ToString() );
             cloudParams.Add( BackendConstants.MISSION_PROPOSALS, JsonConvert.SerializeObject( i_taskProposals ) );
 
-            QueueCloudCall( BackendConstants.COMPLETE_MISSION, cloudParams, null );
+            QueueCloudCall( BackendConstants.COMPLETE_MISSION, cloudParams, ( result ) => {
+                EasyMessenger.Instance.Send( MISSION_COMPLETED_ON_SERVER_MESSAGE, i_mission );
+            } );
         }  
 
         public void MakeAddPointsToUpgradeCall( string i_className, string i_targetID, string i_upgradeID, int i_points ) {

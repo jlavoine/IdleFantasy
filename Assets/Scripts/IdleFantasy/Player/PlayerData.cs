@@ -65,8 +65,10 @@ namespace IdleFantasy {
         }
 
         private void SubscribeToMessages() {
-            MyMessenger.AddListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
-            MyMessenger.AddListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
+            EasyMessenger.Instance.AddListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionClientComplete );
+            EasyMessenger.Instance.AddListener<MissionData>( IdleFantasyBackend.MISSION_COMPLETED_ON_SERVER_MESSAGE, OnMissionServerComplete );
+            EasyMessenger.Instance.AddListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
+            EasyMessenger.Instance.AddListener( RepeatableQuestModel.AD_FINISHED_MESSAGE, OnRepeatableQuestAdFinished );
         }
 
         public void Dispose() {
@@ -74,16 +76,46 @@ namespace IdleFantasy {
         }
 
         private void UnsubscribeFromMessages() {
-            MyMessenger.RemoveListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionCompleted );
-            MyMessenger.RemoveListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
+            EasyMessenger.Instance.RemoveListener<MissionData>( MissionKeys.MISSION_COMPLETED, OnMissionClientComplete );
+            EasyMessenger.Instance.RemoveListener<MissionData>( IdleFantasyBackend.MISSION_COMPLETED_ON_SERVER_MESSAGE, OnMissionServerComplete );
+            EasyMessenger.Instance.RemoveListener<string>( Tutorial.TUTORIAL_FINISHED, OnTutorialFinished );
+            EasyMessenger.Instance.RemoveListener( RepeatableQuestModel.AD_FINISHED_MESSAGE, OnRepeatableQuestAdFinished );
         }
 
-        private void OnMissionCompleted( MissionData i_missionData ) {
-            IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
-            ApplyMissionRewards( i_missionData );
-            UpdateMissionProgress( i_missionData.MissionWorld, i_missionData.Index );
+        private void OnMissionClientComplete( MissionData i_missionData ) {            
+            ApplyMissionRewards( i_missionData );        
 
-            CheckForUnitUnlock();
+            if ( i_missionData.MissionCategory == BackendConstants.MISSION_TYPE_MAP ) {
+                IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
+                UpdateMissionProgress( i_missionData.MissionWorld, i_missionData.Index );
+                CheckForUnitUnlock();
+            } else if ( i_missionData.MissionCategory == BackendConstants.MISSION_TYPE_REPEATABLE_QUEST ) {
+                SetRepeatableQuestFinished( BackendConstants.WORLD_BASE );
+            }
+        }
+
+        private void SetRepeatableQuestFinished( string i_world ) {
+            IRepeatableQuestProgress progress = GetRepeatableQuestForWorld( i_world );
+            progress.SetMissionFinished();
+        }
+
+        private void OnMissionServerComplete( MissionData i_missionData ) {
+            if ( i_missionData.MissionCategory == BackendConstants.MISSION_TYPE_REPEATABLE_QUEST ) {
+                DownloadRepeatableQuestProgress();
+            }
+        }
+
+        private void OnRepeatableQuestAdFinished() {
+            RepeatableQuestProgress[BackendConstants.WORLD_BASE].CurrentlyAvailable = true;
+
+            SendRepeatableQuestAdFinishedToServer( BackendConstants.WORLD_BASE );
+        }
+
+        private void SendRepeatableQuestAdFinishedToServer( string i_world ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( BackendConstants.MAP_WORLD, i_world );
+
+            BackendManager.Backend.MakeCloudCall( BackendConstants.WATCHED_REPEATABLE_QUEST_AD, cloudParams, null );
         }
 
         private void OnTutorialFinished( string i_tutorialName ) {
@@ -310,6 +342,15 @@ namespace IdleFantasy {
             } else {
                 EasyLogger.Instance.Log( LogTypes.Fatal, "No mission progress for world: " + i_world, "" );
                 return new WorldMissionProgress();
+            }
+        }
+
+        public IRepeatableQuestProgress GetRepeatableQuestForWorld( string i_world ) {
+            if ( RepeatableQuestProgress.ContainsKey( i_world ) ) {
+                return RepeatableQuestProgress[i_world];
+            } else {
+                EasyLogger.Instance.Log( LogTypes.Fatal, "No repeatable quest progress for world: " + i_world, "" );
+                return new RepeatableQuestProgress();
             }
         }
 
