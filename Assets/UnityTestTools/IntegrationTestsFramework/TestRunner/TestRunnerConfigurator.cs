@@ -18,8 +18,6 @@ using System.Net.NetworkInformation;
 using UnityEditorInternal;
 #endif
 
-#pragma warning disable 0168
-
 namespace UnityTest
 {
     public class TestRunnerConfigurator
@@ -61,7 +59,7 @@ namespace UnityTest
                     {
                         return (UnityEditor.EditorBuildSettingsScene[] )serializer.Deserialize(textReader);
                     }
-                    catch (System.Xml.XmlException e)
+                    catch (System.Xml.XmlException)
                     {
                         return null;
                     }
