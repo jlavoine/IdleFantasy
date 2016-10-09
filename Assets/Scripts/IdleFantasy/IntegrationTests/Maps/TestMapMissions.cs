@@ -24,7 +24,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         private void TestMissionTaskContent( MissionData i_mission, MapAreaTypes i_areaType ) {
             foreach ( MissionTaskData taskData in i_mission.Tasks ) {
-                TestStatForMission( taskData.StatRequirement, i_areaType );
                 TestPowerForMission( taskData.PowerRequirement );
             }
         }
@@ -34,16 +33,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             if ( i_powerRequirement != expectedPower ) {
                 IntegrationTest.Fail( "Mission expecting " + expectedPower + " power but was " + i_powerRequirement );
-            }
-        }
-
-        private void TestStatForMission( string i_stat, MapAreaTypes i_areaType ) {
-            string statConstantKey = i_areaType == MapAreaTypes.Combat ? ConstantKeys.COMBAT_MISSION_STATS : ConstantKeys.NON_COMBAT_MISSION_STATS;
-
-            List<string> validStats = Constants.GetConstant<List<string>>( statConstantKey );
-
-            if ( !validStats.Contains( i_stat ) ) {
-                IntegrationTest.Fail( "Mission contains " + i_stat + " for " + i_areaType.ToString() + " but this is not legal" );
             }
         }
 

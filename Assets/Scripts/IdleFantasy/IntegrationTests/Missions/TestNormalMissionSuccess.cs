@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using Newtonsoft.Json;
-using System;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestNormalMissionSuccess : TestMission {
+    public class TestNormalMissionSuccess : MapMissionTestBase {
         protected override Dictionary<int, MissionTaskProposal> GetTaskProposals() {
             return GetValidMissionProposal();
         }

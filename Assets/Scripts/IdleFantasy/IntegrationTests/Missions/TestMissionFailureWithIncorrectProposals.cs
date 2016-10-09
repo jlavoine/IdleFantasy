@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
-    public class TestMissionFailureWithIncorrectProposals : TestMission {
+    public class TestMissionFailureWithIncorrectProposals : MapMissionTestBase {
         protected override Dictionary<int, MissionTaskProposal> GetTaskProposals() {
             Dictionary<int, MissionTaskProposal> taskProposals = new Dictionary<int, MissionTaskProposal>();
             taskProposals.Add( 0, new MissionTaskProposal( 0, "BASE_MELEE_1", 500 ) );

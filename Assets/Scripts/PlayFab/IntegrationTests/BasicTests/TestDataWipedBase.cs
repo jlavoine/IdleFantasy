@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestDataWipedBase : IntegrationTestBase {
-        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS, BackendConstants.GAME_METRICS };
+        private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS, BackendConstants.GAME_METRICS, BackendConstants.REPEATABLE_QUEST_PROGRESS };
         private const string EMPTY_SAVE_DATA = "{}";
         private const int DEFAULT_MAP_SIZE = 36;
         private const int STARTING_GOLD = 2000;
@@ -85,6 +85,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 case BackendConstants.GAME_METRICS:
                     VerifyGameMetricsIsDefault( i_saveData );
                     break;
+                case BackendConstants.REPEATABLE_QUEST_PROGRESS:
+                    VerifyRepeatableQuestProgressIsDefault( i_saveData );
+                    break;
                 default:
                     UnityEngine.Debug.LogError( "No case for default data check on " + i_saveKey );
                     break;
@@ -124,6 +127,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             GameMetrics metrics = JsonConvert.DeserializeObject<GameMetrics>( i_saveData );
             if ( metrics.Metrics.Count != 0 ) {
                 IntegrationTest.Fail( "Game metrics was not empty" );
+            }
+        }
+
+        private void VerifyRepeatableQuestProgressIsDefault( string i_saveData ) {
+            RepeatableQuestProgress progress = JsonConvert.DeserializeObject<RepeatableQuestProgress>( i_saveData );
+            if ( progress.CurrentlyAvailable != false || progress.CompletedCount != 0 ) {
+                IntegrationTest.Fail( "Repeatable quest progress was not default" );
             }
         }
 

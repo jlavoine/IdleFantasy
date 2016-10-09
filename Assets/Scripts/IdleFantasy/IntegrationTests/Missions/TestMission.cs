@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using MyLibrary;
+using UnityEngine;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
-        protected const string MISSION_WORLD = "Base";
-        protected const string MISSION_CATEGORY = "Map";
+        protected const string MISSION_WORLD = "Base";   
         protected const int MISSION_GOLD_REWARD = 1000;
         protected const int MISSIONS_DONE_COUNT = 0;
 
@@ -14,6 +14,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
         protected abstract string GetUnitProgressData();
+        protected abstract IEnumerator SetMissionDataOnServer();
+        protected abstract string GetMissionCategory();
 
         protected override IEnumerator RunAllTests() {
             bool completedMission = ShouldMarkMissionsComplete();
@@ -32,15 +34,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             }
 
             yield return RunOtherFailureChecks();
-        }
-
-        private IEnumerator SetMissionDataOnServer() {
-            MapData map = CreateMapData();           
-            string data = JsonConvert.SerializeObject( map );
-
-            IntegrationTestUtils.SetReadOnlyData( "Map_" + MISSION_WORLD, data );
-
-            yield return mBackend.WaitUntilNotBusy();
         }
 
         protected IEnumerator SetMissionProgressOnServer( bool i_bCompleted ) {
@@ -64,24 +57,10 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return mBackend.WaitUntilNotBusy();
         }
 
-        private MapData CreateMapData() {
-            MapData map = new MapData();
-            map.World = MISSION_WORLD;
-            map.MapSize = 1;
-            map.Areas = new List<MapAreaData>();
-
-            MapAreaData area0 = new MapAreaData();
-            area0.Index = 0;
-            area0.Mission = CreateMissionData();
-            map.Areas.Add( area0 );
-
-            return map;
-        }
-
-        private MissionData CreateMissionData() {           
+        protected MissionData CreateMissionData() {           
             MissionData testMissionData = new MissionData();
 
-            testMissionData.MissionCategory = MISSION_CATEGORY;
+            testMissionData.MissionCategory = GetMissionCategory();
             testMissionData.MissionWorld = MISSION_WORLD;
             testMissionData.Index = MISSION_INDEX;
             testMissionData.GoldReward = MISSION_GOLD_REWARD;
@@ -155,16 +134,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected virtual IEnumerator RunOtherFailureChecks() {
-            yield return FailIfMissionsCompletedMetricNotCorrect();
-        }
-
-        private IEnumerator FailIfMissionsCompletedMetricNotCorrect() {
-            int correctMetric = IsTestExpectedToFail() ? MISSIONS_DONE_COUNT : MISSIONS_DONE_COUNT + 1;
-
-            Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.KEY, GameMetricsList.TOTAL_MISSIONS_DONE } };
-            FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getGameMetric.ToString(), correctMetric, cloudParams );
-
-            yield return mBackend.WaitUntilNotBusy();
+            yield return null;
         }
         #endregion
     }
