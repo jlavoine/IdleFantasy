@@ -74,5 +74,9 @@ namespace IdleFantasy.UnitTests {
 
             return guilds;
         }
+
+        public static void ReplaceMessengerWithMock() {
+            EasyMessenger.Instance = Substitute.For<IMessageService>();
+        }
     }
 }
