@@ -37,25 +37,33 @@ namespace MyLibrary {
         }
 
         public bool IsAdReady() {
-            #if UNITY_EDITOR
-            return true;
-            #elif
+            #if UNITY_IOS || UNITY_ANDROID
             return Advertisement.IsReady();
+            #else
+            return true;
             #endif
         }
 
         public void RequestRewardAd() {
-            #if UNITY_EDITOR
-            OnRewardAdFinished( ShowResult.Finished );
-            #elif
+            #if UNITY_IOS || UNITY_ANDROID
             ShowOptions options = new ShowOptions();
-            options.resultCallback = OnRewardAdFinished;
+            options.resultCallback = OnRewardAdFinishedWithShowResults;
 
             Advertisement.Show( REWARD_VIDEO_ZONE, options );
+            #else
+            OnRewardAdFinished( AdResults.Finished );
             #endif
         }
 
-        private void OnRewardAdFinished( ShowResult i_result ) {
+        #if UNITY_ANDROID || UNITY_IOS
+        private void OnRewardAdFinishedWithShowResults( ShowResult i_result ) {
+            // this is to get around the fact that ShowResult is not available in PC builds, so we created our own result enum
+            AdResults adResult = (AdResults) i_result;
+            OnRewardAdFinished( adResult );
+        }
+        #endif
+
+        private void OnRewardAdFinished( AdResults i_result ) {
             EasyMessenger.Instance.Send( REWARD_AD_FINISHED_MESSAGE, i_result );            
         }
     }

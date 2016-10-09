@@ -42,20 +42,20 @@ namespace IdleFantasy {
         }
 
         private void SubscribeToMessages() {
-            EasyMessenger.Instance.AddListener<ShowResult>( AdManager.REWARD_AD_FINISHED_MESSAGE, OnRewardAdFinished );
+            EasyMessenger.Instance.AddListener<AdResults>( AdManager.REWARD_AD_FINISHED_MESSAGE, OnRewardAdFinished );
         }
 
         private void UnsubscribeFromMessages() {
-            EasyMessenger.Instance.RemoveListener<ShowResult>( AdManager.REWARD_AD_FINISHED_MESSAGE, OnRewardAdFinished );
+            EasyMessenger.Instance.RemoveListener<AdResults>( AdManager.REWARD_AD_FINISHED_MESSAGE, OnRewardAdFinished );
         }
 
-        private void OnRewardAdFinished( ShowResult i_result ) {
+        private void OnRewardAdFinished( AdResults i_result ) {
             switch ( i_result ) {
-                case ShowResult.Failed:
-                case ShowResult.Skipped:
+                case AdResults.Failed:
+                case AdResults.Skipped:
                     PlayerFailedRewardAd();                    
                     break;
-                case ShowResult.Finished:
+                case AdResults.Finished:
                     PlayerFinishedRewardAd();
                     break;
                 default:
