@@ -24,6 +24,7 @@ namespace IdleFantasy {
         public const string MINIMUM = "Minimum";
         public const string INDEX = "Index";
         public const string MAP = "Map";
+        public const string TIME = "Time";
         #endregion
 
         #region Cloud Methods

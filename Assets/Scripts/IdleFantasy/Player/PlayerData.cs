@@ -329,6 +329,11 @@ namespace IdleFantasy {
             UpdateInventoryData();
         }
 
+        public void SetResources( string i_resource, int i_amount ) {
+            mInventory[i_resource] = i_amount;
+            UpdateInventoryData();
+        }
+
         public void UpdateInventoryData() {
             foreach ( KeyValuePair<string, int> inventoryItem in mInventory ) {
                 mModel.SetProperty( inventoryItem.Key, inventoryItem.Value );

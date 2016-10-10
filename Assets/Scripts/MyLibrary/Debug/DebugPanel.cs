@@ -17,19 +17,19 @@ namespace MyLibrary {
             AddDefaultCommands();
         }
 
-        private void AddDefaultCommands() {
-            AddCommand( "help", "Shows all commands", OnHelpCommand );
+        protected virtual void AddDefaultCommands() {
+            AddCommand( "help", "help", "Shows all commands", OnHelpCommand );
         }
 
-        public void AddCommand( string i_command, string i_desc, Callback<string[]> i_callback ) {
-            DebugCommand command = new DebugCommand( i_command, i_desc, i_callback );
+        public void AddCommand( string i_command, string i_usage, string i_desc, Callback<string[]> i_callback ) {
+            DebugCommand command = new DebugCommand( i_command, i_usage, i_desc, i_callback );
             Commands.Add( i_command, command );
         }
 
         private void OnHelpCommand( string[] i_args ) {
             EchoText( "The following commands exist: " );
             foreach ( KeyValuePair<string, DebugCommand> command in Commands ) {
-                EchoText( command.Key + ": " + command.Value.Description );
+                EchoText( command.Key + " -- " + command.Value.Usage + ": " + command.Value.Description );
             }
         }
 
@@ -74,6 +74,10 @@ namespace MyLibrary {
 
         private void ClearInput() {
             Input.text = "";
+        }
+
+        protected void EchoImproperArgs() {
+            EchoText( "Wrong usage of arguments! Type help to see usage of all commands." );
         }
     }
 }

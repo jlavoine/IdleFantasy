@@ -4,4 +4,5 @@ public interface IResourceInventory  {
     bool HasEnoughResources( string i_resource, int i_value );
     void SpendResources( string i_resource, int i_value );
     void GainResources( string i_resource, int i_value );
+    void SetResources( string i_resource, int i_amount );
 }

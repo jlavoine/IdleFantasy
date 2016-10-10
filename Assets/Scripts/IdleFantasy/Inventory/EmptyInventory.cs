@@ -15,6 +15,10 @@ namespace IdleFantasy {
             return false;
         }
 
+        public void SetResources( string i_resource, int i_amount ) {
+            throw new NotImplementedException();
+        }
+
         public void SpendResources( string i_resource, int i_count ) { }
     }
 }
