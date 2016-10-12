@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace IdleFantasy {
-    public class MapData {
+    public class MapData : IMapData {
         public string World;
 
         public int MapLevel;
@@ -12,5 +12,13 @@ namespace IdleFantasy {
         public List<MapModification> AllModifications;
         public List<MapName> UpcomingMaps;
         public List<MapAreaData> Areas;
+
+        public List<MapName> GetUpcomingMaps() {
+            return UpcomingMaps;
+        }
+
+        public int GetLevel() {
+            return MapLevel;
+        }
     }
 }

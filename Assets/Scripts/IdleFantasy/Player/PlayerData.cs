@@ -359,6 +359,15 @@ namespace IdleFantasy {
             }
         }
 
+        public IMapData GetMapDataForWorld( string i_world ) {
+            if ( Maps.ContainsKey( i_world ) ) {
+                return Maps[i_world];
+            } else {
+                EasyLogger.Instance.Log( LogTypes.Fatal, "No map data for world: " + i_world, "" );
+                return new MapData();
+            }
+        }
+
         public void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData ) {
             MapData map = JsonConvert.DeserializeObject<MapData>( i_travelData[BackendConstants.MAP] );
             WorldMissionProgress progress = JsonConvert.DeserializeObject<WorldMissionProgress>( i_travelData[BackendConstants.MISSION_PROGRESS] );

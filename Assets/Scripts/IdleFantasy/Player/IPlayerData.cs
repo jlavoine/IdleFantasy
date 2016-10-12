@@ -23,6 +23,7 @@ namespace IdleFantasy {
 
         IWorldMissionProgress GetMissionProgressForWorld( string i_world );
         IRepeatableQuestProgress GetRepeatableQuestForWorld( string i_world );
+        IMapData GetMapDataForWorld( string i_world );
 
         void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData );
     }
