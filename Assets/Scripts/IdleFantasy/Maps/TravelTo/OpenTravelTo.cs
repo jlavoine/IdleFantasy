@@ -9,7 +9,7 @@ namespace IdleFantasy {
         }
 
         private void CreateTravelToView() {
-            TravelTo travelTo = new TravelTo( PlayerManager.Data.Maps[BackendConstants.WORLD_BASE].UpcomingMaps );
+            TravelTo travelTo = new TravelTo( PlayerManager.Data.GetMapDataForWorld( BackendConstants.WORLD_BASE ) );
 
             GameObject mainCanvas = GameObject.FindGameObjectWithTag( "MainCanvas" );
             GameObject travelToUI = gameObject.InstantiateUI( TravelToPopupPrefab, mainCanvas );
