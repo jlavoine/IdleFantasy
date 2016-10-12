@@ -13,7 +13,7 @@ namespace MyLibrary {
         public InputField Input;
 
         void Start() {
-            DontDestroyOnLoad( gameObject );
+            //DontDestroyOnLoad( gameObject );  // don't have to do this yet
             AddDefaultCommands();
         }
 
