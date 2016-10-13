@@ -104,13 +104,25 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             EasyMessenger.Instance.AddListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+            EasyMessenger.Instance.AddListener( MapKeys.WORLD_RESET_SUCCESS, OnWorldReset );
         }
 
         private void UnsubscribeFromMessages() {
             EasyMessenger.Instance.RemoveListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+            EasyMessenger.Instance.RemoveListener( MapKeys.WORLD_RESET_SUCCESS, OnWorldReset );
         }
 
         private void OnInventoryChanged( string i_resource, int i_newValue ) {
+            UpdateViewProperties();
+        }
+
+        private void OnWorldReset() {
+            Level.Value = 1;
+            Unit.Level.Value = 1;
+            Unit.TrainingLevel = 0;
+            NumUnits = 0;
+            NextUnitProgress = 0f;
+
             UpdateViewProperties();
         }
 

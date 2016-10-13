@@ -35,5 +35,9 @@ namespace IdleFantasy {
         public void SendTravelRequest( string i_world, int i_optionIndex ) {
             throw new NotImplementedException();
         }
+
+        public void SendWorldResetRequest( string i_world ) {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -368,6 +368,18 @@ namespace IdleFantasy {
             }
         }
 
+        public void PlayerResetWorld( Dictionary<string, string> i_newMapData ) {
+            MapData map = JsonConvert.DeserializeObject<MapData>( i_newMapData[BackendConstants.MAP] );
+            WorldMissionProgress progress = JsonConvert.DeserializeObject<WorldMissionProgress>( i_newMapData[BackendConstants.MISSION_PROGRESS] );
+
+            SetResources( VirtualCurrencies.GOLD, Constants.GetConstant<int>( ConstantKeys.STARTING_GOLD ) );
+            SendWorldResetAnalytic( Maps[map.World] );
+            SetMapData( map );
+            SetMissionProgressForWorld( map.World, progress );
+            SendTravelSuccessMessage();
+            SendWorldResetSuccessMessage();
+        }
+
         public void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData ) {
             MapData map = JsonConvert.DeserializeObject<MapData>( i_travelData[BackendConstants.MAP] );
             WorldMissionProgress progress = JsonConvert.DeserializeObject<WorldMissionProgress>( i_travelData[BackendConstants.MISSION_PROGRESS] );
@@ -376,6 +388,14 @@ namespace IdleFantasy {
             SetMapData( map );
             SetMissionProgressForWorld( map.World, progress );
             SendTravelSuccessMessage();
+        }
+
+        private void SendWorldResetAnalytic( MapData i_map ) {
+            Dictionary<string, object> analyticParams = new Dictionary<string, object>();
+            analyticParams.Add( Analytics.MAP_LEVEL, i_map.MapLevel );
+            analyticParams.Add( Analytics.MAP_WORLD, i_map.World );
+
+            MyMessenger.Send<string, IDictionary<string, object>>( LibraryAnalyticEvents.SEND_ANALYTIC_EVENT, Analytics.WORLD_RESET_EVENT, analyticParams );
         }
 
         private void SendMapCompletedAnalytic( MapData i_map ) {
@@ -394,6 +414,10 @@ namespace IdleFantasy {
 
         private void SendTravelSuccessMessage() {            
             MyMessenger.Send( MapKeys.TRAVEL_TO_SUCCESS );
+        }
+
+        private void SendWorldResetSuccessMessage() {
+            MyMessenger.Send( MapKeys.WORLD_RESET_SUCCESS );
         }
     }
 }

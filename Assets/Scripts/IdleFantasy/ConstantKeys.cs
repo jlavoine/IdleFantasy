@@ -11,6 +11,8 @@ namespace IdleFantasy {
         public const string COMBAT_MISSION_STATS = "CombatMissionStats";
         public const string NON_COMBAT_MISSION_STATS = "NonCombatMissionStats";
 
+        public const string STARTING_GOLD = "StartingGold";
+
         public const string NEXT_CONTINENT_LEVEL_MIN = "NextContinentLevel";
 
         public const string UPCOMING_MAPS_COUNT = "UpcomingMapsCount";

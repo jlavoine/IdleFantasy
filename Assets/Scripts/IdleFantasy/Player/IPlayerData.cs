@@ -18,6 +18,7 @@ namespace IdleFantasy {
         Dictionary<string, MapData> Maps { get; }
         Dictionary<string, WorldMissionProgress> MissionProgress { get; }
         IGameMetrics GameMetrics { get; }
+        Dictionary<string, UnitProgress> UnitProgress { get; }
 
         UnitUnlockPlanData UnitUnlockPlan { get; }
 
@@ -26,5 +27,6 @@ namespace IdleFantasy {
         IMapData GetMapDataForWorld( string i_world );
 
         void PlayerTraveledToNewArea( Dictionary<string, string> i_travelData );
+        void PlayerResetWorld( Dictionary<string, string> i_newMapData );
     }
 }

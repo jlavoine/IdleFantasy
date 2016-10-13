@@ -83,6 +83,17 @@ namespace IdleFantasy {
                 }
             } );
         }
+
+        public void SendWorldResetRequest( string i_world ) {
+            Dictionary<string, string> cloudParams = new Dictionary<string, string>();
+            cloudParams.Add( BackendConstants.MAP_WORLD, i_world );
+
+            QueueCloudCall( BackendConstants.RESET_WORLD_REQUEST, cloudParams, ( results ) => {
+                if ( !IsClientOutOfSync() ) {
+                    PlayerManager.Data.PlayerResetWorld( results );
+                }
+            } );
+        }
         #endregion
     }
 }

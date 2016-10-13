@@ -78,6 +78,7 @@ const MAP_UPCOMING = "UpcomingMaps";                    // key for list/array of
 const MAP_ALL_MODS = "AllModifications";                // key for list/array of all modifications on a map
 const UPCOMING_MAPS_COUNT = 4;                          // standard # of upcoming maps, from a map
 const AREAS_PER_TRAVEL_OPTION = 9;                      // # of area clears per unlocked travel option
+const WORLD_RESET_LEVEL = 10;                           // min map level to reset world
 
 // map area types
 const AREA_COMBAT = "Combat";       // 0
@@ -648,8 +649,61 @@ function GetMissionFromMap(map, missionIndex) {
     return GetMissionFromArea(areaForMission);
 }
 
+handlers.resetWorld = function(args) {
+    var world = args.data[WORLD];
+
+    var currentMap = GetMapOfWorld(world);
+    var mapLevel = GetMapLevel(currentMap);
+
+    if (mapLevel < WORLD_RESET_LEVEL) {
+        return { outOfSync : true };
+    } else {
+        ResetWorld(world);
+        return ReturnNewAreaData(world);
+    }
+}
+
+function ResetWorld(world) {
+    ResetUnitProgressForWorld(world);
+    ResetBuildingProgressForWorld(world);
+    ResetCurrency();
+    ResetMapForWorld(world);
+    ResetTrainerCounts();
+    ResetRepeatableQuestProgressForWorld(world);
+
+    IncreaseWorldProgressRestartCount(world);
+}
+
+function ResetMapForWorld(world) {
+    var mapName = GenerateMapName(1);
+    var newMap = CreateMap(mapName, world, 1, DEFAULT_MAP_SIZE);    
+    CreateMissionProgressForMap(newMap, false);
+    SaveMap(newMap);  
+}
+
 /////////////////////////////////////////////////
 /// ~Map Utils
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// WorldProgress
+/////////////////////////////////////////////////
+
+function IncreaseWorldProgressRestartCount(world) {
+    var worldsProgress = GetReadOnlySaveData(WORLD_PROGRESS_KEY);
+
+    for (var index in worldsProgress) {
+        if (index == world) {
+            var progress = worldsProgress[world];
+            progress[WORLD_PROGRESS_RESTARTS] += 1;
+        }
+    }
+
+    SetReadOnlyData(WORLD_PROGRESS_KEY, worldsProgress);
+}
+
+/////////////////////////////////////////////////
+/// ~WorldProgress
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
@@ -1664,6 +1718,15 @@ handlers.watchedAdForRepeatableQuest = function (args) {
     SaveRepeatableQuestProgressForWorld(repeatableQuest, world);
 }
 
+function ResetRepeatableQuestProgressForWorld(world) {
+    var repeatableQuestProgress = GetRepeatableQuestOfWorld(world);
+
+    repeatableQuestProgress[CURRENTLY_AVAILABLE] = false;
+    repeatableQuestProgress[MISSION] = GenerateRepeatableQuestMission(world, 1);
+
+    SaveRepeatableQuestProgressForWorld(repeatableQuestProgress, world);
+}
+
 /////////////////////////////////////////////////
 /// ~Repeatable Quests
 /////////////////////////////////////////////////
@@ -2062,7 +2125,7 @@ function AddNewPlayerData_IfMissing(allSaveData) {
         var isFirstMap = true;
         CreateMissionProgressForMap(firstMapData, isFirstMap);
 
-        AddStartingCurrency();
+        ResetCurrency();
     }
 }
 
@@ -2299,6 +2362,33 @@ function GetBuildingStartingSize(buildingTitleData) {
     return startingSize;
 }
 
+// TODO: This method doesn't actually use the world...I never added world for buildings!
+function ResetBuildingProgressForWorld(world) {
+    var allBuildingProgress = GetProgressData(CLASS_BUILDING);
+
+    for (var buildingID in allBuildingProgress) {    
+        var buildingData = allBuildingProgress[buildingID];
+        if (IsBuildingUnlocked(buildingData)) {
+            ResetBuildingProgress(buildingData);
+        }        
+    }    
+
+    UpdateBuildingSaveData(allBuildingProgress);
+}
+
+function IsBuildingUnlocked(buildingData) {
+    return buildingData[UPGRADE_LEVEL] > 0;
+}
+
+function ResetBuildingProgress(buildingData) {
+    buildingData[UPGRADE_LEVEL] = 1;
+}
+
+function UpdateBuildingSaveData(allBuildingProgress) {
+    var key = GetProgressKey(CLASS_BUILDING);
+    SetReadOnlyData(key, allBuildingProgress);
+}
+
 /////////////////////////////////////////////////
 /// ~Building
 /////////////////////////////////////////////////
@@ -2346,8 +2436,8 @@ function GetPlayerCurrenciesFromInventory(playerInventory) {
     return playerCurrencies;
 }
 
-function AddStartingCurrency() {
-    AddCurrency( CURRENCY_GOLD, STARTING_GOLD );
+function ResetCurrency() {
+    SetCurrency( CURRENCY_GOLD, STARTING_GOLD );
 }
 
 /////////////////////////////////////////////////
@@ -2561,6 +2651,30 @@ function GetStatData(stats, statName) {
 
     log.info("Got " + JSON.stringify(statData));
     return statData;
+}
+
+function IsUnitUnlocked(unitData) {
+    return unitData[UPGRADE_LEVEL] > 0;
+}
+
+// TODO: This method doesn't actually use the world...I never added world for units!
+function ResetUnitProgressForWorld(world) {
+    var allUnitProgress = GetProgressData(CLASS_UNIT);
+
+    for (var unitID in allUnitProgress) {
+        var unitData = allUnitProgress[unitID];
+        if (IsUnitUnlocked(unitData)) {
+            ResetUnitProgress(unitData);
+        }
+    }    
+
+    UpdateUnitSaveData(allUnitProgress);
+}
+
+function ResetUnitProgress(unitData) {
+    unitData[UPGRADE_LEVEL] = 1;
+    unitData[TRAINERS_ASSIGNED] = 0;
+    UpdateUnitCount(unitData, 0, Date.now());
 }
 
 /////////////////////////////////////////////////
@@ -2781,6 +2895,14 @@ function UpdateCountDueToChangeInTraining(targetID, allProgressData) {
     var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
 
     UpdateCountForUnit(targetID, allProgressData, allUnitData, allBuildingProgress, allBuildingData, Date.now());
+}
+
+function ResetTrainerCounts() {
+    var trainerSaveData = GetReadOnlySaveData(TRAINER_SAVE_DATA);
+    var trainerCounts = trainerSaveData[TRAINER_COUNTS];
+
+    trainerCounts[NORMAL_TRAINER] = 0;
+    SetReadOnlyData(TRAINER_SAVE_DATA, trainerSaveData);
 }
 
 /////////////////////////////////////////////////

@@ -37,6 +37,7 @@ namespace IdleFantasy {
         public const string TRAVEL_TO = "initiateTravelTo";
         public const string TUTORIAL_COMPLETE = "tutorialComplete";
         public const string WATCHED_REPEATABLE_QUEST_AD = "watchedAdForRepeatableQuest";
+        public const string RESET_WORLD_REQUEST = "resetWorld";
         #endregion
 
         #region Map Piece Modifiers

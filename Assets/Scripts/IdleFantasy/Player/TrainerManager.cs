@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using MyLibrary;
 
@@ -30,7 +29,7 @@ namespace IdleFantasy {
                 else if ( value > TotalTrainers ) {
                     value = TotalTrainers;
                 }
-                
+
                 mPlayerModel.SetProperty( CURRENT_TRAINERS, value );
                 EasyMessenger.Instance.Send( AVAILABLE_TRAINERS_EVENT, (ITrainerManager) this );
             }
@@ -52,7 +51,7 @@ namespace IdleFantasy {
                 if ( value < 0 ) {
                     value = 0;
                 }
-                
+
                 mPlayerModel.SetProperty( TOTAL_TRAINERS, value );
             }
         }
@@ -61,12 +60,16 @@ namespace IdleFantasy {
             mTrainers = i_trainerData.TrainerCounts;
             mPlayerModel = i_playerModel;
 
+            RefreshTrainerUI( i_unitProgress );
+
+            SubscribeToMessages();
+        }
+
+        private void RefreshTrainerUI( Dictionary<string, UnitProgress> i_unitProgress ) {
             TotalTrainers = GetTotalTrainers();
             AvailableTrainers = GetAvailableTrainers( i_unitProgress );
             UpdateNextTrainerCost();
             UpdateCanAffordNextTrainer();
-
-            SubscribeToMessages();       
         }
 
         public void Dispose() {
@@ -75,14 +78,23 @@ namespace IdleFantasy {
 
         private void SubscribeToMessages() {
             EasyMessenger.Instance.AddListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+            EasyMessenger.Instance.AddListener( MapKeys.WORLD_RESET_SUCCESS, OnWorldReset );
         }
 
         private void UnsubscribeFromMessages() {
             EasyMessenger.Instance.RemoveListener<string, int>( PlayerData.INVENTORY_CHANGED_EVENT, OnInventoryChanged );
+            EasyMessenger.Instance.RemoveListener( MapKeys.WORLD_RESET_SUCCESS, OnWorldReset );
         }
 
         private void OnInventoryChanged( string i_resourceType, int i_newValue ) {
             UpdateCanAffordNextTrainer();
+        }
+
+        private void OnWorldReset() {
+            ResetAllTrainerAssignments( PlayerManager.Data.UnitProgress );
+            mTrainers[NORMAL_TRAINERS] = 0;
+
+            RefreshTrainerUI( PlayerManager.Data.UnitProgress );
         }
 
         private void UpdateCanAffordNextTrainer() {
