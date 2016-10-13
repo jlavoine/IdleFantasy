@@ -11,6 +11,8 @@ namespace IdleFantasy {
             set;
         }
 
+        void Dispose();
+
         int GetTotalTrainersOfType( string i_type );
         int GetAssignedTrainers( string i_id );
 

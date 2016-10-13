@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace IdleFantasy.UnitTests {
     [TestFixture]
-    public class TrainerPurchases {
+    public class TestTrainerPurchases {
         private ITrainerManager mTrainerData;
 
         static object[] NewTrainerCostTests = {

@@ -37,6 +37,7 @@ namespace IdleFantasy.UnitTests {
 
         private static IPlayerData CreateMockPlayer() {
             IPlayerData mockPlayerData = NSubstitute.Substitute.For<IPlayerData>();
+            mockPlayerData.UnitProgress.Returns( new Dictionary<string, UnitProgress>() );
             return mockPlayerData;
         }
 
