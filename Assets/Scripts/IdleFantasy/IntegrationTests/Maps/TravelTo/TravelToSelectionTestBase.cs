@@ -29,7 +29,9 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator SetPlayerDataOnServer() {
-            SetMapSaveData();            
+            IntegrationTestUtils.CreateAndSetRandomMapSaveData( TEST_WORLD, TEST_LEVEL, TEST_SIZE, ( result ) => {
+                mMapData = result;
+            } );            
             yield return mBackend.WaitUntilNotBusy();
 
             // do this AFTER setting map data because that test method RESETS progress
@@ -50,18 +52,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             mBackend.MakeCloudCall( BackendConstants.TRAVEL_TO, cloudParams, null );
 
             yield return mBackend.WaitUntilNotBusy();
-        }
-
-        private void SetMapSaveData() {
-            Dictionary<string, string> testParams = new Dictionary<string, string>();
-            testParams[BackendConstants.MAP_LEVEL] = TEST_LEVEL.ToString();
-            testParams[BackendConstants.MAP_WORLD] = TEST_WORLD;
-            testParams[BackendConstants.MAP_SIZE] = TEST_SIZE.ToString();
-
-            mBackend.MakeCloudCall( CloudTestMethods.createMapForTesting.ToString(), testParams, ( results ) => {
-                mMapData = JsonConvert.DeserializeObject<MapData>( results[BackendConstants.DATA] );
-                IntegrationTestUtils.SetReadOnlyData( BackendConstants.MAP_BASE, JsonConvert.SerializeObject( mMapData ) );
-            } );
         }
     }
 }

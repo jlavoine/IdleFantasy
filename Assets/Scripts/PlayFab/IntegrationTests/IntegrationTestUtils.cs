@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public static class IntegrationTestUtils {
         public const string SAVE_KEY_UNITS = "UnitsProgress";
         public const string SAVE_KEY_BUILDINGS = "BuildingsProgress";
+        public const string TRAINER_DATA_KEY = "TrainerSaveData";
         public const string SAVE_KEY_GUILDS = "GuildsProgress";
         public const string SAVE_KEY_METRICS = "GameMetrics";
+
+        public const int STARTING_GOLD = 2000;
 
         public static IEnumerator UpgradeTarget_NoRules( string i_targetID, string i_className ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
@@ -56,6 +60,22 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         public static IEnumerator SetPlayerCurrencyAndWait( int i_amount ) {
             SetPlayerCurrency( i_amount );
             yield return BackendManager.Backend.WaitUntilNotBusy();
+        }
+
+        public static void CreateAndSetRandomMapSaveData( string i_world, int i_level, int i_size, Callback<MapData> i_callback ) {
+            Dictionary<string, string> testParams = new Dictionary<string, string>();
+            testParams[BackendConstants.MAP_LEVEL] = i_level.ToString();
+            testParams[BackendConstants.MAP_WORLD] = i_world;
+            testParams[BackendConstants.MAP_SIZE] = i_size.ToString();
+
+            BackendManager.Backend.MakeCloudCall( CloudTestMethods.createMapForTesting.ToString(), testParams, ( results ) => {
+                MapData data = JsonConvert.DeserializeObject<MapData>( results[BackendConstants.DATA] );
+                SetReadOnlyData( BackendConstants.MAP_BASE, JsonConvert.SerializeObject( data ) );
+
+                if ( i_callback != null ) {
+                    i_callback( data );
+                }
+            } );
         }
     }
 }
