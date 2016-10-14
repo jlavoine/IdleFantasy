@@ -1052,7 +1052,7 @@ function GetMissionTaskDescription(task, areaType) {
 }
 
 function GetStatsList() {
-    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4", "BASE_STAT_5", "BASE_STAT_6", "BASE_STAT_7", "WIZARD_STAT_1", "PRIEST_STAT_2"];
+    var stats = ["BASE_STAT_1", "BASE_STAT_2", "BASE_STAT_3", "BASE_STAT_4", "BASE_STAT_5", "BASE_STAT_6", "WIZARD_STAT_1", "PRIEST_STAT_1"];
 
     return stats;   
 }
@@ -1072,7 +1072,7 @@ function GetRandomStatForMap(map) {
     AddToListFromModification(stats, map, BASE_STAT_4_UP, "BASE_STAT_4");
     AddToListFromModification(stats, map, BASE_STAT_5_UP, "BASE_STAT_5");
     AddToListFromModification(stats, map, BASE_STAT_6_UP, "BASE_STAT_6");
-    AddToListFromModification(stats, map, BASE_STAT_7_UP, "BASE_STAT_7");
+    //AddToListFromModification(stats, map, BASE_STAT_7_UP, "BASE_STAT_7");
     AddToListFromModification(stats, map, WIZARD_STAT_1_UP, "WIZARD_STAT_1");
     AddToListFromModification(stats, map, PRIEST_STAT_1_UP, "PRIEST_STAT_1");
 
