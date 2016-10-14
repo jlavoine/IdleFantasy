@@ -89,9 +89,14 @@ namespace IdleFantasy {
                 IncrementMetric( GameMetricsList.TOTAL_MISSIONS_DONE );
                 UpdateMissionProgress( i_missionData.MissionWorld, i_missionData.Index );
                 CheckForUnitUnlock();
+                SendMissionClientCompleteProcessed( i_missionData );
             } else if ( i_missionData.MissionCategory == BackendConstants.MISSION_TYPE_REPEATABLE_QUEST ) {
                 SetRepeatableQuestFinished( BackendConstants.WORLD_BASE );
             }
+        }
+
+        private void SendMissionClientCompleteProcessed( MissionData i_missionData ) {
+            EasyMessenger.Instance.Send( MissionKeys.MISSION_CLIENT_COMPLETE_PROCESSED, i_missionData );
         }
 
         private void SetRepeatableQuestFinished( string i_world ) {

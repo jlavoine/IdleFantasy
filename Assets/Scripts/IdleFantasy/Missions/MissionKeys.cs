@@ -18,5 +18,6 @@ namespace IdleFantasy {
         public const string MISSION_READY = "IsMissionReady";
 
         public const string MISSION_COMPLETED = "MissionCompleted";
+        public const string MISSION_CLIENT_COMPLETE_PROCESSED = "MissionClientCompleteProcessed";
     }
 }
