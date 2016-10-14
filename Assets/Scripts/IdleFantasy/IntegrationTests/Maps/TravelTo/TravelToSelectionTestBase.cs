@@ -6,7 +6,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TravelToSelectionTestBase : IntegrationTestBase {
         private const int TEST_LEVEL = 1;
         private const string TEST_WORLD = "Base";
-        protected const int TEST_SIZE = 36;
 
         protected abstract IEnumerator RunOtherFailureChecks();
         protected abstract Dictionary<string,WorldMissionProgress> GetMissionProgressForPlayer();
@@ -29,7 +28,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private IEnumerator SetPlayerDataOnServer() {
-            IntegrationTestUtils.CreateAndSetRandomMapSaveData( TEST_WORLD, TEST_LEVEL, TEST_SIZE, ( result ) => {
+            IntegrationTestUtils.CreateAndSetRandomMapSaveData( TEST_WORLD, TEST_LEVEL, IntegrationTestUtils.DEFAULT_MAP_SIZE, ( result ) => {
                 mMapData = result;
             } );            
             yield return mBackend.WaitUntilNotBusy();

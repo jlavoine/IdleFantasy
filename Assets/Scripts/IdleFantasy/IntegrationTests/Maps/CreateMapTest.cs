@@ -7,7 +7,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         public const int NUM_TESTS = 1;
         public const int TEST_LEVEL = 1;
-        public const int TEST_SIZE = 36;
         public const string TEST_WORLD = "TestWorld";
 
         protected override IEnumerator RunAllTests() {
@@ -16,7 +15,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             Dictionary<string, string> testParams = new Dictionary<string, string>();
             testParams[BackendConstants.MAP_LEVEL] = TEST_LEVEL.ToString();
             testParams[BackendConstants.MAP_WORLD] = TEST_WORLD;
-            testParams[BackendConstants.MAP_SIZE] = TEST_SIZE.ToString();
+            testParams[BackendConstants.MAP_SIZE] = IntegrationTestUtils.DEFAULT_MAP_SIZE.ToString();
 
             for ( int i = 0; i < NUM_TESTS; ++i ) {
                 mBackend.MakeCloudCall( CloudTestMethods.createMapForTesting.ToString(), testParams, CheckMap );
@@ -31,7 +30,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             MapData mapData = JsonConvert.DeserializeObject<MapData>( i_results[BackendConstants.DATA] );
 
             new TestMapNames( mapData.Name, TEST_LEVEL );
-            new TestMapAreas( mapData, TEST_SIZE );
+            new TestMapAreas( mapData, IntegrationTestUtils.DEFAULT_MAP_SIZE );
             new TestUpcomingMaps( mapData, TEST_LEVEL );
             new TestMapMissions( mapData.Areas, mapData.AllModifications, TEST_LEVEL );   
         }

@@ -11,6 +11,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         public const string SAVE_KEY_METRICS = "GameMetrics";
 
         public const int STARTING_GOLD = 2000;
+        public const int DEFAULT_MAP_SIZE = 25;
 
         public static IEnumerator UpgradeTarget_NoRules( string i_targetID, string i_className ) {
             Dictionary<string, string> testParams = new Dictionary<string, string>();

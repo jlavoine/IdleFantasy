@@ -8,7 +8,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             WorldMissionProgress progress = new WorldMissionProgress();
             progress.World = BackendConstants.WORLD_BASE;
             progress.Missions = new List<SingleMissionProgress>();
-            for ( int i = 0; i < TEST_SIZE; ++i ) {
+            for ( int i = 0; i < IntegrationTestUtils.DEFAULT_MAP_SIZE; ++i ) {
                 SingleMissionProgress singleProgress = new SingleMissionProgress();
                 singleProgress.Completed = false;
                 progress.Missions.Add( singleProgress );

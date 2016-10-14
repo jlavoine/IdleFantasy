@@ -7,7 +7,6 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestDataWipedBase : IntegrationTestBase {
         private List<string> DATA_KEYS_TO_TEST = new List<string>() { BackendConstants.MAP_BASE, BackendConstants.BUILDING_PROGRESS, BackendConstants.UNIT_PROGRESS, BackendConstants.GUILD_PROGRESS, BackendConstants.WORLD_PROGRESS, BackendConstants.TRAINER_PROGRESS, BackendConstants.MISSION_PROGRESS, BackendConstants.GAME_METRICS, BackendConstants.REPEATABLE_QUEST_PROGRESS };
         private const string EMPTY_SAVE_DATA = "{}";
-        private const int DEFAULT_MAP_SIZE = 36;
 
         private const string STARTING_BUILDING = "BASE_WARRIOR_BUILDING_1";
         private const string STARTING_UNIT = "BASE_WARRIOR_1";
@@ -160,7 +159,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
                 Dictionary<string, WorldMissionProgress> allMissionProgress = JsonConvert.DeserializeObject<Dictionary<string, WorldMissionProgress>>( results[BackendConstants.DATA] );
                 WorldMissionProgress baseWorldMissionProgress = allMissionProgress[BackendConstants.WORLD_BASE];
 
-                if ( baseWorldMissionProgress.Missions.Count != DEFAULT_MAP_SIZE ) {
+                if ( baseWorldMissionProgress.Missions.Count != IntegrationTestUtils.DEFAULT_MAP_SIZE ) {
                     IntegrationTest.Fail( "Missions completed list was not default: " + baseWorldMissionProgress.Missions.Count );
                 }
 

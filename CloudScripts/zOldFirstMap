@@ -1,0 +1,960 @@
+{
+  "World": "Base",
+  "MapLevel": 1,
+  "MapSize": 36,
+  "Areas": [
+    {
+      "Index": 0,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 0,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 1,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 1,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_7",
+            "DescriptionKey": "BASE_STAT_7_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 2,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 2,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 3,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 3,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 4,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 4,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 5,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 5,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 6,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 6,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_4",
+            "DescriptionKey": "BASE_STAT_4_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 7,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 7,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 8,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 8,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_4",
+            "DescriptionKey": "BASE_STAT_4_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 9,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 9,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 10,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 10,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_5",
+            "DescriptionKey": "BASE_STAT_5_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 11,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 11,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 12,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 12,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_5",
+            "DescriptionKey": "BASE_STAT_5_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 13,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 13,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 14,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 14,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 15,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 15,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 16,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 16,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_4",
+            "DescriptionKey": "BASE_STAT_4_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 17,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 17,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 18,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 18,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 19,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 19,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 20,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 20,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 21,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 21,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 22,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 22,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 23,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 23,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 24,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 24,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_4",
+            "DescriptionKey": "BASE_STAT_4_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 25,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 25,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 26,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 26,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_5",
+            "DescriptionKey": "BASE_STAT_5_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 27,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 27,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 28,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 28,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_5",
+            "DescriptionKey": "BASE_STAT_5_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 29,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 29,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 0
+    },
+    {
+      "Index": 30,
+      "AreaType": 2,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 30,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_3",
+            "DescriptionKey": "BASE_STAT_3_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 31,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 31,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 32,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 32,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    },
+    {
+      "Index": 33,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 33,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 34,
+      "AreaType": 1,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 34,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_1",
+            "DescriptionKey": "BASE_STAT_1_MISSION_DESC_MISC",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 1
+    },
+    {
+      "Index": 35,
+      "AreaType": 0,
+      "Mission": {
+        "MissionCategory": "Map",
+        "MissionWorld": "Base",
+        "Index": 35,
+        "GoldReward": 500,
+        "Tasks": [
+          {
+            "Index": 0,
+            "StatRequirement": "BASE_STAT_2",
+            "DescriptionKey": "BASE_STAT_2_MISSION_DESC_COMBAT",
+            "PowerRequirement": 20
+          }
+        ]
+      },
+      "Terrain": 2
+    }
+  ],
+  "Name": {
+    "Prefix": {
+      "ID": "PREFIX_COMBAT_DOWN_1",
+      "PieceType": 0,
+      "Weight": 1,
+      "LevelRestriction": {
+        "Key": "Level",
+        "Min": 1,
+        "Max": 100
+      },
+      "Modifications": [
+        {
+          "Key": "CombatWeight",
+          "Amount": -5
+        },
+        {
+          "Key": "CombatMinimum",
+          "Amount": -5
+        }
+      ]
+    },
+    "Terrain": {
+      "ID": "TERRAIN_MOUNTAIN_1",
+      "PieceType": 1,
+      "Weight": 1,
+      "LevelRestriction": {
+        "Key": "Level",
+        "Min": 1,
+        "Max": 100
+      },
+      "Modifications": []
+    },
+    "Suffix": {
+      "ID": "SUFFIX_BASE_STAT_6_UP_1",
+      "PieceType": 2,
+      "Weight": 1,
+      "LevelRestriction": {
+        "Key": "Level",
+        "Min": 1,
+        "Max": 100
+      },
+      "Modifications": [
+        {
+          "Key": "Base_Stat_6_Up",
+          "Amount": 20
+        }
+      ]
+    }
+  },
+  "UpcomingMaps": [
+    {
+      "Prefix": {
+        "ID": "PREFIX_COMBAT_DOWN_1",
+        "PieceType": 0,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "CombatWeight",
+            "Amount": -5
+          },
+          {
+            "Key": "CombatMinimum",
+            "Amount": -5
+          }
+        ]
+      },
+      "Terrain": {
+        "ID": "TERRAIN_MOUNTAIN_3",
+        "PieceType": 1,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": []
+      },
+      "Suffix": {
+        "ID": "SUFFIX_BASE_STAT_1_UP_1",
+        "PieceType": 2,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "Base_Stat_1_Up",
+            "Amount": 20
+          }
+        ]
+      }
+    },
+    {
+      "Prefix": {
+        "ID": "PREFIX_WIZARD_STAT_1_UP_1",
+        "PieceType": 0,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "Wizard_Stat_1_Up",
+            "Amount": 25
+          }
+        ]
+      },
+      "Terrain": {
+        "ID": "TERRAIN_GRASS_2",
+        "PieceType": 1,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": []
+      },
+      "Suffix": {
+        "ID": "SUFFIX_BASE_STAT_3_UP_1",
+        "PieceType": 2,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "Base_Stat_3_Up",
+            "Amount": 20
+          }
+        ]
+      }
+    },
+    {
+      "Prefix": {
+        "ID": "PREFIX_BASE_STAT_7_UP_1",
+        "PieceType": 0,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "Base_Stat_7_Up",
+            "Amount": 25
+          }
+        ]
+      },
+      "Terrain": {
+        "ID": "TERRAIN_MOUNTAIN_1",
+        "PieceType": 1,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": []
+      },
+      "Suffix": {
+        "ID": "SUFFIX_BASE_STAT_3_UP_1",
+        "PieceType": 2,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "Base_Stat_3_Up",
+            "Amount": 20
+          }
+        ]
+      }
+    },
+    {
+      "Prefix": {
+        "ID": "PREFIX_COMBAT_DOWN_1",
+        "PieceType": 0,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "CombatWeight",
+            "Amount": -5
+          },
+          {
+            "Key": "CombatMinimum",
+            "Amount": -5
+          }
+        ]
+      },
+      "Terrain": {
+        "ID": "TERRAIN_FOREST_3",
+        "PieceType": 1,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": []
+      },
+      "Suffix": {
+        "ID": "SUFFIX_RESOURCE_UP_1",
+        "PieceType": 2,
+        "Weight": 1,
+        "LevelRestriction": {
+          "Key": "Level",
+          "Min": 1,
+          "Max": 100
+        },
+        "Modifications": [
+          {
+            "Key": "GoldRewardBase",
+            "Amount": 0.25
+          }
+        ]
+      }
+    }
+  ],
+  "AllModifications": [
+    {
+      "Key": "CombatWeight",
+      "Amount": 35
+    },
+    {
+      "Key": "CombatMinimum",
+      "Amount": 0
+    },
+    {
+      "Key": "ExploreWeight",
+      "Amount": 40
+    },
+    {
+      "Key": "ExploreMinimum",
+      "Amount": 0
+    },
+    {
+      "Key": "MiscWeight",
+      "Amount": 20
+    },
+    {
+      "Key": "MiscMinimum",
+      "Amount": 0
+    },
+    {
+      "Key": "Base_Stat_6_Up",
+      "Amount": 20
+    }
+  ]
+}
