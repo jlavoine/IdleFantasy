@@ -40,12 +40,13 @@ namespace IdleFantasy {
             }
 
             SetAreaUnlockedState(); // "inefficient" to check every area
+            SetAreaAccessibility( !Progress.Completed && IsAreaUnlocked() );
         }
 
         private void SetUpModel() {
             SetTerrain();
             SetCompletedState( Progress.Completed );
-            SetAreaAccessibility( !Progress.Completed );
+            SetAreaAccessibility( !Progress.Completed && IsAreaUnlocked() );
             SetAreaUnlockedState();
         }
 
