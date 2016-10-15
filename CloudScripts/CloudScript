@@ -1429,18 +1429,22 @@ function CompleteMission(mission, taskProposals, allUnitProgress) {
     log.info("Successfully completed mission: " + GetMissionType(mission) + " #" + GetMissionIndex(mission) );
     var missionType = GetMissionType(mission);
 
+    // pay BEFORE unlocking
+    PayUnitsFromTaskProposals(taskProposals, allUnitProgress);
+
     if (missionType == MISSION_MAP) {
-        CompleteMapMission(mission);
+        CompleteMapMission(mission);        
         CheckForUnitUnlock();
     } else if (missionType == MISSION_REPEATABLE_QUEST) {
         CompleteRepeatableQuestMission(mission);
     }
     
     ApplyMissionRewards(mission);
-    PayUnitsFromTaskProposals(taskProposals, allUnitProgress);    
 }
 
 function CompleteMapMission(mission) {
+    IncrementGameMetric(TOTAL_MISSIONS_DONE);
+
     var world = GetMissionWorld(mission);
     MarkMissionComplete(mission, world);
 }
@@ -1735,9 +1739,7 @@ function ResetRepeatableQuestProgressForWorld(world) {
 /// Unlocking
 /////////////////////////////////////////////////
 
-function CheckForUnitUnlock() {
-    IncrementGameMetric(TOTAL_MISSIONS_DONE);
-
+function CheckForUnitUnlock() {    
     var unlock = GetUnlock();
     if (unlock != null) {
         var unitToUnlock = unlock[UNLOCK_UNIT_ID];
