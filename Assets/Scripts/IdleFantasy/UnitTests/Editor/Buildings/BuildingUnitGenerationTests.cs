@@ -40,6 +40,7 @@ namespace IdleFantasy.UnitTests {
             testBuilding.AddUnitsFromProgress( i_numUnits );
             
             Assert.AreEqual( testBuilding.NumUnits, expectedUnits );
+            testBuilding.Dispose();
         }
 
         [Test]
@@ -53,6 +54,7 @@ namespace IdleFantasy.UnitTests {
             testBuilding.Tick( i_timeSpan );
 
             Assert.AreNotSame( unitsBeforeTick, testBuilding.NumUnits );
+            testBuilding.Dispose();
         }
 
         [Test]
@@ -64,6 +66,7 @@ namespace IdleFantasy.UnitTests {
             testBuilding.Tick( new TimeSpan( 1, 0, 0 ) );
 
             Assert.AreEqual( 0, testBuilding.NextUnitProgress );
+            testBuilding.Dispose();
         }
     }
 }
