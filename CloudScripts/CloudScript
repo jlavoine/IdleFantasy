@@ -77,7 +77,7 @@ const MAP_AREAS = "Areas";                              // key for list/array of
 const MAP_UPCOMING = "UpcomingMaps";                    // key for list/array of upcoming maps, from a map
 const MAP_ALL_MODS = "AllModifications";                // key for list/array of all modifications on a map
 const UPCOMING_MAPS_COUNT = 4;                          // standard # of upcoming maps, from a map
-const AREAS_PER_TRAVEL_OPTION = 5;                      // # of area clears per unlocked travel option
+const AREAS_PER_TRAVEL_OPTION = [2,9,18,25];            // # of area clears per unlocked travel option
 const WORLD_RESET_LEVEL = 10;                           // min map level to reset world
 
 // map area types
@@ -813,8 +813,7 @@ function CanTravelToUpcomingMapIndex(optionIndex, world) {
 }
 
 function GetClearedAreasRequiredForTravelOptionIndex(optionIndex) {
-    var requiredClears = AREAS_PER_TRAVEL_OPTION * (optionIndex+1);
-    return requiredClears;
+    return AREAS_PER_TRAVEL_OPTION[optionIndex];
 }
 
 function TravelToIndex(optionIndex, world) {

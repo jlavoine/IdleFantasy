@@ -18,6 +18,7 @@ namespace MyLibrary {
         private const string COLOR_KEY = "Color";
         private const string BOOL_KEY = "Bool";
         private const string STRINGLIST_KEY = "StringList";
+        private const string INTLIST_KEY = "IntList";
 
         private static Hashtable mConstants = new Hashtable();
 
@@ -65,6 +66,9 @@ namespace MyLibrary {
                     break;
                 case STRINGLIST_KEY:
                     mConstants[i_entry.ID] = ParseStringList( i_entry.Value );
+                    break;
+                case INTLIST_KEY:
+                    mConstants[i_entry.ID] = ParseList<int>( i_entry.Value );
                     break;
                 default:
                     MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Error, "Illegal constant type " + i_entry.Type + " for key " + i_entry.ID, "" );

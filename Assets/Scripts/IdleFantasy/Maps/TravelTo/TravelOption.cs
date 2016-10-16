@@ -1,5 +1,6 @@
 ﻿using MyLibrary;
 using System;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class TravelOption : GenericViewModel {
@@ -43,8 +44,8 @@ namespace IdleFantasy {
         }
 
         public int GetRequiredMapClearCount( int i_optionIndex ) {
-            int areasPerOption = Constants.GetConstant<int>( ConstantKeys.AREAS_PER_TRAVEL_OPTION );
-            return areasPerOption * ( i_optionIndex + 1 );
+            List<int> areasPerOption = Constants.GetConstant<List<int>>( ConstantKeys.AREAS_PER_TRAVEL_OPTION );
+            return areasPerOption[i_optionIndex];
         }
 
         public void SetOptionName( string i_name ) {
