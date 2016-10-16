@@ -7,6 +7,7 @@ namespace IdleFantasy.UnitTests {
         private static IdleFantasyOfflineBackend mOfflineBackend;
 
         public static void LoadOfflineData() {
+            EasyMessenger.Instance = null;
             mOfflineBackend = new IdleFantasyOfflineBackend();
             BackendManager.Backend = mOfflineBackend;
 

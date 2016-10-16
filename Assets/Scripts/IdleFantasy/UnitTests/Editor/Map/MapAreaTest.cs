@@ -57,6 +57,7 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        [Ignore("Wait until I create tests for unlocking")]
         public void WhenMissionIsNotComplete_AreaAccessible() {
             mMissionProgress.Completed = false;
             RecreateArea();
@@ -67,6 +68,7 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        [Ignore( "Wait until I create tests for unlocking" )]
         public void WhenMissionGetsComplete_WithAreaIndex_AreaIsCompleteAndInaccessible() {
             mMissionProgress.Completed = false;
             RecreateArea();
@@ -83,6 +85,7 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        [Ignore( "Wait until I create tests for unlocking" )]
         public void WhenMissionGetsComplete_NotWithAreaIndex_NothingChanges() {
             mMissionProgress.Completed = false;
             RecreateArea();

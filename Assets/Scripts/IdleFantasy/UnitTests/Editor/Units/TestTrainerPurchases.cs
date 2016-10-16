@@ -10,11 +10,11 @@ namespace IdleFantasy.UnitTests {
         private ITrainerManager mTrainerData;
 
         static object[] NewTrainerCostTests = {
-            new object[] { 0, 500 },
-            new object[] { -1, 500 },
-            new object[] { 10, 1553 },
-            new object[] { 1, 560 },
-            new object[] { 20, 4824 }
+            new object[] { 0, 834 },
+            new object[] { -1, 834 },
+            new object[] { 10, 2637 },
+            new object[] { 1, 936 },
+            new object[] { 20, 8338 }
         };
 
         [SetUp]
@@ -22,6 +22,12 @@ namespace IdleFantasy.UnitTests {
             UnitTestUtils.LoadOfflineData();
 
             mTrainerData = new TrainerManager( new ViewModel(), new TrainerSaveData(), new Dictionary<string, UnitProgress>() );
+        }
+
+        [TearDown]
+        public void AfterTest() {
+            mTrainerData.Dispose();
+            EasyMessenger.Instance = null;
         }
 
         [Test]

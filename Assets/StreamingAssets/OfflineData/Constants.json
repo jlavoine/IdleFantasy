@@ -32,12 +32,12 @@
   "TrainerStartingCost": {
     "ID": "TrainerStartingCost",
     "Type": "Int",
-    "Value": 500
+    "Value": 834
   },
   "TrainerUpgradeCoefficient": {
     "ID": "TrainerUpgradeCoefficient",
     "Type": "Double",
-    "Value": 1.12
+    "Value": 1.122
   },
   "EnoughUnitsColor": {
     "ID": "EnoughUnitsColor",
@@ -61,8 +61,8 @@
   },
   "AreasPerTravelOption": {
     "ID": "AreasPerTravelOption",
-    "Type": "Int",
-    "Value": 9
+    "Type": "IntList",
+    "Value": "2,9,18,25"
   },
   "BaseGoldReward": {
     "ID": "BaseGoldReward",
@@ -93,5 +93,15 @@
     "ID": "MaxRepeatableQuests",
     "Type": "Int",
     "Value": 1000
+  },
+  "NextContinentLevel": {
+    "ID": "NextContinentLevel",
+    "Type": "Int",
+    "Value": 10
+  },
+  "StartingGold": {
+    "ID": "StartingGold",
+    "Type": "Int",
+    "Value": 2000
   }
 }

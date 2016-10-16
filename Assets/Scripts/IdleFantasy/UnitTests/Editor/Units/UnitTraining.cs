@@ -51,6 +51,12 @@ namespace IdleFantasy.UnitTests {
                 new ViewModel() );
         }
 
+        [TearDown]
+        public void AfterTest() {
+            mTrainerData.Dispose();
+            EasyMessenger.Instance = null;
+        }
+
         [Test]
         public void TrainingUnitIncreasesSpeed() {
             mUnit.Level.Value = 3;

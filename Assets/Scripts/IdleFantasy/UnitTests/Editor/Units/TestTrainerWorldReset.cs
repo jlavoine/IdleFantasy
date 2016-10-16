@@ -17,6 +17,11 @@ namespace IdleFantasy.UnitTests {
             CreateTrainerManager();
         }
 
+        [TearDown]
+        public void AfterTest() {
+            mTrainerData.Dispose();
+        }
+
         private void CreateTrainerManager() {
             TrainerSaveData saveData = new TrainerSaveData();
             saveData.TrainerCounts = new Dictionary<string, int>();

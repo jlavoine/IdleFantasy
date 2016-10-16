@@ -34,10 +34,10 @@ namespace IdleFantasy.UnitTests {
         }
 
         static object[] MapClearCountSource = {
-            new object[] { 0, 9 },
-            new object[] { 1, 18 },
-            new object[] { 2, 27 },
-            new object[] { 3, 36 }
+            new object[] { 0, 2 },
+            new object[] { 1, 9 },
+            new object[] { 2, 18 },
+            new object[] { 3, 25 }
         };
 
         [Test]
@@ -51,10 +51,10 @@ namespace IdleFantasy.UnitTests {
         }
 
         static object[] GetClearsUntilAvailable_Source = {
-            new object[] { 0, 1, 8 },
-            new object[] { 1, 10, 8 },
+            new object[] { 0, 1, 1 },
+            new object[] { 1, 10, 0 },
             new object[] { 2, 100, 0 },
-            new object[] { 3, 20, 16 }
+            new object[] { 3, 20, 5 }
         };
 
         [Test]
