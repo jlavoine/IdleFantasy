@@ -7,8 +7,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         protected const string TRAINER_DATA_KEY = "TrainerSaveData";
         protected const string TRAINER_DATA = "{\"TrainerCounts\":{\"Normal\":$NUM$}}";
         protected const string PROGRESS_KEY = "UnitsProgress";
-        protected const string PROGRESS_DATA = "{\"BASE_MELEE_1\":{\"Level\":$LEVEL$,\"Trainers\":$TRAINERS$}}";
-        protected const string UNIT_ID = "BASE_MELEE_1";        
+        protected const string PROGRESS_DATA = "{\"BASE_WARRIOR_1\":{\"Level\":$LEVEL$,\"Trainers\":$TRAINERS$}}";
+        protected const string UNIT_ID = "BASE_WARRIOR_1";        
 
         protected void FailTestIfAssignedTrainersDoesNotEqual( int i_trainers ) {
             Dictionary<string, string> getParams = new Dictionary<string, string>();

@@ -14,8 +14,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void SetBuildingTestData() {
             UpgradeTestData testData = new UpgradeTestData();
             testData.SaveKey = "BuildingsProgress";
-            testData.SaveValue = "{\"BASE_BUILDING_1\":{\"Level\":$NUM$}}";
-            testData.TestID = "BASE_BUILDING_1";
+            testData.SaveValue = "{\"BASE_WARRIOR_BUILDING_1\":{\"Level\":$NUM$}}";
+            testData.TestID = "BASE_WARRIOR_BUILDING_1";
             testData.TestClass = "Buildings";
             testData.TestUpgradeID = "BuildingLevel";
             testData.MaxLevel = 50;
@@ -26,8 +26,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private void SetUnitTestData() {
             UpgradeTestData testData = new UpgradeTestData();
             testData.SaveKey = "UnitsProgress";
-            testData.SaveValue = "{\"BASE_MELEE_1\":{\"Level\":$NUM$}}";
-            testData.TestID = "BASE_MELEE_1";
+            testData.SaveValue = "{\"BASE_WARRIOR_1\":{\"Level\":$NUM$}}";
+            testData.TestID = "BASE_WARRIOR_1";
             testData.TestClass = "Units";
             testData.TestUpgradeID = "UnitLevel";
             testData.MaxLevel = 50;

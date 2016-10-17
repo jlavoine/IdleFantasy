@@ -7,7 +7,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         protected override string GetUnitProgressData() {
-            return "{\"BASE_MELEE_1\":{\"Level\":1, \"Count\":0, \"Trainers\":0, \"LastCountTime\":" + long.MaxValue + "}}";
+            return "{\"BASE_WARRIOR_1\":{\"Level\":1, \"Count\":0, \"Trainers\":0, \"LastCountTime\":" + long.MaxValue + "}}";
         }
 
         protected override bool IsTestExpectedToFail() {

@@ -69,13 +69,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             MissionTaskData taskOne = new MissionTaskData();
             taskOne.Index = 0;
             taskOne.PowerRequirement = 1000;
-            taskOne.StatRequirement = "TEST_STAT_1";
+            taskOne.StatRequirement = "BASE_STAT_1";
             missionTasks.Add( taskOne );
 
             MissionTaskData taskTwo = new MissionTaskData();
             taskTwo.Index = 1;
             taskTwo.PowerRequirement = 2000;
-            taskTwo.StatRequirement = "TEST_STAT_2";
+            taskTwo.StatRequirement = "BASE_STAT_2";
             missionTasks.Add( taskTwo );
 
             testMissionData.Tasks = missionTasks;
@@ -97,7 +97,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private void SetBuildingProgressData() {
-            string progressData = "{\"BASE_BUILDING_1\":{\"Level\":100}}";
+            string progressData = "{\"BASE_WARRIOR_BUILDING_1\":{\"Level\":100}}";
             IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_BUILDINGS, progressData );
         }
 
@@ -118,13 +118,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         #region Convenience methods for various tests
         protected string GetValidUnitProgressForMission() {
-            return "{\"BASE_MELEE_1\":{\"Level\":1, \"Count\":10000, \"Trainers\":0, \"LastCountTime\":0}}";
+            return "{\"BASE_WARRIOR_1\":{\"Level\":1, \"Count\":10000, \"Trainers\":0, \"LastCountTime\":0}}";
         }
 
         protected Dictionary<int, MissionTaskProposal> GetValidMissionProposal() {
             Dictionary<int, MissionTaskProposal> taskProposals = new Dictionary<int, MissionTaskProposal>();
-            taskProposals.Add( 0, new MissionTaskProposal( 0, "BASE_MELEE_1", 500 ) );
-            taskProposals.Add( 1, new MissionTaskProposal( 1, "BASE_MELEE_1", 667 ) );
+            taskProposals.Add( 0, new MissionTaskProposal( 0, "BASE_WARRIOR_1", 250 ) );
+            taskProposals.Add( 1, new MissionTaskProposal( 1, "BASE_WARRIOR_1", 667 ) );
 
             return taskProposals;
         }
