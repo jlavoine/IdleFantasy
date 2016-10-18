@@ -3,6 +3,10 @@ namespace IdleFantasy {
     public enum TerrainTypes {
         Grass,
         Forest,
-        Mountain
+        Mountain,
+        Village,
+        City,
+        Cave,
+        Dungeon
     }
 }
