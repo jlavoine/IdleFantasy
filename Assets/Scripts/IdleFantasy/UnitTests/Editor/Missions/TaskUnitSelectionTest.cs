@@ -61,6 +61,14 @@ namespace IdleFantasy.UnitTests {
         }
 
         [Test]
+        public void VerifyNumUnitsOwnedProperty_IsCorrect() {
+            SetNumUnitsToAmount( 100 );
+            mTestSelection.RecalculateProperties();
+
+            Assert.AreEqual( 100, mTestSelection.ViewModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_OWNED ) );
+        }
+
+        [Test]
         public void HasEnoughUnitsIsTrue_WhenEnoughUnits() {
             SetPlayerDataToEnoughUnits();
 
@@ -125,6 +133,13 @@ namespace IdleFantasy.UnitTests {
         private void SetPlayerDataToNotEnoughUnits() {
             IBuildingUtils utils = Substitute.For<IBuildingUtils>();
             utils.GetNumUnits( Arg.Any<IUnit>() ).Returns( 0 );
+
+            BuildingUtilsManager.Utils = utils;
+        }
+
+        private void SetNumUnitsToAmount( int i_amount ) {
+            IBuildingUtils utils = Substitute.For<IBuildingUtils>();
+            utils.GetNumUnits( Arg.Any<IUnit>() ).Returns( i_amount );
 
             BuildingUtilsManager.Utils = utils;
         }

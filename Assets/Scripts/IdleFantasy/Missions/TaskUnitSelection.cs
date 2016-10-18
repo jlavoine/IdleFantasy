@@ -1,6 +1,5 @@
 ﻿using MyLibrary;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class TaskUnitSelection {
@@ -54,6 +53,7 @@ namespace IdleFantasy {
         private void SetUpModel() {
             SetUnitRequiredProperty();
             SetNumUnitsRequiredProperty();
+            SetNumUnitsOwnedProperty();
             UpdateColorProperty();
             SetInteractableProperty(); 
         }
@@ -65,6 +65,10 @@ namespace IdleFantasy {
         private void SetNumUnitsRequiredProperty() {
             int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( Unit, Stat, PowerRequirement );
             mModel.SetProperty( MissionKeys.NUM_UNITS_FOR_TASK, unitsRequired );
+        }
+
+        private void SetNumUnitsOwnedProperty() {
+            mModel.SetProperty( MissionKeys.NUM_UNITS_OWNED, BuildingUtilsManager.Utils.GetNumUnits( Unit ) );
         }
 
         private void UpdateColorProperty() {
