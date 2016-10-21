@@ -1,12 +1,18 @@
 ﻿using MyLibrary;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace IdleFantasy {
     public class IdleFantasyBackend : PlayFabBackend, IIdleFantasyBackend {
         public IdleFantasyBackend() : base() {}
 
         public const string MISSION_COMPLETED_ON_SERVER_MESSAGE = "MissionCompleteOnServer";
+
+        private DateTime mLoggedInTime;
+        public void SetLoggedInTime() {
+            mLoggedInTime = DateTime.UtcNow;
+        }
 
         #region Game cloud calls
         // these cloud calls must be made ONE AT A TIME to avoid the server processing them too closely together.
@@ -59,13 +65,20 @@ namespace IdleFantasy {
         }
 
         public void ChangeAssignedTrainers( string i_unitID, int i_change ) {
+            double clientTimestamp = GetClientTimestamp();
+
             Dictionary<string, string> assignParams = new Dictionary<string, string>();
             assignParams.Add( BackendConstants.CHANGE, i_change.ToString() );
             assignParams.Add( BackendConstants.TARGET_ID, i_unitID );
+            assignParams.Add( BackendConstants.CLIENT_TIMESTAMP, clientTimestamp.ToString() );
 
             QueueCloudCall( BackendConstants.INIT_TRAINING_CHANGE, assignParams, null );
         }
         #endregion
+
+        private double GetClientTimestamp() {
+            return (DateTime.UtcNow - mLoggedInTime).TotalMilliseconds;
+        }
 
         #region Wait-for-game calls
         // these are calls that are important and rely on all previous game calls to be complete.

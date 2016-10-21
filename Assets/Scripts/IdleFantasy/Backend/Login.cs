@@ -24,7 +24,7 @@ namespace IdleFantasy {
             mLoginTimer.Start();
 
             mBackend.Authenticate( SystemInfo.deviceUniqueIdentifier );
-            //mBackend.Authenticate( TestUsers.THREE );
+            //mBackend.Authenticate( TestUsers.FOUR );
         }
 
         public void OnDestroy() {
@@ -51,6 +51,8 @@ namespace IdleFantasy {
 
         private void OnLogin( Dictionary<string, string> i_result ) {
             mLoginTimer.StepComplete( LibraryAnalyticEvents.ON_LOGIN_TIME );
+            IdleFantasyBackend backend = (IdleFantasyBackend) mBackend;
+            backend.SetLoggedInTime();
 
             MyMessenger.Send<LogTypes, string, string>( MyLogger.LOG_EVENT, LogTypes.Info, "Login success", "" );
 

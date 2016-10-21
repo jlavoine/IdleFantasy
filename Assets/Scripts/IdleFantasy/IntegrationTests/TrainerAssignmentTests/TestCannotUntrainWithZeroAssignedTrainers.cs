@@ -2,7 +2,7 @@
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestCannotUntrainWithZeroAssignedTrainers : TestTrainerAssignments {
-        protected override IEnumerator RunAllTests() {
+        protected override IEnumerator RunTrainingTests() {
             yield return CannotUntrainWithZeroAssignedTrainers();
         }
 

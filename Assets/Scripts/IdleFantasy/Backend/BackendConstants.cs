@@ -25,6 +25,8 @@ namespace IdleFantasy {
         public const string INDEX = "Index";
         public const string MAP = "Map";
         public const string TIME = "Time";
+        public const string CLIENT_TIMESTAMP = "ClientTimestamp";
+        public const string LOGGED_IN_TIME = "LoggedInTimestamp";
         #endregion
 
         #region Cloud Methods

@@ -2,7 +2,7 @@
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestCannotTrainWhenUnitAlreadyTrainedToMax : TestTrainerAssignments {
-        protected override IEnumerator RunAllTests() {
+        protected override IEnumerator RunTrainingTests() {
             yield return CannotTrainWhenUnitAlreadyTrainedToMax();
         }
 

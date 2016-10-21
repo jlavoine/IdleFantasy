@@ -66,6 +66,10 @@ const COMPLETED_COUNT = "CompletedCount";
 const CURRENTLY_AVAILABLE = "CurrentlyAvailable";
 const MISSION = "Mission";
 
+// cheat proofing
+const LOGGED_IN_TIME = "LoggedInTimestamp"; // timestamp for when the user logs in
+const CLIENT_TIMESTAMP = "ClientTimestamp"; // timestamp sent in client actions for when the client took the action
+
 // map related
 const DEFAULT_MAP_SIZE = 25;
 const NEW_PLAYER_MAP = "NewPlayerMap";                  // title data key for the map data that should be a new player's
@@ -351,8 +355,9 @@ handlers.testChangeTraining = function (args) {
     var changeInTrainers = GetNumberFromArgs(args, CHANGE);
     var allProgressData = GetProgressData(className);
     var progressForTarget = GetProgressForTarget(allProgressData, targetID);
+    var clientTimestamp = GetNumberFromArgs(args, CLIENT_TIMESTAMP);
 
-    ChangeTrainingLevel(allProgressData, progressForTarget, changeInTrainers, targetID, className);
+    ChangeTrainingLevel(allProgressData, progressForTarget, changeInTrainers, targetID, className, clientTimestamp);
 }
 
 /// returns the capacity for a unit
@@ -1970,8 +1975,14 @@ function CalculateModificationBonus(modifier, unitData, unitProgress, stat, modi
 
 handlers.onLogin = function (args) {
     AddMissingPlayerData();
-
     UpdateAllUnitCounts(Date.now());    
+    SetLoggedInTime();
+}
+
+/// we use the logged in time to help verify the player's actions
+function SetLoggedInTime() {
+    var time = Date.now();
+    SetSaveData(LOGGED_IN_TIME, time.toString(), INTERNAL);
 }
 
 /// This method looks through all the player's data and makes sure that the default values get added
@@ -2083,6 +2094,7 @@ function AddUnitProgress_IfMissing(unitProgress, titleData) {
             missingProgress[TRAINERS_ASSIGNED] = 0;
             missingProgress[UNIT_COUNT] = 0;
             missingProgress[LAST_UNIT_COUNT] = 0;
+            missingProgress[CLIENT_TIMESTAMP] = 0;
 
             unitProgress[key] = missingProgress;
         }
@@ -2566,6 +2578,20 @@ handlers.tutorialComplete = function (args) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Cheat Proofing
+/////////////////////////////////////////////////
+
+function GetLoggedInTime() {
+    var time = GetInternalSaveData(LOGGED_IN_TIME);
+    return parseInt(time, 10);
+}
+
+
+/////////////////////////////////////////////////
+/// ~Cheat Proofing
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// ProgressData
 /// Methods related to getting and changing 
 /// progress data for a player.
@@ -2703,7 +2729,7 @@ function ResetUnitProgress(unitData) {
 /////////////////////////////////////////////////
 
 function UpdateAllUnitCounts(time) {
-    log.info("Updating all unit counts");
+    log.info("Updating all unit counts with time " + time);
 
     var allUnitProgress = GetProgressData(CLASS_UNIT);
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
@@ -2711,7 +2737,8 @@ function UpdateAllUnitCounts(time) {
     var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
     
     for (var unitKey in allUnitProgress) {
-        UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, time);        
+        UpdateCountForUnit(unitKey, allUnitProgress, allUnitData, allBuildingProgress, allBuildingData, time);    
+        SetClientTimestampForUnit(allUnitProgress[unitKey], 0);    
     }
 
     UpdateUnitSaveData(allUnitProgress); 
@@ -2749,9 +2776,10 @@ function ResetUnitCount(unitSaveData) {
 function ChangeUnitCount(unitSaveData, amount) {
     var currentCount = GetUnitCount(unitSaveData);
     var newCount = currentCount + amount;
+    var updateTime = GetUnitLastCountTime(unitSaveData);
 
     log.info("Changing count from " + currentCount + " to " + newCount + "(" + amount +")");
-    UpdateUnitCount(unitSaveData, newCount, Date.now());
+    UpdateUnitCount(unitSaveData, newCount, updateTime);
 }
 
 function SetUnitCount(unitSaveData, count) {
@@ -2767,7 +2795,7 @@ function GetUnitCount(unitSaveData) {
         unitSaveData[UNIT_COUNT] = 0;
     }
 
-    var count = parseInt(unitSaveData[UNIT_COUNT], 10);
+    var count = parseFloat(unitSaveData[UNIT_COUNT]);
 
     log.info("Returning unit count: " + count);
     return count;
@@ -2831,6 +2859,7 @@ function GetUnitProgressSpeed(unitSaveData) {
 
 handlers.initiateChangeInTraining = function (args) {
     var targetUnitID = args.data[TARGET_ID];
+    var clientTimestamp = GetNumberFromArgs(args, CLIENT_TIMESTAMP); 
     var changeInTrainingLevel = GetNumberFromArgs(args, CHANGE);
 
     log.info(targetUnitID);
@@ -2840,8 +2869,8 @@ handlers.initiateChangeInTraining = function (args) {
     var progressDataForUnit = GetProgressForTarget(allProgressData, targetUnitID);
     log.info("Progress data: " + JSON.stringify(progressDataForUnit));
 
-    if (CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel)) {
-        ChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel, targetUnitID, CLASS_UNIT)
+    if (CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel, clientTimestamp)) {
+        ChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel, targetUnitID, CLASS_UNIT, clientTimestamp);
     } else {
         return { outOfSync : true };
     }
@@ -2874,7 +2903,28 @@ function GetTotalTrainers() {
     return totalTrainers;   
 }
 
-function CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel) {
+function CanChangeTrainingLevel(allProgressData, progressDataForUnit, changeInTrainingLevel, clientTimestamp) {
+    if (IsClientTimestampLegal(progressDataForUnit, clientTimestamp)) {
+        return CanChangeTrainingLevelFromTrainers(allProgressData, progressDataForUnit, changeInTrainingLevel);
+    } else {
+        return false;
+    }
+}
+
+function IsClientTimestampLegal(progressData, clientTimestamp) {
+    var lastClientTimestamp = GetLastClientTimestamp(progressData);
+    return clientTimestamp > lastClientTimestamp;
+}
+
+function GetLastClientTimestamp(progressData) {
+    return progressData[CLIENT_TIMESTAMP];
+}
+
+function SetClientTimestampForUnit(unitProgress, timestamp) {
+    unitProgress[CLIENT_TIMESTAMP] = timestamp;
+}
+
+function CanChangeTrainingLevelFromTrainers(allProgressData, progressDataForUnit, changeInTrainingLevel) {
     var maxLevel = GetMaxTrainingLevel(progressDataForUnit);
     var changeResult = parseInt(progressDataForUnit[TRAINERS_ASSIGNED], 10) + changeInTrainingLevel;
     var availableTrainers = GetAvailableTrainers(allProgressData);
@@ -2895,23 +2945,33 @@ function GetMaxTrainingLevel(progressDataForUnit) {
     return progressDataForUnit[UPGRADE_LEVEL];
 }
 
-function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, targetID, className) {
-    UpdateCountDueToChangeInTraining(targetID, allProgressData);    
+function ChangeTrainingLevel(allProgressData, progressData, changeInTrainers, targetID, className, clientTimestamp) {
+    UpdateCountDueToChangeInTraining(targetID, allProgressData, clientTimestamp);    
 
     var progressKey = GetProgressKey(className);
     var trainersAssigned = parseInt(progressData[TRAINERS_ASSIGNED], 10) + changeInTrainers;
     progressData[TRAINERS_ASSIGNED] = trainersAssigned;
+    SetClientTimestampForUnit(progressData, clientTimestamp);    
     allProgressData[targetID] = progressData;    
 
     SetReadOnlyData(progressKey, allProgressData);
 }
 
-function UpdateCountDueToChangeInTraining(targetID, allProgressData) {
+function UpdateCountDueToChangeInTraining(targetID, allProgressData, clientTimestamp) {
     var allUnitData = GetTitleDataForClass(CLASS_UNIT);
     var allBuildingProgress = GetProgressData(CLASS_BUILDING);
     var allBuildingData = GetTitleDataForClass(CLASS_BUILDING);
+    var updateTime = GetTimeAtWhichClientChangedTraining(clientTimestamp);
 
-    UpdateCountForUnit(targetID, allProgressData, allUnitData, allBuildingProgress, allBuildingData, Date.now());
+    UpdateCountForUnit(targetID, allProgressData, allUnitData, allBuildingProgress, allBuildingData, updateTime);
+}
+
+function GetTimeAtWhichClientChangedTraining(clientTimestamp) {
+    var loggedInTime = GetLoggedInTime();
+    var updateTime = loggedInTime + clientTimestamp;
+
+    log.info("Getting the time at which the client trained: " + loggedInTime + " + " + clientTimestamp + " = " + updateTime);
+    return updateTime;
 }
 
 function ResetTrainerCounts() {

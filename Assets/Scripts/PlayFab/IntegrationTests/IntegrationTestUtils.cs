@@ -28,6 +28,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             testParams[BackendConstants.TARGET_ID] = i_unitID;
             testParams[BackendConstants.CLASS] = GenericDataLoader.UNITS;
             testParams[BackendConstants.CHANGE] = i_trainingLevelChange.ToString();
+            testParams[BackendConstants.CLIENT_TIMESTAMP] = int.MaxValue.ToString();
 
             BackendManager.Backend.MakeCloudCall( CloudTestMethods.testChangeTraining.ToString(), testParams, null );
 

@@ -4,5 +4,6 @@ namespace IdleFantasy {
         public int Trainers;
         public float Count;
         public long LastCountTime;
+        public double ClientTimestamp;
     }
 }

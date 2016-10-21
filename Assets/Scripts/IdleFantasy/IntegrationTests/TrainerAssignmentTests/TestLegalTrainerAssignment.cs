@@ -2,7 +2,7 @@
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public class TestLegalTrainerAssignment : TestTrainerAssignments {
-        protected override IEnumerator RunAllTests() {
+        protected override IEnumerator RunTrainingTests() {
             yield return TestLegalAssignment();
         }
 
@@ -17,8 +17,17 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
             FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getAvailableTrainers.ToString(), 0 );
             FailTestIfAssignedTrainersDoesNotEqual( 1 );
+            FailIfClientTimestampNotUpdated();
 
             yield return mBackend.WaitUntilNotBusy();
+        }
+
+        private void FailIfClientTimestampNotUpdated() {
+            GetProgressData<UnitProgress>( GenericDataLoader.UNITS, UNIT_ID, ( result ) => {
+                if ( result.ClientTimestamp != CLIENT_TIMESTAMP ) {
+                    IntegrationTest.Fail( "Expecting client timestamp to be " + CLIENT_TIMESTAMP + " but was " + result.ClientTimestamp );
+                }
+            } );
         }
     }
 }

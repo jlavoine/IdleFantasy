@@ -5,7 +5,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestUnitGeneration : IntegrationTestBase {
         protected const string LAST_UNIT_COUNT_TIME = "LastCountTime";                
         protected const string SAVE_KEY_BUILDINGS = "BuildingsProgress";
-        protected const string SAVE_VALUE_UNITS = "{\"BASE_WARRIOR_1\":{\"Level\":1, \"Count\":0, \"Trainers\":0, \"LastCountTime\":0}}";        
+        protected const string SAVE_VALUE_UNITS = "{\"BASE_WARRIOR_1\":{\"Level\":1, \"Count\":0, \"Trainers\":0, \"LastCountTime\":0, \"ClientTimestamp\":0}}";        
         protected const string SAVE_VALUE_BUILDINGS = "{\"BASE_WARRIOR_BUILDING_1\":{\"Level\":1}}";
         protected const string UNIT_BEING_COUNTED = "BASE_WARRIOR_1";
 
