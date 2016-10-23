@@ -20,7 +20,8 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
             yield return StartCoroutine(base.RunOtherFailureChecks());
 
             yield return FailIfMissionNotComplete();
-            yield return FailIfMissionRewardNotApplied();            
+            yield return FailIfMissionRewardNotApplied();
+            yield return FailIfRemainingUnitsAreNotFloat();           
         }
 
         private IEnumerator FailIfMissionNotComplete() {
@@ -38,6 +39,17 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         private IEnumerator FailIfMissionRewardNotApplied() {
             Dictionary<string, string> cloudParams = new Dictionary<string, string>() { { BackendConstants.TYPE, VirtualCurrencies.GOLD } };
             FailTestIfReturnedCallDoesNotEqual( CloudTestMethods.getPlayerCurrency.ToString(), MISSION_GOLD_REWARD, cloudParams );
+
+            yield return mBackend.WaitUntilNotBusy();
+        }
+
+        private IEnumerator FailIfRemainingUnitsAreNotFloat() {
+            GetProgressData<UnitProgress>( GenericDataLoader.UNITS, UNIT_ID, ( result ) => {
+                float expectedRemaining = VALID_MISSION_PROGRESS_UNIT_COUNT - TASK_1_PROPOSAL_COUNT - TASK_2_PROPOSAL_COUNT;
+                if ( result.Count != expectedRemaining ) {
+                    IntegrationTest.Fail( "Expecting unit count to be " + expectedRemaining + " but was " + result.Count );
+                }
+            } );
 
             yield return mBackend.WaitUntilNotBusy();
         }

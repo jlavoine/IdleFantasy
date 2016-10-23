@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using MyLibrary;
-using UnityEngine;
 
 namespace IdleFantasy.PlayFab.IntegrationTests {
     public abstract class TestMission : IntegrationTestBase {
-        protected const string MISSION_WORLD = "Base";   
+        protected const string MISSION_WORLD = "Base";
+        protected const string UNIT_ID = "BASE_WARRIOR_1";
+        protected const string BUILDING_ID = "BASE_WARRIOR_BUILDING_1";
         protected const int MISSION_GOLD_REWARD = 1000;
         protected const int MISSIONS_DONE_COUNT = 0;
+        protected const int TASK_1_PROPOSAL_COUNT = 250;
+        protected const int TASK_2_PROPOSAL_COUNT = 667;
+        protected const float VALID_MISSION_PROGRESS_UNIT_COUNT = 9000.5f;
 
-        private const int MISSION_INDEX = 0;        
+        private const int MISSION_INDEX = 0;                               
 
         protected abstract Dictionary<int, MissionTaskProposal> GetTaskProposals();
         protected abstract string GetUnitProgressData();
@@ -97,7 +101,7 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
         }
 
         private void SetBuildingProgressData() {
-            string progressData = "{\"BASE_WARRIOR_BUILDING_1\":{\"Level\":100}}";
+            string progressData = "{\"" + BUILDING_ID + "\":{\"Level\":100}}";
             IntegrationTestUtils.SetReadOnlyData( IntegrationTestUtils.SAVE_KEY_BUILDINGS, progressData );
         }
 
@@ -118,13 +122,13 @@ namespace IdleFantasy.PlayFab.IntegrationTests {
 
         #region Convenience methods for various tests
         protected string GetValidUnitProgressForMission() {
-            return "{\"BASE_WARRIOR_1\":{\"Level\":1, \"Count\":10000, \"Trainers\":0, \"LastCountTime\":0}}";
+            return "{\"" + UNIT_ID + "\":{\"Level\":1, \"Count\":" + VALID_MISSION_PROGRESS_UNIT_COUNT.ToString() + ", \"Trainers\":0, \"LastCountTime\":" + long.MaxValue + "}}";
         }
 
         protected Dictionary<int, MissionTaskProposal> GetValidMissionProposal() {
             Dictionary<int, MissionTaskProposal> taskProposals = new Dictionary<int, MissionTaskProposal>();
-            taskProposals.Add( 0, new MissionTaskProposal( 0, "BASE_WARRIOR_1", 250 ) );
-            taskProposals.Add( 1, new MissionTaskProposal( 1, "BASE_WARRIOR_1", 667 ) );
+            taskProposals.Add( 0, new MissionTaskProposal( 0, UNIT_ID, TASK_1_PROPOSAL_COUNT ) );
+            taskProposals.Add( 1, new MissionTaskProposal( 1, UNIT_ID, TASK_2_PROPOSAL_COUNT ) );
 
             return taskProposals;
         }
