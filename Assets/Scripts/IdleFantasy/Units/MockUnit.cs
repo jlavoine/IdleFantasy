@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class MockUnit : IUnit {
@@ -44,6 +45,14 @@ namespace IdleFantasy {
 
         public bool CanTrain() {
             return true;
+        }
+
+        public string GetName() {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetStats() {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using MyLibrary;
 using IdleFantasy.Data;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public class Unit : IUnit {
@@ -15,6 +16,10 @@ namespace IdleFantasy {
         Upgradeable mLevel;
         public IUpgradeable Level {
             get { return mLevel; }
+        }
+
+        public string GetName() {
+            return mData.GetName();
         }
 
         public int TrainingLevel {
@@ -105,6 +110,16 @@ namespace IdleFantasy {
             speed = Math.Max( speed, 1 );
 
             return speed;
+        }
+
+        public List<string> GetStats() {
+            List<string> stats = new List<string>();
+
+            foreach ( KeyValuePair<string, StatInfo> stat in mData.Stats ) {
+                stats.Add( stat.Key );
+            }
+
+            return stats;
         }
 
         public bool HasStat( string i_stat ) {

@@ -35,17 +35,18 @@ namespace IdleFantasy {
         }
 
         private void PopulateMenu() {
-            foreach( Building building in PlayerManager.Data.Buildings ) {
+            for ( int i = 0; i < PlayerManager.Data.Buildings.Count; ++i ) {
+                Building building = PlayerManager.Data.Buildings[i];
                 if ( building.Level.Value > 0 ) {
-                    CreateAndInitView( building );
+                    CreateAndInitView( building, i );
                 }
             }
         }
 
-        private void CreateAndInitView( Building i_building ) {
+        private void CreateAndInitView( Building i_building, int i_index ) {
             GameObject buildingViewObject = gameObject.InstantiateUI( BuildingViewPrefab, Content );
             BuildingView buildingView = buildingViewObject.GetComponent<BuildingView>();
-            buildingView.Init( i_building );
+            buildingView.Init( i_building, i_index );
         }
 
         void Update() {

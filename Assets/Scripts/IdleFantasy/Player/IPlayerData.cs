@@ -19,6 +19,7 @@ namespace IdleFantasy {
         Dictionary<string, WorldMissionProgress> MissionProgress { get; }
         IGameMetrics GameMetrics { get; }
         Dictionary<string, UnitProgress> UnitProgress { get; }
+        List<IUnit> AllUnits { get; }
 
         UnitUnlockPlanData UnitUnlockPlan { get; }
 

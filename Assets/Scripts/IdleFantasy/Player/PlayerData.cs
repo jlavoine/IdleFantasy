@@ -48,6 +48,17 @@ namespace IdleFantasy {
 
         private IBasicBackend mBackend;
 
+        public List<IUnit> AllUnits {
+            get {
+                List<IUnit> units = new List<IUnit>();
+                foreach ( Building building in Buildings ) {
+                    units.Add( building.Unit );
+                }
+
+                return units;
+            }
+        }
+
         public void Init( IBasicBackend i_backend ) {
             SubscribeToMessages();
 

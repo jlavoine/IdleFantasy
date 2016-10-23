@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace IdleFantasy {
     public interface IUnit {
@@ -14,9 +15,13 @@ namespace IdleFantasy {
         }
         bool CanTrain();
 
+        string GetName();
+
         float GetProgressFromTimeElapsed( TimeSpan i_timeSpan );
 
         bool HasStat( string i_stat );
-        int GetBaseStat( string i_stat );       
+        int GetBaseStat( string i_stat );
+
+        List<string> GetStats();
     }
 }
