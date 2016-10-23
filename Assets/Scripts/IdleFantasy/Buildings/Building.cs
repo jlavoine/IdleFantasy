@@ -140,8 +140,8 @@ namespace IdleFantasy {
         private void UpdateAllowedUpgradeProperties() {
             // FIXME: Did this because tests were failing...need a better way
             if ( PlayerManager.Data is IResourceInventory ) {
-                CanUpgradeUnit = Unit.Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data );
-                CanUpgradeBuilding = Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data );
+                CanUpgradeUnit = Unit.Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data ) && !Unit.Level.IsAtMaxLevel();
+                CanUpgradeBuilding = Level.CanAffordUpgrade( (IResourceInventory) PlayerManager.Data ) && !Level.IsAtMaxLevel();
             }
         }
 
