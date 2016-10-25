@@ -5,6 +5,8 @@ namespace MyLibrary {
         public string Key;
         public List<IAchievementRequirement> Requirements;
 
+        private const string NAME_KEY = "ACHIEVEMENT_NAME_";
+
         public Achievement( string i_key, List<IAchievementRequirement> i_requirements ) {
             Key = i_key;
             Requirements = i_requirements;
@@ -18,6 +20,10 @@ namespace MyLibrary {
             }
 
             return true;
+        }
+
+        public string GetName() {
+            return StringTableManager.Get( NAME_KEY + Key );
         }
     }
 }
