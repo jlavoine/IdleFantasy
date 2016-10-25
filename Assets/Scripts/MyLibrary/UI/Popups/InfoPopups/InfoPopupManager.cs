@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace MyLibrary {
-    public class InfoPopupManager {
+    public class InfoPopupManager : IInfoPopupManager {
         private const string POPUP_PANEL = "InfoPopupPanel";
 
         private List<QueuedInfoPopupData> mListPopups = new List<QueuedInfoPopupData>();
@@ -31,7 +31,7 @@ namespace MyLibrary {
             MyMessenger.RemoveListener( InfoPopupEvents.CLOSE, OnPopupClosed );
         }
 
-        public void QueueInfoPopup( string i_prefabName, ViewModel i_viewModel ) {
+        public void QueueInfoPopup( string i_prefabName, IViewModel i_viewModel ) {
             QueuedInfoPopupData queuedPopup = new QueuedInfoPopupData( i_prefabName, i_viewModel );
             mListPopups.Add( queuedPopup );
             CheckToShowNextPopup();

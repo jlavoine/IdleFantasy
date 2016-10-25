@@ -7,14 +7,14 @@ namespace MyLibrary {
 
         public string PropertyName;
 
-        private ViewModel mModel;
-        protected ViewModel Model {
+        private IViewModel mModel;
+        protected IViewModel Model {
             get { return mModel; }
         }
 
         protected Guid mPropertyID;
 
-        public void SetModel( ViewModel i_model ) {
+        public void SetModel( IViewModel i_model ) {
             mModel = i_model;
             if ( i_model == null ) {
                 Debug.LogError( "PropertyView has null model: " + PropertyName );
