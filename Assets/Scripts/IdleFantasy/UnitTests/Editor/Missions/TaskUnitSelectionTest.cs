@@ -14,7 +14,7 @@ namespace IdleFantasy.UnitTests {
 
         private TaskUnitSelection mTestSelection;
         private const int TEST_TASK_INDEX = 1;
-        private const int POWER_REQUIREMENT = 100;
+        private const int POWER_REQUIREMENT = 1;
         private const string TEST_STAT = TestUnitStats.TEST_STAT_1;
         private IUnit mUnit;
 
@@ -51,6 +51,13 @@ namespace IdleFantasy.UnitTests {
 
         [Test]
         public void VerifyProperties_FromCreatedTaskUnitSelection() {
+            mTestSelection = new TaskUnitSelection( mUnit,
+                new MissionTaskData() { Index = TEST_TASK_INDEX, StatRequirement = TEST_STAT, PowerRequirement = POWER_REQUIREMENT },
+                mMissionProposal );
+
+            IBuildingUtils mockUtils = Substitute.For<IBuildingUtils>();
+            mockUtils.GetNumUnits( Arg.Any<IUnit>() ).Returns( 100 );
+            BuildingUtilsManager.Utils = mockUtils;
             int unitsRequired = StatCalculator.Instance.GetNumUnitsForRequirement( mUnit, TEST_STAT, POWER_REQUIREMENT );
             Color color = Constants.GetConstant<Color>( ConstantKeys.NOT_ENOUGH_UNITS_COLOR );
 
@@ -58,6 +65,8 @@ namespace IdleFantasy.UnitTests {
             Assert.AreEqual( color, mTestSelection.ViewModel.GetPropertyValue<Color>( MissionKeys.NUM_UNITS_FOR_TASK_COLOR ) );
             Assert.AreEqual( unitsRequired, mTestSelection.ViewModel.GetPropertyValue<int>( MissionKeys.NUM_UNITS_FOR_TASK ) );
             Assert.AreEqual( mUnit.GetID(), mTestSelection.ViewModel.GetPropertyValue<string>( MissionKeys.UNIT_FOR_TASK ) );
+
+            BuildingUtilsManager.Utils = null;
         }
 
         [Test]
